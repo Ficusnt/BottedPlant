@@ -1,0 +1,6 @@
+node_modules/
+data/cookies.txt
+.env
+*.log
+CLAUDE.md
+REFS/

@@ -1,0 +1,25 @@
+{
+  "name": "bottedplant",
+  "version": "1.0.0",
+  "description": "Discord bot for YouTube audio and reminders — with a native slash command menu.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "postinstall": "node scripts/setup-ytdlp-conf.js",
+    "setup": "node scripts/setup-ytdlp-conf.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@discordjs/voice": "^0.19.2",
+    "@distube/soundcloud": "^2.0.4",
+    "@distube/yt-dlp": "^2.0.1",
+    "discord.js": "^14.27.0",
+    "distube": "^5.2.3",
+    "dotenv": "^16.6.1",
+    "ffmpeg-static": "^5.2.0",
+    "libsodium-wrappers": "^0.8.4",
+    "opusscript": "^0.0.8"
+  }
+}
