@@ -64,7 +64,7 @@ distube
 client.once('clientReady', () => {
   console.log(`¡Me conecté a Discord! Soy una planta digital ^_^`);
   console.log(`Soy ${client.user.tag} (${client.user.id})`);
-  client.user.setActivity(`🍃 Fotosintetizando — /bp help`, { type: ActivityType.Listening });
+  client.user.setActivity(`🍃 el unico bot que no te deja plantado — /bp help`, { type: ActivityType.Listening });
 
   registerSlashCommands(client).catch((err) => console.error('Error registering slash commands:', err));
   scheduleReminders(client);
