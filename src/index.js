@@ -22,11 +22,6 @@ const client = new Client({
   ],
 });
 
-// The @distube/yt-dlp plugin only accepts { update } in its constructor.
-// The embed hack is configured via yt-dlp.conf next to the binary:
-//   --extractor-args "youtube:player_client=web_embedded"
-// This bypasses YouTube bot detection WITHOUT cookies (Brave/Chrome DPAPI
-// encryption can't be decrypted by yt-dlp on Windows).
 const disTubeOptions = {
   plugins: [new SoundCloudPlugin(), new YtDlpPlugin({ update: false })],
   emitNewSongOnly: true,
@@ -42,11 +37,14 @@ client.distube = distube;
 distube
   .on('playSong', (queue, song) => {
     const embed = require('./embeds').trackEmbed(song, '▶️ Sonando ahora');
-    queue.textChannel?.send({ embeds: [embed] }).catch((e) => console.error('[distube] playSong send error:', e));
+    // URL alone → Discord renders the native YouTube/SoundCloud video player embed
+    queue.textChannel?.send(song.url).catch((e) => console.error('[distube] playSong url send error:', e));
+    queue.textChannel?.send({ embeds: [embed] }).catch((e) => console.error('[distube] playSong embed send error:', e));
   })
   .on('addSong', (queue, song) => {
     const embed = require('./embeds').trackEmbed(song, '➕ Añadida a la cola');
-    queue.textChannel?.send({ embeds: [embed] }).catch((e) => console.error('[distube] addSong send error:', e));
+    queue.textChannel?.send(song.url).catch((e) => console.error('[distube] addSong url send error:', e));
+    queue.textChannel?.send({ embeds: [embed] }).catch((e) => console.error('[distube] addSong embed send error:', e));
   })
   .on('addList', (queue, playlist) => {
     const embed = require('./embeds').playlistEmbed(playlist);

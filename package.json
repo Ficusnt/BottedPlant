@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "postinstall": "node scripts/setup-ytdlp-conf.js",
-    "setup": "node scripts/setup-ytdlp-conf.js"
+    "setup": "node scripts/setup-ytdlp-conf.js",
+    "generate-cookies": "node scripts/generate-cookies.js"
   },
   "engines": {
     "node": ">=18.0.0"
