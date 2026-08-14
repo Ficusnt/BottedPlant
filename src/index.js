@@ -6,6 +6,7 @@ const config = require('./config');
 const { registerSlashCommands, handleInteraction, handleMessage } = require('./bpCommand');
 const { scheduleReminders } = require('./handlers/reminders');
 const dataStore = require('./dataStore');
+const reactions = require('./reactions');
 
 if (!config.token) {
   console.error('DISCORD_TOKEN is missing. Create a .env file from .env.example');
@@ -49,14 +50,14 @@ distube
     queue.textChannel?.send({ embeds: [embed] }).catch((e) => console.error('[distube] addList send error:', e));
   })
   .on('finish', (queue) => {
-    queue.textChannel?.send('✅ ¡Terminó la cola! Bajo mis hojas por hoy. Fue un placer compartir fotosíntesis musical. ¡Hasta la próxima! c: 🍃').catch(() => {});
+    queue.textChannel?.send(reactions.distubeEvents.finish).catch(() => {});
   })
   .on('empty', (queue) => {
-    queue.textChannel?.send('👋 ¡Se fueron todos! Me quedo solo como planta de oficina... bueno, me voy a la maceta. ¡Chau! :P 🪴').catch(() => {});
+    queue.textChannel?.send(reactions.distubeEvents.empty).catch(() => {});
   })
   .on('error', (channel, error) => {
     console.error('DisTube error:', error);
-    channel?.send(`❌ ¡Uy! Se me enredaron las raíces del audio: \`${error.message.slice(0, 400)}\``).catch(() => {});
+    channel?.send(reactions.distubeEvents.error(error.message.slice(0, 400))).catch(() => {});
   });
 
 // ---- Client events ----
@@ -103,10 +104,7 @@ async function checkBirthdays() {
       const mentions = unannounced
         .map(([uid]) => `<@${uid}>`)
         .join(' ');
-      await channel.send(
-        `🎂 **¡HOY ES EL CUMPLE DE ${mentions}!!**\n` +
-        `@everyone ¡Que florezcan los deseos! Deseenles un **feliz cumpleaños** y riéguenlos de cariño 🎉🌿✨`
-      );
+      await channel.send(reactions.reminders.birthdayAnnouncement(mentions));
       for (const [uid] of unannounced) await dataStore.markBirthdayAnnounced(uid, year);
       console.log(`[BIRTHDAY] Announced ${unannounced.length} birthday(s) in ${guild.name}`);
     } catch (err) {
@@ -114,6 +112,22 @@ async function checkBirthdays() {
     }
   }
 }
+
+// ---- Voice inactivity timeout ----
+// Disconnect from voice channels after 10 minutes of inactivity
+setInterval(() => {
+  for (const guild of client.guilds.cache.values()) {
+    const queue = distube.getQueue(guild.id);
+    if (queue && queue.voiceChannel) {
+      const members = queue.voiceChannel.members.filter((m) => !m.user.bot);
+      if (members.size === 0) {
+        console.log(`[Voice] No users in ${queue.voiceChannel.name}, disconnecting...`);
+        distube.stop(guild.id);
+        queue.voiceChannel.leave().catch((err) => console.error('[Voice] Error leaving channel:', err));
+      }
+    }
+  }
+}, 10 * 60 * 1000); // Check every 10 minutes
 
 client.on('guildCreate', (guild) => {
   // Auto-register commands in newly joined servers

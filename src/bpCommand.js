@@ -2,9 +2,13 @@ const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBui
 const { execFile } = require('child_process');
 const { promisify } = require('util');
 const path = require('path');
+const fs = require('fs');
 const dataStore = require('./dataStore');
 const { queueEmbed, formatDuration } = require('./embeds');
+const { cmdLeave } = require('./cmdLeave');
 const { handleMessage, runEconomyCommand } = require('./economy');
+const reactions = require('./reactions');
+const { music, reminders, fun, rand } = reactions;
 
 const execFileAsync = promisify(execFile);
 
@@ -49,6 +53,7 @@ function bpCommandData() {
             .addStringOption((opt) => opt.setName('title').setDescription('Título a buscar').setRequired(true))
         )
         .addSubcommand((sub) => sub.setName('stop').setDescription('Detener y salir del canal de voz'))
+        .addSubcommand((sub) => sub.setName('leave').setDescription('Salir del canal de voz'))
         .addSubcommand((sub) => sub.setName('skip').setDescription('Saltar la canción actual'))
         .addSubcommand((sub) => sub.setName('rewind').setDescription('Rebobinar la canción actual desde el principio'))
         .addSubcommand((sub) => sub.setName('queue').setDescription('Mostrar la cola de reproducción'))
@@ -258,6 +263,9 @@ async function handleInteraction(interaction) {
       case 'stop':
         await cmdStop(interaction);
         break;
+      case 'leave':
+        await cmdLeave(interaction);
+        break;
       case 'skip':
         await cmdSkip(interaction);
         break;
@@ -337,7 +345,7 @@ async function handleInteraction(interaction) {
         await cmdHelp(interaction);
         break;
       default:
-        await interaction.reply('Comando desconocido, che. Usá `/bp help` antes de que se me caigan las hojas de la duda. 🌿');
+        await interaction.reply(fun.unknownCommand);
     }
   }, interaction);
 }
@@ -454,7 +462,21 @@ async function searchTracks(place, query) {
 // Runs yt-dlp directly with a search prefix (ytsearch5 / scsearch5)
 async function searchWithYtDlp(prefix, query) {
   const ytDlp = path.join(__dirname, '..', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.exe');
-  const { stdout } = await execFileAsync(ytDlp, ['--dump-single-json', `${prefix}:${query}`], {
+  const dataDir = path.join(__dirname, '..', 'data');
+  const cookieFile = path.join(dataDir, 'cookies.txt');
+  const confFile = path.join(__dirname, '..', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
+
+  // Build arguments - use cookies if available
+  const args = ['--dump-single-json', `${prefix}:${query}`];
+  if (fs.existsSync(cookieFile) && fs.statSync(cookieFile).size > 0) {
+    args.unshift('--cookies', cookieFile);
+  }
+  // Use yt-dlp.conf if available
+  if (fs.existsSync(confFile)) {
+    args.unshift('--config-location', confFile);
+  }
+
+  const { stdout } = await execFileAsync(ytDlp, args, {
     timeout: 45000,
     maxBuffer: 16 * 1024 * 1024,
   });
@@ -509,7 +531,7 @@ async function cmdStop(interaction) {
     return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz... yo no me muevo de mi maceta, así que vení vos. :P', ephemeral: true });
   }
   interaction.client.distube.stop(interaction.guildId);
-  await interaction.reply('⏹ ¡Listo! Me desconecto como planta que se duerme... ¡hasta la próxima! 👋🌙');
+  await interaction.reply(music.stop);
 }
 
 async function cmdSkip(interaction) {
@@ -518,11 +540,11 @@ async function cmdSkip(interaction) {
     return interaction.reply({ content: '❌ No estoy reproduciendo nada... ¿me perdí algo? A veces me quedo callado, como las plantas en invierno. ❄️ :o', ephemeral: true });
   }
   if (queue.songs.length <= 1) {
-    return interaction.reply('⏭ No hay más canciones, che... usá `/bp music rewind` para repetir la actual, como yo repito mis hojas cada temporada. c:');
+    return interaction.reply(music.skipNoMore);
   }
   const song = queue.songs[0];
   interaction.client.distube.skip(interaction.guildId);
-  await interaction.reply(`⏭ Saltando **${song.name}**... ¡que siga la fotosíntesis musical! 🎵`);
+  await interaction.reply(music.skip(song.name));
 }
 
 async function cmdRewind(interaction) {
@@ -535,7 +557,7 @@ async function cmdRewind(interaction) {
     return interaction.reply({ content: '🔇 Che, mismo canal de voz o no hay rebobinado... yo no me muevo, soy planta, acordate. :P', ephemeral: true });
   }
   queue.seek(0);
-  await interaction.reply(`↩️ Rebobinando **${queue.songs[0].name}**... ¡otra vez con más savia! 🔂`);
+  await interaction.reply(music.rewind(queue.songs[0].name));
 }
 
 async function cmdQueue(interaction) {
@@ -589,7 +611,7 @@ async function cmdReminders(interaction) {
   const all = await dataStore.getReminders();
   const mine = Object.entries(all).filter(([, r]) => r.userId === interaction.user.id);
   if (mine.length === 0) {
-    return interaction.reply('📭 No tenés recordatorios pendientes... se te secaron. 🌿');
+    return interaction.reply(reminders.listEmpty);
   }
   const lines = mine.map(([id, r]) => `• \`${id}\` — <t:${Math.floor(r.when / 1000)}:F> — "${r.message}"`);
   await interaction.reply({ embeds: [new EmbedBuilder().setTitle('⏰ Tus recordatorios').setDescription(lines.join('\n'))] });
@@ -605,7 +627,7 @@ async function cmdCancelRemind(interaction) {
     return interaction.reply({ content: '❌ Ese recordatorio no es tuyo, che... no lo arranques de la maceta ajena.', ephemeral: true });
   }
   await dataStore.removeReminder(id);
-  await interaction.reply(`🗑 Recordatorio \`${id}\` cancelado. Lo podé. 🌱`);
+  await interaction.reply(reminders.cancelled(id));
 }
 
 // ---------------- Birthdays ----------------
@@ -628,7 +650,7 @@ async function cmdBirthdays(interaction) {
   const all = await dataStore.getBirthdays();
   const entries = Object.entries(all);
   if (entries.length === 0) {
-    return interaction.reply('🎈 Todavía no hay cumpleaños guardados... el jardín espera. 🌿');
+    return interaction.reply(reminders.birthdaysEmpty);
   }
   const sorted = entries.sort(([, a], [, b]) => a.month - b.month || a.day - b.day);
   const lines = sorted.map(([userId, b]) => {
@@ -646,7 +668,7 @@ async function cmdStatus(interaction) {
   const states = ['☀️ regandome', '🌱 fotosintetizando', '🍃 dejando caer hojas', '💧 esperando que me rieguen', '🌿 creciendo en silencio', '🌸 floreciendo', '🪴 plantado acá', '😴 en modo invernal'];
   const chosen = rand(states);
   await interaction.client.user.setActivity(chosen);
-  await interaction.reply(`Estado cambiado a: **${chosen}**... ahora todos saben que soy una planta con actitud. 🌿`);
+  await interaction.reply(fun.statusChanged(chosen));
 }
 
 async function cmdRola(interaction) {
@@ -656,13 +678,13 @@ async function cmdRola(interaction) {
     : interaction.member;
 
   if (!member) {
-    return interaction.reply('No encuentro a ese usuario... se perdió entre mis hojas. 🍃');
+    return interaction.reply(fun.userNotFound);
   }
 
   const activity = member.presence?.activities?.find((a) => a.name === 'Spotify');
 
   if (!activity || !activity.details) {
-    return interaction.reply('No rolando... esta persona está en silencio como yo. :c 🌿');
+    return interaction.reply(fun.noSpotify);
   }
 
   const title = activity.details;
@@ -749,7 +771,7 @@ async function cmdRoll(interaction) {
   const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);
   const total = rolls.reduce((a, b) => a + b, 0);
   const detail = count > 1 ? ` (${rolls.join(' + ')})` : '';
-  await interaction.reply(`🎲 ${interaction.user.username} tiró ${count}d${sides}: **${total}**${detail}`);
+  await interaction.reply(fun.diceRoll(interaction.user.username, count, sides, total, detail));
 }
 
 async function cmdHelp(interaction) {
@@ -806,10 +828,6 @@ async function cmdHelp(interaction) {
     )
     .setFooter({ text: 'Soy una planta, no un bot... que me digan bot y me caigo de la maceta. Escribí /bp para el menú. 🌿' });
   await interaction.reply({ embeds: [help] });
-}
-
-function rand(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 module.exports = {

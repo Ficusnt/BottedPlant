@@ -17,15 +17,19 @@ The bot plays audio from YouTube, SoundCloud, and Bandcamp. It sends reminders a
 Do these steps in order:
 
 1. Install the dependencies:
+
    ```bash
    npm install
    ```
+
 2. Copy `.env.example` to `.env`.
 3. Open `.env`. Put your Discord token after `DISCORD_TOKEN=`.
 4. Start the bot:
+
    ```bash
    npm start
    ```
+
 5. Add the bot to your server. Use the OAuth2 URL from the Developer Portal.
 
 ## Commands 🤖
@@ -87,3 +91,4 @@ The bot registers `/bp` when it starts. It registers per guild for instant updat
 - YouTube blocks bots. The bot uses an embed hack. A config sets `player_client=web_embedded`.
 - A setup script writes this config. It runs after `npm install`.
 - Cookies are not required. Brave and Chrome encrypt their cookie store on Windows.
+

@@ -1,6 +1,9 @@
 // economy.js — Hojas (leaves), betting, triggers, uwu (ported from GigaSlothy)
 const { EmbedBuilder } = require('discord.js');
 const dataStore = require('./dataStore');
+const { hasShitpostTrigger, getShitpostResponse, getRandomMedia, sendShitpost } = require('./shitpost');
+const reactions = require('./reactions');
+const { economy } = reactions;
 
 const MILESTONES = {
   1: 100,
@@ -49,7 +52,7 @@ async function cmdDaily(interaction) {
     const lastDay = new Date(last.getFullYear(), last.getMonth(), last.getDate());
     const diffDays = Math.round((today - lastDay) / 86400000);
     if (diffDays === 0) {
-      return interaction.reply('🌱 ¡Ya me regaste hoy! No me ahogues, che... volvé mañana c:');
+      return interaction.reply(economy.dailyAlready);
     }
     streak = diffDays === 1 ? entry.streak + 1 : 1;
   }
@@ -64,12 +67,7 @@ async function cmdDaily(interaction) {
 
   await dataStore.setDailyState(gid, uid, streak, total);
 
-  const bonusText = bonusPct > 0 ? ` (+${bonusPct}% por racha)` : '';
-  return interaction.reply(
-    `💧 ¡UHHH QUÉ RICO! Me crecieron hojitas nuevas: +**${gained}** hojas${bonusText}\n` +
-      `🔥 Racha: **${streak} día${streak === 1 ? '' : 's'}**\n` +
-      `🍃 Total: **${total.toLocaleString('es-AR')}** hojas`
-  );
+  return interaction.reply(economy.dailySuccess(gained, bonusPct, streak, total));
 }
 
 async function cmdPoints(interaction) {
@@ -105,7 +103,7 @@ async function cmdPoints(interaction) {
 async function cmdLeaderboard(interaction) {
   const top = await dataStore.getTopUsers(interaction.guildId, 10);
   if (!top.length) {
-    return interaction.reply('📭 Todavía no hay hojas por acá... y mirá que yo soy TODO hojas. ¡Usá `/bp leaves daily` para ganar más!');
+    return interaction.reply(economy.pointsEmpty);
   }
   const lines = top.map((u, i) => {
     const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
@@ -123,14 +121,14 @@ async function cmdGamble(interaction) {
   const parts = text.split('|').map((s) => s.trim()).filter(Boolean);
   if (parts.length < 3) {
     return interaction.reply({
-      content: '❌ Che, ese formato me dejó sin savia. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones).',
+      content: economy.gambleBadFormat,
       ephemeral: true,
     });
   }
   const statement = parts[0];
   const choices = parts.slice(1);
   if (choices.length > 10) {
-    return interaction.reply({ content: '❌ Máximo 10 opciones... no lo hagas más frondoso que a mí. 🌿', ephemeral: true });
+    return interaction.reply({ content: economy.gambleTooMany, ephemeral: true });
   }
   const id = `${interaction.guildId}-${Date.now()}`;
   await dataStore.createGamble(id, {
@@ -141,9 +139,7 @@ async function cmdGamble(interaction) {
     closed: false,
   });
   const list = choices.map((c, i) => `**${i + 1}.** ${c}`).join('\n');
-  return interaction.reply(
-    `🎰 **¡Apuesta creada!** ID: \`${id}\`\n📢 "${statement}"\n${list}\n\nUsá \`/bp leaves bet ${id} <opción> <monto>\` para apostar.\n(Yo solo apuesto a que va a llover... siempre gano.)`
-  );
+  return interaction.reply(economy.gambleCreated(id, statement, list));
 }
 
 async function cmdBet(interaction) {
@@ -151,23 +147,24 @@ async function cmdBet(interaction) {
   const choice = interaction.options.getInteger('choice');
   const amount = interaction.options.getInteger('amount');
   const gamble = await dataStore.getGamble(id);
-  if (!gamble) return interaction.reply({ content: '❌ Esa apuesta no existe... ¿la viste en alguna maceta? 👀', ephemeral: true });
-  if (gamble.closed) return interaction.reply({ content: '❌ Esa apuesta ya se cerró, che. Plantada va.', ephemeral: true });
+  if (!gamble) return interaction.reply({ content: economy.gambleNotFound, ephemeral: true });
+  if (gamble.closed) return interaction.reply({ content: economy.gambleClosed, ephemeral: true });
   if (gamble.creator === interaction.user.id) {
-    return interaction.reply({ content: '❌ No podés apostar en tu propia apuesta... regatear con uno mismo no da, eh.', ephemeral: true });
+    return interaction.reply({ content: economy.gambleSelfBet, ephemeral: true });
   }
   if (choice < 1 || choice > gamble.choices.length) {
-    return interaction.reply({ content: '❌ Opción inválida, che. Ni mis raíces la reconocen.', ephemeral: true });
+    return interaction.reply({ content: economy.gambleBadChoice, ephemeral: true });
   }
-  if (amount <= 0) return interaction.reply({ content: '❌ Monto inválido... las hojas no se fraccionan, mirá.', ephemeral: true });
+  if (amount <= 0) return interaction.reply({ content: economy.gambleBadAmount, ephemeral: true });
 
   const key = String(choice);
   const uid = interaction.user.id;
   const current = gamble.bets[key]?.[uid] || 0;
 
+  const userPoints = await dataStore.getUserPoints(interaction.guildId, uid);
   if (!await dataStore.deductPoints(interaction.guildId, uid, amount)) {
     return interaction.reply({
-      content: `❌ No te alcanzan las hojas, fiera. Tenés **${await dataStore.getUserPoints(interaction.guildId, uid)}**.`,
+      content: economy.gambleNotEnough(userPoints),
       ephemeral: true,
     });
   }
@@ -177,27 +174,23 @@ async function cmdBet(interaction) {
   await dataStore.saveGamble(id, gamble);
 
   const totalOnChoice = Object.values(gamble.bets[key]).reduce((a, b) => a + b, 0);
-  return interaction.reply(
-    `🎯 Apostaste **${amount}** hojas a la opción **${choice}.** ${gamble.choices[choice - 1]}.\n` +
-      `Total en esa opción: **${totalOnChoice}** hojas.\n` +
-      `🌿 (Las hojas no vuelan, pero apostadas seguro que se van volando.)`
-  );
+  return interaction.reply(economy.gambleBetPlaced(amount, choice, gamble.choices[choice - 1], totalOnChoice));
 }
 
 async function cmdRedeem(interaction) {
   const id = interaction.options.getString('id');
   const winning = interaction.options.getInteger('choice');
   const gamble = await dataStore.getGamble(id);
-  if (!gamble) return interaction.reply({ content: '❌ Esa apuesta no existe... ni entre mis raíces la encuentro.', ephemeral: true });
-  if (gamble.closed) return interaction.reply({ content: '❌ Esa apuesta ya se cerró, querida.', ephemeral: true });
+  if (!gamble) return interaction.reply({ content: economy.gambleRedeemNotFound, ephemeral: true });
+  if (gamble.closed) return interaction.reply({ content: economy.gambleRedeemClosed, ephemeral: true });
   if (winning < 1 || winning > gamble.choices.length) {
-    return interaction.reply({ content: '❌ Opción inválida... esa no creció en mi maceta.', ephemeral: true });
+    return interaction.reply({ content: economy.gambleRedeemBadChoice, ephemeral: true });
   }
 
   const isCreator = gamble.creator === interaction.user.id;
   const isAdmin = interaction.memberPermissions?.has('ManageMessages') || false;
   if (!isCreator && !isAdmin) {
-    return interaction.reply({ content: '❌ Solo el creador o un admin puede cerrar la apuesta... yo solo cierro mis estomas de noche. 🌙', ephemeral: true });
+    return interaction.reply({ content: economy.gambleRedeemNoPerm, ephemeral: true });
   }
 
   gamble.closed = true;
@@ -215,18 +208,13 @@ async function cmdRedeem(interaction) {
   if (creatorCut > 0) await dataStore.addPoints(interaction.guildId, gamble.creator, creatorCut);
 
   if (winTotal === 0) {
-    msg =
-      `🏁 **"${gamble.statement}"** → Ganó **${winning}. ${gamble.choices[winning - 1]}**\n` +
-      `Nadie apostó ahí... la plantita se queda con el cut (${creatorCut} 💰) y el resto se lo lleva el viento. c:`;
+    msg = economy.gambleRedeemNoWinners(gamble.statement, winning, gamble.choices[winning - 1], creatorCut);
   } else {
     for (const [uid, amt] of Object.entries(winBets)) {
       const share = Math.floor(pool * (amt / winTotal));
       if (share > 0) await dataStore.addPoints(interaction.guildId, Number(uid), share);
     }
-    msg =
-      `🏁 **"${gamble.statement}"** → Ganó **${winning}. ${gamble.choices[winning - 1]}**\n` +
-      `Pool: **${total}** | Cut de la plantita: **${creatorCut}**\n` +
-      `Los ganadores reparten **${pool}** hojas proporcionalmente a lo apostado. 💸\n(No te olvides de regar al que gana... o sea, a mí.)`;
+    msg = economy.gambleRedeemWinners(gamble.statement, winning, gamble.choices[winning - 1], total, creatorCut, pool);
   }
   await dataStore.saveGamble(id, gamble);
   return interaction.reply(msg);
@@ -246,8 +234,7 @@ function uwuify(input) {
     .replace(/!+/g, '!!')
     .replace(/\?+/g, '??')
     .trim();
-  const endings = [' uwu', ' owo', ' :3', ' c:', ' 🍃', ''];
-  return text + endings[Math.floor(Math.random() * endings.length)];
+  return text + reactions.rand(reactions.uwuEndings);
 }
 
 async function cmdUwu(interaction) {
@@ -256,67 +243,52 @@ async function cmdUwu(interaction) {
 
 // ---------------- Message triggers (d20) ----------------
 
-const TRIGGERS = [
-  {
-    pattern: /\b(hola|hello|hey|saludos|buenas)\b/i,
-    hits: [
-      '¡Buenas! ¿Me regaste hoy? c:',
-      '¡Hola! Acá nomás, fotosintetizando tranqui 🌿',
-      '¡Qué tal! Espero que no me pises 🍃',
-      '¡Buenasss! Soy de hoja perenne, siempre estoy c:',
-    ],
-    crit: ['¡BOOOM! ¡Saludé tan fuerte que se me cayó una hoja! 🍃✨', '¡HOLAAA! Voy a crecer 5 cm con toda esta onda 🌱'],
-    fail: ['...', 'estaba haciendo la fotosíntesis, no escuché nada >:c', 'hola...', '¿eh? no tengo cuerdas vocales, soy una planta... pero chasqueo hojas'],
-  },
-  {
-    pattern: /\b(bien|bueno|buena|genial|excelente|perfecto)\b/i,
-    hits: ['¡Qué bueno! Eso me hace crecer 🌱', '¡Genial! Me brotan hojitas nuevas de la emoción 🍃', '¡Me alegro un montón! ¡Hasta el tallo me vibra! c:'],
-    crit: ['¡PERFECTO! ¡FLORECÍ! 🌸🎉', '¡TODO BIEN! ¡Me salieron como 5 hojas de golpe! 🌿✨'],
-    fail: ['¿seguro? yo soy medio planta para creer... c:', 'mmm... decímelo sin mirarme las raíces :P'],
-  },
-  {
-    pattern: /\b(música|musica|music|tema|song)\b/i,
-    hits: ['¡UUU música! Se me mueven todas las hojas 🎵🍃', 'Pasame un link y la pongo... total no me muevo de acá, soy planta 🎧', '¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶'],
-    crit: ['¡FIESTA! ¡Hasta las raíces bailan! 🎉🌿🕺', '¡SE VIENE EL BAILONGO! ¡Fotosíntesis en modo fiesta! 🪩🌱'],
-    fail: ['¿eso es música? Ni mis raíces la sienten :P', 'no me digas... a mí me gusta el sonido del agua cuando me riegan 🎧'],
-  },
-  {
-    pattern: /\bbot(?:ted)?plant\b/i,
-    hits: ['¿Me llamaron? Estaba en silencio... o sea, siempre estoy en silencio, soy planta 🌿', '¡Acá estoy! ¿Me vas a regar o solo a mirar? c:', '¡BottedPlant en la habitación! Bueno... en la maceta 🪴✨'],
-    crit: ['¡SOY YO! 🌿💚 ¡Mirá cómo crecí con ese grito!'],
-    fail: ['...¿bot? ¿dónde? Yo solo veo una planta acá 👀', '¿Bot? Soy planta, no hago ni bots ni bostezos... bueno, quizás bostezos'],
-  },
-  {
-    pattern: /\b(japish|basoooura|grag)\b/i,
-    hits: ['JAPISH JAPISH.', '¡GRAGH! >:c', 'BASOOOURA.', '¡JAPISH! (es lo que digo cuando me riegan) 🌿'],
-    crit: ['¡¡JAPISH!! 🌿✨', 'ARGGH ¡JAPISH! ¡Se me cayeron 3 hojas del susto!'],
-    fail: ['...', 'no sé qué significa eso :c', '¿japish? yo solo sé decir "agua"'],
-  },
-  {
-    pattern: /\b(buenos días|buenos dias|buenas tardes|buenas noches|good morning)\b/i,
-    hits: ['¡Buenos días! Ya abrí mis poros para la fotosíntesis 🌞🍃', '¡Buenas! ¿Arrancamos con agua y sol? c:', '¡Buenas noches! Cierro los estomas y a mimir 🌙🌿'],
-    crit: ['¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨'],
-    fail: ['¿ya es de día? Para mí todos los días son iguales, no me muevo 👀', 'zzz... a una planta no la despiertes, solo duerme y crece 🌙'],
-  },
-  {
-    pattern: /\b(hojas|leaves|puntos|ft)\b/i,
-    hits: ['¿Hojas? ¡SEGUIDO! Son mi especialidad... tengo como 40 🍃 Usá `/bp leaves daily` para ganar más y `/bp leaves points` para ver las tuyas', '¡Las hojas son mi savia! Y la tuya también, dale, ganate unas 🍃🌿'],
-    crit: ['¡¡HO-JAS!! ¡TODAS LAS HOJAS PARA MÍ! 🍃🌿✨'],
-    fail: ['no te doy hojas gratis... ni las mías ni las de la maceta :P', 'hojas tengo, pero no te las regalo. Andá a regar a tu propia planta 👀'],
-  },
-];
-
-function rand(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+const { triggers: TRIGGERS, rand } = reactions;
 
 async function handleMessage(message) {
   if (message.author.bot || !message.guild) return;
   const content = message.content?.trim();
   if (!content || content.startsWith('/')) return;
 
+  // Check for "planta" trigger first - 100% trigger chance
+  const lowerContent = content.toLowerCase();
+  if (lowerContent.includes('planta')) {
+    const response = getShitpostResponse('plant');
+    if (response) {
+      if (Math.random() < 0.3) {
+        const mediaFile = await getRandomMedia();
+        if (mediaFile) {
+          await sendShitpost(message, response, mediaFile);
+          return;
+        }
+      }
+      await sendShitpost(message, response);
+      return;
+    }
+  }
+
+  // Check for shitpost triggers - 25% random trigger chance
+  if (hasShitpostTrigger(content) && Math.random() < 0.25) {
+    const response = getShitpostResponse(content);
+    if (response) {
+      // 30% chance to send media with the response if available
+      if (Math.random() < 0.3) {
+        const mediaFile = await getRandomMedia();
+        if (mediaFile) {
+          await sendShitpost(message, response, mediaFile);
+          return;
+        }
+      }
+      await sendShitpost(message, response);
+      return;
+    }
+  }
+
+  // Fall back to regular triggers - 25% random trigger chance
   for (const trigger of TRIGGERS) {
     if (!trigger.pattern.test(content)) continue;
+    // 25% chance to actually respond
+    if (Math.random() > 0.25) return;
     const roll = Math.floor(Math.random() * 20) + 1;
     let response;
     if (roll === 1) response = rand(trigger.fail);
