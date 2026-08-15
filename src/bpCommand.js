@@ -135,6 +135,41 @@ function bpCommandData() {
             .setDescription('Uwuificar un texto')
             .addStringOption((o) => o.setName('text').setDescription('Texto a uwuificar').setRequired(true))
         )
+        .addSubcommand((sub) =>
+          sub
+            .setName('reactions')
+            .setDescription('Gestionar reacciones del bot (agregar, editar, borrar, listar)')
+            .addStringOption((opt) =>
+              opt
+                .setName('action')
+                .setDescription('Acción a realizar')
+                .setRequired(true)
+                .addChoices(
+                  { name: 'listar', value: 'list' },
+                  { name: 'agregar', value: 'add' },
+                  { name: 'editar', value: 'edit' },
+                  { name: 'borrar', value: 'delete' }
+                )
+            )
+            .addStringOption((opt) =>
+              opt
+                .setName('categoria')
+                .setDescription('Categoría de la reacción')
+                .setRequired(false)
+                .addChoices(
+                  { name: 'triggers (respuestas a palabras)', value: 'triggers' },
+                  { name: 'shitposts (memes aleatorios)', value: 'shitposts' }
+                )
+            )
+            .addStringOption((opt) => opt.setName('palabra_clave').setDescription('Palabra clave/trigger').setRequired(false))
+            .addStringOption((opt) => opt.setName('respuesta').setDescription('Texto de respuesta (hits, crit, fail)').setRequired(false))
+            .addStringOption((opt) => opt.setName('tipo_respuesta').setDescription('Tipo de respuesta').setRequired(false).addChoices(
+              { name: 'hit (respuesta normal)', value: 'hits' },
+              { name: 'crit (crítico - 5%)', value: 'crit' },
+              { name: 'fail (fallo - 5%)', value: 'fail' }
+            ))
+            .addAttachmentOption((opt) => opt.setName('archivo').setDescription('Archivo de media (imagen/video) para adjuntar').setRequired(false))
+        )
     )
     // 🍃 Leaves group
     .addSubcommandGroup((group) =>

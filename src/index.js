@@ -37,12 +37,13 @@ client.distube = distube;
 // ---- DisTube event handlers ----
 distube
   .on('playSong', (queue, song) => {
-    const embed = require('./embeds').trackEmbed(song, '▶️ Sonando ahora');
-    // URL alone → Discord renders native YouTube/SoundCloud video player embed
-    queue.textChannel.send({ content: song.url, embeds: [embed] }).catch((e) => console.error('[distube] playSong send error:', e));
+    // Plain text only: title, duration, requester (no embed, no phrases)
+    const duration = require('./embeds').formatDuration(song.duration);
+    const requester = song.member?.displayName || 'Alguien';
+    queue.textChannel.send(` **${song.name}** \`${duration}\` — pedida por **${requester}**\n${song.url}`).catch((e) => console.error('[distube] playSong send error:', e));
   })
   .on('addSong', (queue, song) => {
-    const embed = require('./embeds').trackEmbed(song, '➕ Añadida a la cola');
+    const embed = require('./embeds').trackEmbed(song, ' Añadida a la cola');
     queue.textChannel.send({ content: song.url, embeds: [embed] }).catch((e) => console.error('[distube] addSong send error:', e));
   })
   .on('addList', (queue, playlist) => {
