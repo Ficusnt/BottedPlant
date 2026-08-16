@@ -1,4 +1,4 @@
-// shitpost.js - Random meme responses with media support
+// shitpost.js - Random meme responses with media support 
 const fs = require('fs').promises;
 const path = require('path');
 const phraseManager = require('./phraseManager');
