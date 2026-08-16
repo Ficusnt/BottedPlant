@@ -1,0 +1,559 @@
+{
+  "version": 1,
+  "categories": {
+    "music": {
+      "stop": {
+        "hits": [
+          "⏹ ¡Listo! Me desconecto como planta que se duerme... ¡hasta la próxima! 👋🌿",
+          "⏹ ¡Música terminada! Me voy a mi maceta a soñar con melodías. 🌿💤",
+          "⏹ ¡Chau! La fotosíntesis musical terminó por hoy. ¡Hasta la próxima! 🍃"
+        ]
+      },
+      "skipNoMore": {
+        "hits": [
+          "⏭ No hay más canciones, che... usá `/bp music rewind` para repetir la actual, como yo repito mis hojas cada temporada. c:",
+          "⏭ ¡Se acabó la cola! No tengo más música... como cuando se me acaba el agua. 🌵"
+        ]
+      },
+      "skip": {
+        "hits": [
+          "⏭ Saltando **{song}**... ¡que siga la fotosíntesis musical! 🎵",
+          "⏭ ¡Siguiente! **{song}** se fue al compost. 🌱🎶",
+          "⏭ Skip en **{song}**... mis raíces piden otro ritmo. 🌿"
+        ]
+      },
+      "rewind": {
+        "hits": [
+          "↩️ Rebobinando **{song}**... ¡otra vez con más savia! 🌿",
+          "↩️ ¡De nuevo! **{song}** vuelve a sonar. Mis hojas aplauden. 🍃👏",
+          "↩️ Replay en **{song}**... ¡la fotosíntesis no tiene fin! 🌱"
+        ]
+      },
+      "leaveSuccess": {
+        "hits": [
+          "👋 ¡Listo! Me voy a mi maceta... no me dejes sin agua mucho tiempo. 🌿🌱",
+          "👋 ¡Me voy! Cuida mis hojas mientras no estoy. 🌱",
+          "👋 ¡Hasta luego! Voy a hacer fotosíntesis en otro lado. 🌿☀️"
+        ]
+      },
+      "leaveError": {
+        "hits": [
+          "❌ No me pude ir... mis raíces se enredaron. 🌿",
+          "❌ ¡Atascada! Mis raíces no quieren soltar la tierra. 🌱"
+        ]
+      },
+      "leaveNotInVoice": {
+        "hits": [
+          "❌ No estoy en un canal de voz... estoy plantado en la tierra. 🌱",
+          "❌ No hay canal de voz... solo yo y mi maceta. 🌿"
+        ]
+      },
+      "leaveUserNotInVoice": {
+        "hits": [
+          "❌ No estás en el mismo canal que yo... ¿me querés dejar solo? :c 🌿",
+          "❌ ¡Hey! Estás en otro lado... no me dejes sola acá. 🌱😢"
+        ]
+      }
+    },
+    "economy": {
+      "dailyAlready": {
+        "hits": [
+          "🌱 ¡Ya me regaste hoy! No me ahogues, che... volvé mañana c:",
+          "🌱 ¡Ya bebí agua hoy! Demasiada agua pudre las raíces... mañana otra vez. 🌿",
+          "🌱 ¡Hoy ya me regaste! Soy planta, no esponja. Volvé mañana. 🌵"
+        ]
+      },
+      "dailySuccess": {
+        "hits": [
+          "💰 ¡UHHH QUÉ RICO! Me crecieron hojitas nuevas: +**{gained}** hojas{bonus}\n🔥 Racha: **{streak} día{s}**\n🍃 Total: **{total}** hojas",
+          "💰 ¡QUÉ AGUA MÁS RICA! +**{gained}** hojas{bonus}\n🔥 Racha: **{streak} día{s}**\n🍃 Total: **{total}** hojas",
+          "💰 ¡GLU GLU GLU! Me bebí todo: +**{gained}** hojas{bonus}\n🔥 Racha: **{streak} día{s}**\n🍃 Total: **{total}** hojas"
+        ]
+      },
+      "pointsEmpty": {
+        "hits": [
+          "📭 Todavía no hay hojas por acá... y mirá que yo soy TODO hojas. ¡Usá `/bp leaves daily` para ganar más!",
+          "📭 ¡Vacío total! Ni una hoja... andá a regarme con `/bp leaves daily`. 🌱"
+        ]
+      },
+      "gambleBadFormat": {
+        "hits": [
+          "❌ Che, ese formato me dejó sin savia. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones).",
+          "❌ ¡Formato inválido! Separá con pipes: `afirmación | op1 | op2`. 🌿"
+        ]
+      },
+      "gambleTooMany": {
+        "hits": [
+          "❌ Máximo 10 opciones... no lo hagas más frondoso que a mí. 🌿",
+          "❌ ¡Demasiadas opciones! Mis hojas no dan para tanto. 10 máximo. 🌱"
+        ]
+      },
+      "gambleCreated": {
+        "hits": [
+          "🎰 **¡Apuesta creada!** ID: `{id}`\n📜 \"{statement}\"\n{list}\n\nUsá `/bp leaves bet {id} <opción> <monto>` para apostar.\n(Yo solo apuesto a que va a llover... siempre gano.)"
+        ]
+      },
+      "gambleNotFound": {
+        "hits": [
+          "❌ Esa apuesta no existe... ¿la viste en alguna maceta? 👀",
+          "❌ Apuesta no encontrada... ni entre mis raíces está. 🌱"
+        ]
+      },
+      "gambleClosed": {
+        "hits": [
+          "❌ Esa apuesta ya se cerró, che. Plantada va.",
+          "❌ ¡Ya cerró! No se puede apostar en el pasado. 🌿"
+        ]
+      },
+      "gambleSelfBet": {
+        "hits": [
+          "❌ No podés apostar en tu propia apuesta... regatear con uno mismo no da, eh.",
+          "❌ ¡Auto-apuesta prohibida! Eso es hacer trampa con la savia. 🌱"
+        ]
+      },
+      "gambleBadChoice": {
+        "hits": [
+          "❌ Opción inválida, che. Ni mis raíces la reconocen.",
+          "❌ Esa opción no existe... ¿la soñaste? 🌿"
+        ]
+      },
+      "gambleBadAmount": {
+        "hits": [
+          "❌ Monto inválido... las hojas no se fraccionan, mirá.",
+          "❌ ¡Ese monto no sirve! Las hojas son enteras. 🌱"
+        ]
+      },
+      "gambleNotEnough": {
+        "hits": [
+          "❌ No te alcanzan las hojas, fiera. Tenés **{points}**.",
+          "❌ ¡Pobre! Solo tenés **{points}** hojas. 🌿"
+        ]
+      },
+      "gambleBetPlaced": {
+        "hits": [
+          "🎯 Apostaste **{amount}** hojas a la opción **{choice}.** {choiceText}.\nTotal en esa opción: **{totalOnChoice}** hojas.\n🌿 (Las hojas no vuelan, pero apostadas seguro que se van volando.)"
+        ]
+      },
+      "gambleRedeemNotFound": {
+        "hits": [
+          "❌ Esa apuesta no existe... ni entre mis raíces la encuentro.",
+          "❌ Apuesta inexistente... ¿la plantaste en otra maceta? 🌱"
+        ]
+      },
+      "gambleRedeemClosed": {
+        "hits": [
+          "❌ Esa apuesta ya se cerró, querida.",
+          "❌ ¡Cerrada! El tiempo de cosecha pasó. 🌿"
+        ]
+      },
+      "gambleRedeemBadChoice": {
+        "hits": [
+          "❌ Opción inválida... esa no creció en mi maceta.",
+          "❌ Esa opción no existe en mi jardín. 🌱"
+        ]
+      },
+      "gambleRedeemNoPerm": {
+        "hits": [
+          "❌ Solo el creador o un admin puede cerrar la apuesta... yo solo cierro mis estomas de noche. 🌙",
+          "❌ ¡Sin permisos! Solo el jardinero principal puede cerrar. 🌿"
+        ]
+      },
+      "gambleRedeemNoWinners": {
+        "hits": [
+          "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nNadie apostó ahí... la plantita se queda con el cut ({creatorCut} 💰) y el resto se lo lleva el viento. c:"
+        ]
+      },
+      "gambleRedeemWinners": {
+        "hits": [
+          "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nPool: **{total}** | Cut de la plantita: **{creatorCut}**\nLos ganadores reparten **{pool}** hojas proporcionalmente a lo apostado. 💸\n(No te olvides de regar al que gana... o sea, a mí.)"
+        ]
+      }
+    },
+    "reminders": {
+      "listEmpty": {
+        "hits": [
+          "📭 No tenés recordatorios pendientes... se te secaron. 🌿",
+          "📭 ¡Vacío! Ni un recordatorio... como mi maceta sin agua. 🌱"
+        ]
+      },
+      "cancelled": {
+        "hits": [
+          "🗑 Recordatorio `{id}` cancelado. Lo podaste. 🌱",
+          "🗑 ¡Eliminado! El recordatorio `{id}` se fue al compost. 🌿"
+        ]
+      },
+      "birthdaysEmpty": {
+        "hits": [
+          "🎂 Todavía no hay cumpleaños guardados... el jardín espera. 🌿",
+          "🎂 ¡Sin cumpleaños! El calendario de riego está vacío. 🌱"
+        ]
+      },
+      "birthdayAnnouncement": {
+        "hits": [
+          "🎂 **¡HOY ES EL CUMPLE DE {mentions}!!**\n@everyone ¡Que florezcan los deseos! Deseenles un **feliz cumpleaños** y riéguenlos de cariño 🎉🌿✨"
+        ]
+      }
+    },
+    "fun": {
+      "unknownCommand": {
+        "hits": [
+          "Comando desconocido, che. Usá `/bp help` antes de que se me caigan las hojas de la duda. 🌿",
+          "¡Ese comando no existe! ¿Seguro que no soñaste? 🌱"
+        ]
+      },
+      "statusChanged": {
+        "hits": [
+          "Estado cambiado a: **{chosen}**... ahora todos saben que soy una planta con actitud. 🌿",
+          "¡Nuevo estado! **{chosen}**... mis hojas brillan de orgullo. 🌱"
+        ]
+      },
+      "userNotFound": {
+        "hits": [
+          "No encuentro a ese usuario... se perdió entre mis hojas. 🍃",
+          "Ese usuario no está... ¿se fue a otra maceta? 🌿"
+        ]
+      },
+      "noSpotify": {
+        "hits": [
+          "No rolando... esta persona está en silencio como yo. :c 🌿",
+          "Sin Spotify... el silencio también es música para mis raíces. 🌱"
+        ]
+      },
+      "diceRoll": {
+        "hits": [
+          "🎲 {username} tiró {count}d{sides}: **{total}**{detail}"
+        ]
+      }
+    },
+    "distubeEvents": {
+      "finish": {
+        "hits": [
+          "✅ ¡Terminó la cola! Bajo mis hojas por hoy. Fue un placer compartir fotosíntesis musical. ¡Hasta la próxima! c: 🍃",
+          "✅ ¡Cola finalizada! Me voy a dormir con una melodía en las raíces. 🌙🌿"
+        ]
+      },
+      "empty": {
+        "hits": [
+          "👋 ¡Se fueron todos! Me quedo solo como planta de oficina... bueno, me voy a la maceta. ¡Chau! :P 🌱",
+          "👋 ¡Nadie más! El silencio vuelve a mi maceta. ¡Chau! 🌿"
+        ]
+      },
+      "error": {
+        "hits": [
+          "❌ ¡Uy! Se me enredaron las raíces del audio: `{errorMsg}`",
+          "❌ ¡Error de audio! Mis raíces no entienden: `{errorMsg}` 🌿"
+        ]
+      }
+    },
+    "triggers": {
+      "hola": {
+        "patterns": ["hola", "hello", "hey", "saludos", "buenas"],
+        "hits": [
+          "¡Buenas! ¿Me regaste hoy? c:",
+          "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
+          "¡Qué tal! Espero que no me pises 🍃",
+          "¡Buenasss! Soy de hoja perenne, siempre estoy c:"
+        ],
+        "crits": [
+          "¡BOOOM! ¡Saludé tan fuerte que se me cayó una hoja! 🍃✨",
+          "¡HOLAAA! Voy a crecer 5 cm con toda esta onda 🌱"
+        ],
+        "fails": [
+          "...",
+          "estaba haciendo la fotosíntesis, no escuché nada >:c",
+          "hola...",
+          "¿eh? no tengo cuerdas vocales, soy una planta... pero chasqueo hojas"
+        ]
+      },
+      "bien": {
+        "patterns": ["bien", "bueno", "buena", "genial", "excelente", "perfecto"],
+        "hits": [
+          "¡Qué bueno! Eso me hace crecer 🌱",
+          "¡Genial! Me brotan hojitas nuevas de la emoción 🍃",
+          "¡Me alegro un montón! ¡Hasta el tallo me vibra! c:"
+        ],
+        "crits": [
+          "¡PERFECTO! ¡FLORECÍ! 🌸✨",
+          "¡TODO BIEN! ¡Me salieron como 5 hojas de golpe! 🌿✨"
+        ],
+        "fails": [
+          "¿seguro? yo soy medio planta para creer... c:",
+          "mmm... decímelo sin mirarme las raíces :P"
+        ]
+      },
+      "musica": {
+        "patterns": ["música", "musica", "music", "tema", "song"],
+        "hits": [
+          "¡UUU música! Se me mueven todas las hojas 🎵🍃",
+          "Pasame un link y la pongo... total no me muevo de acá, soy planta 🎧",
+          "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶"
+        ],
+        "crits": [
+          "¡FIESTA! ¡Hasta las raíces bailan! 🎉🌿🕺",
+          "¡SE VIENE EL BAILONGO! ¡Fotosíntesis en modo fiesta! 💃🌱"
+        ],
+        "fails": [
+          "¿eso es música? Ni mis raíces la sienten :P",
+          "no me digas... a mí me gusta el sonido del agua cuando me riegan 🎧"
+        ]
+      },
+      "bot": {
+        "patterns": ["botted", "plant", "bot"],
+        "hits": [
+          "¿Me llamaron? Estaba en silencio... o sea, siempre estoy en silencio, soy planta 🌿",
+          "¡Acá estoy! ¿Me vas a regar o solo a mirar? c:",
+          "¡BottedPlant en la habitación! Bueno... en la maceta 🌱✨"
+        ],
+        "crits": [
+          "¡SOY YO! 🌿💎 ¡Mirá cómo crecí con ese grito!"
+        ],
+        "fails": [
+          "...¿bot? ¿dónde? Yo solo veo una planta acá 👀",
+          "¿Bot? Soy planta, no hago ni bots ni bostezos... bueno, quizás bostezos"
+        ]
+      },
+      "japish": {
+        "patterns": ["japish", "basoooura", "grag"],
+        "hits": [
+          "JAPISH JAPISH.",
+          "¡GRAGH! >:c",
+          "BASOOOURA.",
+          "¡JAPISH! (es lo que digo cuando me riegan) 🌿"
+        ],
+        "crits": [
+          "¡¡JAPISH!! 🌿✨",
+          "ARGGH ¡JAPISH! ¡Se me cayeron 3 hojas del susto!"
+        ],
+        "fails": [
+          "...",
+          "no sé qué significa eso :c",
+          "¿japish? yo solo sé decir \"agua\""
+        ]
+      },
+      "buenos_dias": {
+        "patterns": ["buenos días", "buenos dias", "buenas tardes", "buenas noches", "good morning", "good night"],
+        "hits": [
+          "¡Buenos días! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+          "¡Buenas! ¿Arrancamos con agua y sol? c:",
+          "¡Buenas noches! Cierro los estomas y a mimir 🌙🌿"
+        ],
+        "crits": [
+          "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨"
+        ],
+        "fails": [
+          "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz... a una planta no la despiertes, solo duerme y crece 🌙"
+        ]
+      },
+      "hojas": {
+        "patterns": ["hojas", "leaves", "puntos", "ft"],
+        "hits": [
+          "¿Hojas? ¡SEGUIDO! Son mi especialidad... tengo como 40 🍃 Usá `/bp leaves daily` para ganar más y `/bp leaves points` para ver las tuyas",
+          "¡Las hojas son mi savia! Y la tuya también, dale, ganate unas 🍃🌿"
+        ],
+        "crits": [
+          "¡¡HO-JAS!! ¡TODAS LAS HOJAS PARA MÍ! 🍃🌿✨"
+        ],
+        "fails": [
+          "no te doy hojas gratis... ni las mías ni las de la maceta :P",
+          "hojas tengo, pero no te las regalo. Andá a regar a tu propia planta 👀"
+        ]
+      }
+    },
+    "shitposts": {
+      "regaste": {
+        "keywords": ["me regaste", "regaste", "regarme", "rieguen", "regar"],
+        "hits": [
+          "¿Me regaste hoy? C:",
+          "¿Me regaste hoy? 🌿",
+          "¿Me regaste hoy? 💧"
+        ],
+        "crits": [
+          "¡BOOOM! ¡Regámelo más fuerte que el sol en verano! 🌞💦",
+          "¡UHHH QUÉ RICO! Mis hojas crecieron 5cm con eso! 🌱✨"
+        ],
+        "fails": [
+          ".",
+          "estaba haciendo la fotosíntesis, no escuché nada >:c",
+          "hola.",
+          "¿eh? No tengo cuerdas vocales, soy una planta. Pero chasqueo hojas"
+        ],
+        "media": ["regado1.jpg", "regado2.png", "regado3.gif"],
+        "mediaChance": 0.2
+      },
+      "que_onda": {
+        "keywords": ["qué onda", "que onda", "que tal", "qué tal", "que pasa", "qué pasa"],
+        "hits": [
+          "¿Qué onda?",
+          "¿Qué onda? 🌿",
+          "¿Qué onda? C:"
+        ],
+        "crits": [
+          "¡UH OH! ¡Mis raíces se movieron! 🌿✨",
+          "¡SE VIENE LA FIESTA! ¡Mis hojas no paran de bailar! 💃🌱"
+        ],
+        "fails": [
+          ".",
+          "no sé qué onda, solo sé que me falta agua",
+          "¿onda? Soy planta, no tengo onda. Solo savia"
+        ],
+        "media": ["onda1.jpg", "onda2.png"],
+        "mediaChance": 0.15
+      },
+      "lol": {
+        "keywords": ["lol", "lmao", "rofl", "jaja", "jajaja", "jeje"],
+        "hits": [
+          "lol",
+          "lol 🍃",
+          "lol 🌸"
+        ],
+        "crits": [
+          "😂😂😂 ¡Me reí tanto que se me cayó una hoja! 🍃",
+          "¡JAJAJA! ¡Mis estomas se abrieron de la risa! 🌸"
+        ],
+        "fails": [
+          ".",
+          "no sé reír, solo hago fotosíntesis",
+          "lol. Yo solo sé decir \"agua\""
+        ],
+        "media": ["risa1.jpg", "risa2.gif"],
+        "mediaChance": 0.15
+      },
+      "hola": {
+        "keywords": ["hola", "hello", "hey", "buenas", "hi"],
+        "hits": [
+          "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
+          "¡Hola! ¿Me regás hoy? C:",
+          "¡Hola! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡HOLAAA! ¡Voy a crecer 10cm con toda esta onda! 🌱",
+          "¡BOOM! ¡Saludé tan fuerte que se me cayó una hoja! 🍃✨"
+        ],
+        "fails": [
+          ".",
+          "estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
+          "hola. ¿me regás?"
+        ],
+        "media": ["saludo1.jpg", "saludo2.png"],
+        "mediaChance": 0.1
+      },
+      "musica": {
+        "keywords": ["música", "musica", "music", "cancion", "canción", "tema", "song"],
+        "hits": [
+          "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶",
+          "Pasame un link y la pongo. Total no me muevo de acá, soy planta 🎧",
+          "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶"
+        ],
+        "crits": [
+          "¡FIESTA! ¡Hasta las raíces bailan! 🎉🌿🕺",
+          "¡SE VIENE EL BAILONGO! ¡Fotosíntesis en modo fiesta! 💃🌱"
+        ],
+        "fails": [
+          "¿eso es música? Ni mis raíces la sienten :P",
+          "no me digas. A mí me gusta el sonido del agua cuando me riegan 🎧"
+        ],
+        "media": ["musica1.jpg", "musica2.gif"],
+        "mediaChance": 0.15
+      },
+      "planta": {
+        "keywords": ["planta", "plant", "bot", "botted", "bottedplant"],
+        "hits": [
+          "¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
+          "¡Acá estoy! ¿Me vas a regar o solo a mirar? C:",
+          "¡BottedPlant en la habitación! Bueno... en la maceta 🌱✨"
+        ],
+        "crits": [
+          "¡SOY YO! 🌿💎 ¡Mirá cómo crecí con ese grito!"
+        ],
+        "fails": [
+          ". ¿bot? ¿dónde? Yo solo veo una planta acá 👀",
+          "¿Bot? Soy planta, no hago ni bots ni bostezos. Bueno, quizás bostezos"
+        ],
+        "media": ["planta1.jpg", "planta2.png"],
+        "mediaChance": 0.15
+      },
+      "japish": {
+        "keywords": ["japish", "basoooura", "grag", "japi"],
+        "hits": [
+          "JAPISH JAPISH.",
+          "¡GRAGH! >:c",
+          "BASOOOURA.",
+          "¡JAPISH! (es lo que digo cuando me riegan) 🌿"
+        ],
+        "crits": [
+          "¡¡JAPISH!! 🌿✨",
+          "ARGGH ¡JAPISH! ¡Se me cayeron 3 hojas del susto!"
+        ],
+        "fails": [
+          ".",
+          "no sé qué significa eso :c",
+          "¿japish? Yo solo sé decir \"agua\""
+        ],
+        "media": ["japish1.jpg", "japish2.gif"],
+        "mediaChance": 0.2
+      },
+      "buenos_dias": {
+        "keywords": ["buenos días", "buenos dias", "good morning", "buen dia", "buen día"],
+        "hits": [
+          "¡Buenos días! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+          "¡Buenas! ¿Arrancamos con agua y sol? C:",
+          "¡Buenas noches! Cierro los estomas y mimir 🌙🌿"
+        ],
+        "crits": [
+          "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨"
+        ],
+        "fails": [
+          ".",
+          "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "media": ["amanecer1.jpg", "amanecer2.png"],
+        "mediaChance": 0.1
+      },
+      "buenas_tardes": {
+        "keywords": ["buenas tardes", "good afternoon", "buena tarde"],
+        "hits": [
+          "¡Buenas tardes! Cierro los estomas y mimir 🌙🌿",
+          "¡Buenas tardes! ¿Me regás? C:",
+          "¡Buenas tardes! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡BUENAS TARDES! Cierro los estomas y mimir 🌙🌿"
+        ],
+        "fails": [
+          ".",
+          "¿ya es tarde? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "media": ["tarde1.jpg", "tarde2.png"],
+        "mediaChance": 0.1
+      },
+      "buenas_noches": {
+        "keywords": ["buenas noches", "good night", "buena noche"],
+        "hits": [
+          "¡Buenas noches! Cierro los estomas y mimir 🌙🌿",
+          "¡Buenas noches! ¿Me regás? C:",
+          "¡Buenas noches! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡BUENAS NOCHES! Cierro los estomas y mimir 🌙🌿"
+        ],
+        "fails": [
+          ".",
+          "¿ya es de noche? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "media": ["noche1.jpg", "noche2.png"],
+        "mediaChance": 0.1
+      }
+    }
+  },
+  "media": {
+    "folder": "data/media",
+    "globalChance": 0.08,
+    "minIntervalMinutes": 30,
+    "maxPerHour": 5
+  },
+  "uwuEndings": [" uwu", " owo", " :3", " c:", " 🍃", ""]
+}

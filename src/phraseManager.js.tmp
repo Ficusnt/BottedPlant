@@ -1,5 +1,0 @@
-/**  
- * phraseManager.js - Centralized phrase dictionary system  
- * Replaces hardcoded reactions.js with data-driven phrases from phrases.json  
- * Supports variable interpolation, d20 rolls, media handling, and hot-reload  
- */ 

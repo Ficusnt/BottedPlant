@@ -20,7 +20,8 @@ async function cmdLeave(interaction) {
   const queue = getQueue(interaction);
   if (queue) interaction.client.distube.stop(interaction.guildId);
   try {
-    await voiceState.disconnect();
+    // Use voiceChannel.leave() instead of voiceState.disconnect() to avoid needing MoveMembers permission
+    await voiceState.channel.leave();
     await interaction.reply(await phraseManager.getPhrase('music', 'leaveSuccess'));
   } catch (err) {
     console.error('Error disconnecting from voice:', err);
