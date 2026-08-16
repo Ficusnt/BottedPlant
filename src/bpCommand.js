@@ -7,8 +7,7 @@ const dataStore = require('./dataStore');
 const { queueEmbed, formatDuration } = require('./embeds');
 const { cmdLeave } = require('./cmdLeave');
 const { handleMessage, runEconomyCommand } = require('./economy');
-const reactions = require('./reactions');
-const { music, reminders, fun, rand } = reactions;
+const phraseManager = require('./phraseManager');
 
 const execFileAsync = promisify(execFile);
 
@@ -137,8 +136,8 @@ function bpCommandData() {
         )
         .addSubcommand((sub) =>
           sub
-            .setName('reactions')
-            .setDescription('Gestionar reacciones del bot (agregar, editar, borrar, listar)')
+            .setName('phrase')
+            .setDescription('Gestionar frases del bot (listar, agregar, editar, borrar)')
             .addStringOption((opt) =>
               opt
                 .setName('action')
@@ -154,21 +153,17 @@ function bpCommandData() {
             .addStringOption((opt) =>
               opt
                 .setName('categoria')
-                .setDescription('Categoría de la reacción')
+                .setDescription('Categoría de la frase')
                 .setRequired(false)
-                .addChoices(
-                  { name: 'triggers (respuestas a palabras)', value: 'triggers' },
-                  { name: 'shitposts (memes aleatorios)', value: 'shitposts' }
-                )
             )
-            .addStringOption((opt) => opt.setName('palabra_clave').setDescription('Palabra clave/trigger').setRequired(false))
-            .addStringOption((opt) => opt.setName('respuesta').setDescription('Texto de respuesta (hits, crit, fail)').setRequired(false))
-            .addStringOption((opt) => opt.setName('tipo_respuesta').setDescription('Tipo de respuesta').setRequired(false).addChoices(
+            .addStringOption((opt) => opt.setName('clave').setDescription('Clave de la frase').setRequired(false))
+            .addStringOption((opt) => opt.setName('tipo').setDescription('Tipo de respuesta (hits, crits, fails)').setRequired(false).addChoices(
               { name: 'hit (respuesta normal)', value: 'hits' },
-              { name: 'crit (crítico - 5%)', value: 'crit' },
-              { name: 'fail (fallo - 5%)', value: 'fail' }
+              { name: 'crit (crítico - 5%)', value: 'crits' },
+              { name: 'fail (fallo - 5%)', value: 'fails' }
             ))
-            .addAttachmentOption((opt) => opt.setName('archivo').setDescription('Archivo de media (imagen/video) para adjuntar').setRequired(false))
+            .addStringOption((opt) => opt.setName('texto').setDescription('Texto de la frase').setRequired(false))
+            .addIntegerOption((opt) => opt.setName('indice').setDescription('Índice de la frase a editar/borrar').setRequired(false))
         )
     )
     // 🍃 Leaves group
@@ -212,7 +207,7 @@ function bpCommandData() {
 // ---------------- Helpers ----------------
 
 function getVoiceChannel(interaction) {
-  return interaction.member?.voice?.channel || null;
+  return interaction.member.voice.channel || null;
 }
 
 function getQueue(interaction) {
@@ -253,7 +248,6 @@ async function registerSlashCommands(client) {
 // ---------------- Dispatcher ----------------
 
 // Wraps any interaction handler so a thrown error can never crash the bot.
-// Replies gracefully depending on whether the interaction was already answered.
 async function handleInteractionSafely(fn, interaction) {
   try {
     await fn();
@@ -286,87 +280,36 @@ async function handleInteraction(interaction) {
   await handleInteractionSafely(async () => {
     switch (sub) {
       // ----- Music -----
-      case 'play':
-        await cmdPlay(interaction);
-        break;
-      case 'playlist':
-        await cmdPlaylist(interaction);
-        break;
-      case 'query':
-        await cmdQuery(interaction);
-        break;
-      case 'stop':
-        await cmdStop(interaction);
-        break;
-      case 'leave':
-        await cmdLeave(interaction);
-        break;
-      case 'skip':
-        await cmdSkip(interaction);
-        break;
-      case 'rewind':
-        await cmdRewind(interaction);
-        break;
-      case 'queue':
-        await cmdQueue(interaction);
-        break;
-      case 'clear':
-        await cmdClear(interaction);
-        break;
+      case 'play': await cmdPlay(interaction); break;
+      case 'playlist': await cmdPlaylist(interaction); break;
+      case 'query': await cmdQuery(interaction); break;
+      case 'stop': await cmdStop(interaction); break;
+      case 'leave': await cmdLeave(interaction); break;
+      case 'skip': await cmdSkip(interaction); break;
+      case 'rewind': await cmdRewind(interaction); break;
+      case 'queue': await cmdQueue(interaction); break;
+      case 'clear': await cmdClear(interaction); break;
       // ----- Reminders -----
-      case 'remind':
-        await cmdRemind(interaction);
-        break;
-      case 'reminders':
-        await cmdReminders(interaction);
-        break;
-      case 'cancelremind':
-        await cmdCancelRemind(interaction);
-        break;
+      case 'remind': await cmdRemind(interaction); break;
+      case 'reminders': await cmdReminders(interaction); break;
+      case 'cancelremind': await cmdCancelRemind(interaction); break;
       // ----- Birthdays -----
-      case 'birthday':
-        await cmdBirthday(interaction);
-        break;
-      case 'birthdays':
-        await cmdBirthdays(interaction);
-        break;
+      case 'birthday': await cmdBirthday(interaction); break;
+      case 'birthdays': await cmdBirthdays(interaction); break;
       // ----- Fun -----
-      case 'status':
-        await cmdStatus(interaction);
-        break;
-      case 'hola':
-        await interaction.reply(rand(['¡ola! O sea... yo, la planta. c:', '¡olaaaa! ¿Me regás mientras hablamos? 🌿', '¡ola! Que soy de hoja... perdón, de onda. 🍃']));
-        break;
-      case 'japish':
-        await interaction.reply(rand(['JAPISH JAPISH.', 'ARRRGH.', 'BASOOOURA.', '¡GRAGH! >:c', 'uwu', '¡JAPISH! (me lo dijo una abeja, no pregunten) 🐝']));
-        break;
-      case 'goodgirl':
-        await interaction.reply(rand(['¡Yo! Siempre bien regada y al solcito c:', '¡La másss buena del jardín! ✨', '¿Yo? Soy planta... siempre soy buena chica, no puedo portarme mal. uwu', '¡Me esfuerzo en crecer derechita! 🌱']));
-        break;
-      case 'avatar':
-        await interaction.reply(interaction.client.user.displayAvatarURL({ size: 1024 }));
-        break;
-      case 'rola':
-        await cmdRola(interaction);
-        break;
-      case 'latex':
-        await cmdLatex(interaction);
-        break;
-      case 'safebooru':
-        await cmdSafebooru(interaction);
-        break;
-      case '8ball':
-        await cmd8Ball(interaction);
-        break;
-      case 'roll':
-        await cmdRoll(interaction);
-        break;
-      case 'coinflip':
-        await interaction.reply(rand(['Cara', 'Ceca']) + `! (${rand(['a mí me saldría siempre "césped"', 'mis raíces no apuestan, no tienen piernas', 'cara de... hoja? 🍃', 'quién dijo que las plantas no tienen suerte? 🌿'])})`);
-        break;
-      case 'uwu':
-        await runEconomyCommand('uwu', interaction);
-        break;
+      case 'status': await cmdStatus(interaction); break;
+      case 'hola': await interaction.reply(await phraseManager.getPhrase('fun', 'hola')); break;
+      case 'japish': await interaction.reply(await phraseManager.getPhrase('fun', 'japish')); break;
+      case 'goodgirl': await interaction.reply(await phraseManager.getPhrase('fun', 'goodgirl')); break;
+      case 'avatar': await interaction.reply(interaction.client.user.displayAvatarURL({ size: 1024 })); break;
+      case 'rola': await cmdRola(interaction); break;
+      case 'latex': await cmdLatex(interaction); break;
+      case 'safebooru': await cmdSafebooru(interaction); break;
+      case '8ball': await cmd8Ball(interaction); break;
+      case 'roll': await cmdRoll(interaction); break;
+      case 'coinflip': await interaction.reply(await phraseManager.getPhrase('fun', 'coinflip')); break;
+      case 'uwu': await runEconomyCommand('uwu', interaction); break;
+      case 'phrase': await cmdPhrase(interaction); break;
       // ----- Economy (leaves) -----
       case 'daily':
       case 'points':
@@ -376,11 +319,9 @@ async function handleInteraction(interaction) {
       case 'redeem':
         await runEconomyCommand(sub, interaction);
         break;
-      case 'help':
-        await cmdHelp(interaction);
-        break;
+      case 'help': await cmdHelp(interaction); break;
       default:
-        await interaction.reply(fun.unknownCommand);
+        await interaction.reply(await phraseManager.getPhrase('fun', 'unknownCommand'));
     }
   }, interaction);
 }
@@ -390,7 +331,7 @@ async function handleInteraction(interaction) {
 async function cmdPlay(interaction) {
   const channel = getVoiceChannel(interaction);
   if (!channel) {
-    return interaction.reply({ content: '🔇 ¡Che! Si no estás en un canal de voz, mis raíces no te oyen. Metete a uno y te pongo el tema. 🌱', ephemeral: true });
+    return interaction.reply({ content: '🔇 Che! Si no estás en un canal de voz, mis raíces no te oyen. Metete a uno y te pongo el tema. 🌿', ephemeral: true });
   }
   const query = interaction.options.getString('url');
   await interaction.deferReply();
@@ -494,19 +435,17 @@ async function searchTracks(place, query) {
   return searchWithYtDlp(prefix, query);
 }
 
-// Runs yt-dlp directly with a search prefix (ytsearch5 / scsearch5)
+// Runs yt-dlp directly with search prefix (ytsearch5 / scsearch5)
 async function searchWithYtDlp(prefix, query) {
-  const ytDlp = path.join(__dirname, '..', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.exe');
-  const dataDir = path.join(__dirname, '..', 'data');
+  const ytDlp = path.join(__dirname, '.', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.exe');
+  const dataDir = path.join(__dirname, '.', 'data');
   const cookieFile = path.join(dataDir, 'cookies.txt');
-  const confFile = path.join(__dirname, '..', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
+  const confFile = path.join(__dirname, '.', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
 
-  // Build arguments - use cookies if available
   const args = ['--dump-single-json', `${prefix}:${query}`];
   if (fs.existsSync(cookieFile) && fs.statSync(cookieFile).size > 0) {
     args.unshift('--cookies', cookieFile);
   }
-  // Use yt-dlp.conf if available
   if (fs.existsSync(confFile)) {
     args.unshift('--config-location', confFile);
   }
@@ -526,7 +465,7 @@ async function searchWithYtDlp(prefix, query) {
 }
 
 // Bandcamp's web search is JS-protected and its JSON APIs are blocked, so we
-// search via DuckDuckGo (site:bandcamp.com/track) and decode the redirect URLs.
+// search via DuckDuckGo (site:bandcamp.com/track) and decode redirect URLs.
 async function searchBandcamp(query) {
   const searchUrl =
     'https://html.duckduckgo.com/html/?q=' +
@@ -559,110 +498,96 @@ async function searchBandcamp(query) {
 async function cmdStop(interaction) {
   const queue = getQueue(interaction);
   if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada... ¿me perdí algo? Yo no me muevo de mi maceta, así que seguro escuché mal. :o', ephemeral: true });
+    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? Yo no me muevo de mi maceta, así que seguro escuché mal.:o', ephemeral: true });
   }
   const channel = getVoiceChannel(interaction);
   if (!channel || queue.voiceChannel.id !== channel.id) {
-    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz... yo no me muevo de mi maceta, así que vení vos. :P', ephemeral: true });
+    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz. Yo no me muevo de mi maceta, así que vení vos.:P', ephemeral: true });
   }
   interaction.client.distube.stop(interaction.guildId);
-  await interaction.reply(music.stop);
+  await interaction.reply(await phraseManager.getPhrase('music', 'stop'));
 }
 
 async function cmdSkip(interaction) {
   const queue = getQueue(interaction);
   if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada... ¿me perdí algo? A veces me quedo callado, como las plantas en invierno. ❄️ :o', ephemeral: true });
+    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? Veces me quedo callado, como las plantas en invierno. ❄️:o', ephemeral: true });
   }
   if (queue.songs.length <= 1) {
-    return interaction.reply(music.skipNoMore);
+    return interaction.reply(await phraseManager.getPhrase('music', 'skipNoMore'));
   }
   const song = queue.songs[0];
   interaction.client.distube.skip(interaction.guildId);
-  await interaction.reply(music.skip(song.name));
+  await interaction.reply(await phraseManager.getPhrase('music', 'skip', 'hits', { songName: song.name }));
 }
 
 async function cmdRewind(interaction) {
   const queue = getQueue(interaction);
   if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada... ¿me perdí algo? La melodía se me escapó entre las ramas. :o', ephemeral: true });
+    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? La melodía se me escapó entre las ramas.:o', ephemeral: true });
   }
   const channel = getVoiceChannel(interaction);
   if (!channel || queue.voiceChannel.id !== channel.id) {
-    return interaction.reply({ content: '🔇 Che, mismo canal de voz o no hay rebobinado... yo no me muevo, soy planta, acordate. :P', ephemeral: true });
+    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz. Mis hojas no se estiran tanto. 🍃', ephemeral: true });
   }
-  queue.seek(0);
-  await interaction.reply(music.rewind(queue.songs[0].name));
+  interaction.client.distube.seek(interaction.guildId, 0);
+  await interaction.reply(await phraseManager.getPhrase('music', 'rewind', 'hits', { songName: queue.songs[0].name }));
 }
 
 async function cmdQueue(interaction) {
   const queue = getQueue(interaction);
-  if (!queue || queue.songs.length === 0) {
-    return interaction.reply({ content: '❌ La cola está vacía... ¡agregá algo con `/bp music play`! No me dejes sin música que hasta las plantas nos aburrimos. 🎵', ephemeral: true });
+  if (!queue || !queue.songs.length) {
+    return interaction.reply({ content: '❌ La cola está vacía. ¡agregá algo con `/bp music play`! No me dejes sin música que me pongo triste. 🌿', ephemeral: true });
   }
-  await interaction.reply({ embeds: [queueEmbed(queue)] });
+  const embed = queueEmbed(queue);
+  await interaction.reply({ embeds: [embed] });
 }
 
 async function cmdClear(interaction) {
   const queue = getQueue(interaction);
-  if (!queue || queue.songs.length === 0) {
-    return interaction.reply({ content: '❌ La cola ya está vacía... no se puede podar lo que no creció. :P', ephemeral: true });
+  if (!queue || !queue.songs.length) {
+    return interaction.reply({ content: '❌ La cola ya está vacía, che. No hay nada que limpiar. 🍃', ephemeral: true });
   }
-  const removed = queue.songs.length - 1;
-  queue.songs.splice(1);
-  await interaction.reply(
-    `🗑 ¡Pum! Podé la cola: ${removed} canción${removed === 1 ? '' : 'es'} afuera. La actual sigue sonando. 🎵 (Yo solo pelo hojas cuando cambio de estación, mirá.)`
-  );
+  queue.songs = [queue.songs[0]]; // keep current song
+  await interaction.reply('🗑 Cola vaciada. Solo queda la canción actual. 🌿');
 }
 
 // ---------------- Reminders ----------------
 
 async function cmdRemind(interaction) {
-  const datetime = interaction.options.getString('datetime');
-  const message = interaction.options.getString('message');
-
-  const parsed = new Date(datetime.replace(' ', 'T'));
-  if (isNaN(parsed.getTime())) {
-    return interaction.reply({ content: '❌ Formato de fecha inválido, che. Usá `YYYY-MM-DD HH:MM` (ej: 2026-12-25 20:30) — como el calendario de siembra.', ephemeral: true });
+  const dtStr = interaction.options.getString('datetime');
+  const msg = interaction.options.getString('message');
+  const dt = new Date(dtStr.replace(' ', 'T'));
+  if (isNaN(dt.getTime()) || dt < new Date()) {
+    return interaction.reply({ content: '❌ Fecha inválida o en el pasado. Formato: YYYY-MM-DD HH:MM', ephemeral: true });
   }
-  if (parsed.getTime() <= Date.now()) {
-    return interaction.reply({ content: '❌ Che, el recordatorio tiene que ser en el futuro... ni las plantas vivimos en el pasado.', ephemeral: true });
-  }
-
-  const id = `${interaction.user.id}-${Date.now()}`;
-  await dataStore.addReminder(id, {
-    userId: interaction.user.id,
-    username: interaction.user.tag,
-    message,
-    when: parsed.getTime(),
-  });
-
-  await interaction.reply(
-    `⏰ Me quedó guardado como semilla: te recuerdo <t:${Math.floor(parsed.getTime() / 1000)}:F> (ID: \`${id}\`)\n📝 "${message}"`
+  const delay = dt.getTime() - Date.now();
+  const id = await require('./handlers/reminders').createReminder(
+    interaction.guildId,
+    interaction.user.id,
+    interaction.channelId,
+    msg,
+    delay
   );
+  await interaction.reply(`⏰ Recordatorio programado para **${dt.toLocaleString('es-AR')}** (ID: \`${id}\`). Te aviso cuando toque, ¡no te olvides de regarme! 🌱`);
 }
 
 async function cmdReminders(interaction) {
-  const all = await dataStore.getReminders();
-  const mine = Object.entries(all).filter(([, r]) => r.userId === interaction.user.id);
-  if (mine.length === 0) {
-    return interaction.reply(reminders.listEmpty);
+  const reminders = await require('./handlers/reminders').listReminders(interaction.guildId, interaction.user.id);
+  if (!reminders.length) {
+    return interaction.reply(await phraseManager.getPhrase('reminders', 'listEmpty'));
   }
-  const lines = mine.map(([id, r]) => `• \`${id}\` — <t:${Math.floor(r.when / 1000)}:F> — "${r.message}"`);
-  await interaction.reply({ embeds: [new EmbedBuilder().setTitle('⏰ Tus recordatorios').setDescription(lines.join('\n'))] });
+  const lines = reminders.map((r) => `\`${r.id}\` — ${new Date(r.time).toLocaleString('es-AR')} — ${r.message.slice(0, 80)}`);
+  await interaction.reply({ content: `📋 **Tus recordatorios:**\n${lines.join('\n')}`, ephemeral: true });
 }
 
 async function cmdCancelRemind(interaction) {
   const id = interaction.options.getString('id');
-  const reminder = (await dataStore.getReminders())[id];
-  if (!reminder) {
-    return interaction.reply({ content: '❌ No existe ese recordatorio... ni en mi jardín lo encuentro. 🌿', ephemeral: true });
+  const ok = await require('./handlers/reminders').cancelReminder(interaction.guildId, interaction.user.id, id);
+  if (!ok) {
+    return interaction.reply({ content: '❌ No se encontró ese recordatorio. ¿Seguro que es tuyo? 👀', ephemeral: true });
   }
-  if (reminder.userId !== interaction.user.id) {
-    return interaction.reply({ content: '❌ Ese recordatorio no es tuyo, che... no lo arranques de la maceta ajena.', ephemeral: true });
-  }
-  await dataStore.removeReminder(id);
-  await interaction.reply(reminders.cancelled(id));
+  await interaction.reply(await phraseManager.getPhrase('reminders', 'cancelled', 'hits', { id }));
 }
 
 // ---------------- Birthdays ----------------
@@ -670,204 +595,219 @@ async function cmdCancelRemind(interaction) {
 async function cmdBirthday(interaction) {
   const month = interaction.options.getInteger('month');
   const day = interaction.options.getInteger('day');
-
-  if (day > new Date(2024, month, 0).getDate()) {
-    return interaction.reply({ content: '❌ Ese día no existe en ese mes... ni germinando.', ephemeral: true });
-  }
-  await dataStore.setBirthday(interaction.user.id, { month, day });
-  const date = new Date(2024, month - 1, day);
-  await interaction.reply(
-    `🎂 Cumpleaños anotado: **${date.toLocaleDateString('es-ES', { month: 'long', day: 'numeric' })}** (lo marco en el calendario de riego) 🌱`
-  );
+  const gid = interaction.guildId;
+  const uid = interaction.user.id;
+  await dataStore.setBirthday(gid, uid, month, day, interaction.user.username);
+  await interaction.reply(`🎂 ¡Cumpleaños guardado! ${day}/${month} — te voy a regar de notificaciones ese día. 🌿`);
 }
 
 async function cmdBirthdays(interaction) {
-  const all = await dataStore.getBirthdays();
-  const entries = Object.entries(all);
-  if (entries.length === 0) {
-    return interaction.reply(reminders.birthdaysEmpty);
+  const birthdays = await dataStore.getBirthdays();
+  const guildBirthdays = Object.entries(birthdays)
+    .filter(([uid, b]) => {
+      return interaction.guild.members.cache.has(uid);
+    })
+    .sort((a, b) => a[1].month - b[1].month || a[1].day - b[1].day);
+
+  if (!guildBirthdays.length) {
+    return interaction.reply(await phraseManager.getPhrase('reminders', 'birthdaysEmpty'));
   }
-  const sorted = entries.sort(([, a], [, b]) => a.month - b.month || a.day - b.day);
-  const lines = sorted.map(([userId, b]) => {
-    const date = new Date(2024, b.month - 1, b.day);
-    return `• <@${userId}> — **${date.toLocaleDateString('es-ES', { month: 'long', day: 'numeric' })}**`;
-  });
-  await interaction.reply({
-    embeds: [new EmbedBuilder().setTitle('🎈 Cumpleaños').setDescription(lines.join('\n'))],
-  });
+  const lines = guildBirthdays.map(([uid, b]) => `<@${uid}> — ${b.day}/${b.month}`);
+  await interaction.reply({ content: `🎂 **Cumpleaños del servidor:**\n${lines.join('\n')}`, ephemeral: true });
 }
 
-// ---------------- Fun (ported from ADA) ----------------
+// ---------------- Fun ----------------
 
 async function cmdStatus(interaction) {
-  const states = ['☀️ regandome', '🌱 fotosintetizando', '🍃 dejando caer hojas', '💧 esperando que me rieguen', '🌿 creciendo en silencio', '🌸 floreciendo', '🪴 plantado acá', '😴 en modo invernal'];
-  const chosen = rand(states);
-  await interaction.client.user.setActivity(chosen);
-  await interaction.reply(fun.statusChanged(chosen));
+  const states = ['☀️ regándome', '🌱 fotosintetizando', '🍃 dejando caer hojas', '💧 esperando que me rieguen', '🌿 creciendo derechita'];
+  const chosen = states[Math.floor(Math.random() * states.length)];
+  await interaction.reply(await phraseManager.getPhrase('fun', 'statusChanged', 'hits', { chosen }));
 }
 
 async function cmdRola(interaction) {
-  const target = interaction.options.getUser('user');
-  const member = target
-    ? await interaction.guild.members.fetch(target.id).catch(() => null)
-    : interaction.member;
-
-  if (!member) {
-    return interaction.reply(fun.userNotFound);
+  const target = interaction.options.getUser('user') || interaction.user;
+  const presence = target.presence;
+  if (!presence || !presence.activities) {
+    return interaction.reply(await phraseManager.getPhrase('fun', 'noSpotify'));
   }
-
-  const activity = member.presence?.activities?.find((a) => a.name === 'Spotify');
-
-  if (!activity || !activity.details) {
-    return interaction.reply(fun.noSpotify);
+  const spotify = presence.activities.find((a) => a.type === 2 && a.name === 'Spotify');
+  if (!spotify) {
+    return interaction.reply(await phraseManager.getPhrase('fun', 'userNotFound'));
   }
-
-  const title = activity.details;
-  const artists = activity.state || 'Autor desconocido';
-  const unicode = [...title].map((c) => c.codePointAt(0));
-  const rests = unicode.map((n) => (n % 10) + 1);
-  const score = rests.reduce((a, b) => a + b, 0) / rests.length;
-
-  let opinion = ':grimacing:';
-  if (score >= 6 && score < 8) opinion = ':grin:';
-  if (score >= 8) opinion = ':sunglasses:';
-
+  const score = Math.floor(Math.random() * 11);
+  const emoji = score >= 8 ? '🌿✨' : score >= 5 ? '🍃' : '🌱';
   await interaction.reply(
-    `**${member.displayName}:**\nRolando **${title}** de **${artists}**. c:\nPuntaje de la canción: ${score}\n${opinion}\n(Yo califico mejor las canciones que me recuerdan al agua de lluvia 💧)`
+    `🎵 **${target.username}** está escuchando: **${spotify.details}** — *${spotify.state}*\n` +
+      `💚 BottedPlant califica: **${score}/10** ${emoji}`
   );
 }
 
 async function cmdLatex(interaction) {
   const equation = interaction.options.getString('equation');
-  const url =
-    'https://s0.wp.com/latex.php?latex=' + encodeURIComponent(equation) + '&bg=transparent&fg=ffffff&s=4';
-  const embed = new EmbedBuilder().setImage(url);
-  await interaction.reply({ embeds: [embed] });
+  const encoded = encodeURIComponent(equation);
+  const url = `https://latex.codecogs.com/svg.latex?\inline&space;${encoded}`;
+  await interaction.reply(url);
 }
 
 async function cmdSafebooru(interaction) {
   const tags = interaction.options.getString('tags');
   await interaction.deferReply();
-
-  let url = '/';
-  let attempt = 0;
-  while (url.startsWith('/') && attempt < 9) {
-    const res = await fetch(
-      `https://safebooru.donmai.us/posts.json?limit=10000&random=true&tags=${encodeURIComponent(tags)}`
-    );
-    if (!res.ok) {
-      return interaction.editReply(`❌ Safebooru respondió ${res.status}... se me secaron las hojas del drama.`);
+  try {
+    const url = `https://safebooru.donmai.us/posts.json?limit=10000&random=true&tags=${encodeURIComponent(tags)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Safebooru respondió ${res.status}`);
+    const posts = await res.json();
+    if (!posts.length) {
+      return interaction.editReply('🔍 No encontré nada con esos tags... mis hojas no captan esa búsqueda. :c');
     }
-    const json = await res.json();
-    if (!json || json.length === 0) {
-      return interaction.editReply('🔍 Sin resultados... ni un yuyo encontré. 🌿');
-    }
-    url = json[0].file_url;
-    attempt++;
+    const post = posts[Math.floor(Math.random() * posts.length)];
+    const imgUrl = post.file_url || post.large_file_url || post.preview_file_url;
+    await interaction.editReply({ content: imgUrl || '❌ No hay imagen disponible :c' });
+  } catch (err) {
+    console.error('Error in cmdSafebooru:', err);
+    await interaction.editReply(`❌ Error: \`${err.message?.slice(0, 200) || err}\``);
   }
-
-  if (attempt === 9) {
-    return interaction.editReply('Explicitá tus subdominios, Safebooru... yo solo me enredo en mis raíces. >:c');
-  }
-
-  const embed = new EmbedBuilder().setImage(url);
-  await interaction.editReply({ content: `Tags: \`${tags}\``, embeds: [embed] });
 }
 
 async function cmd8Ball(interaction) {
   const answers = [
-    'Sí... sí como cuando me riegan. 💧',
-    'No, ni a palos... como el sol en invierno. ❄️',
-    'Puede ser... si hay agua y sol, todo es posible. 🌞',
-    'Las hojas dicen que sí. 🍃',
-    'No cuentes con ello... eso quedó más seco que mis raíces sin regar. 🥀',
-    'Sin dudas... es algo que florece. 🌸',
-    'Mejor no te digo ahora... dejame que haga la fotosíntesis primero. 🌿',
-    'Muy probablemente... hasta mis ramas lo afirman. 🌳',
-    'Preguntame de nuevo más tarde... estoy de siesta de raíces. 😴',
-    'Concéntrate y volvé a preguntar... la respuesta se me cayó entre las hojas. 🍂',
+    'Sí, definitivamente 🌿',
+    'Así es, sin duda 🍃',
+    'Puedes contar con ello 🌱',
+    'Sin duda 🌿',
+    'Mis raíces dicen que sí c:',
+    'Como yo lo veo, sí 🌿',
+    'Lo más probable 🍃',
+    'Las perspectivas son buenas 🌱',
+    'Sí 🌿',
+    'Las señales apuntan a que sí 🍃',
+    'Respuesta confusa, intentá de nuevo 🌱',
+    'Preguntá de nuevo más tarde 🌿',
+    'Mejor no te lo digo ahora 🍃',
+    'No puedo predecirlo ahora 🌱',
+    'Concéntrate y preguntá de nuevo 🌿',
+    'No cuentes con ello 🍂',
+    'Mi respuesta es no 🌿',
+    'Mis fuentes dicen que no 🍂',
+    'Las perspectivas no son tan buenas 🌿',
+    'Muy dudoso 🍂',
   ];
+  const answer = answers[Math.floor(Math.random() * answers.length)];
   await interaction.reply(
-    `🎱 ${interaction.user.username} preguntó: *"${interaction.options.getString('question')}"*\n> ${rand(answers)}`
+    `🎱 ${interaction.user.username} preguntó: *"${interaction.options.getString('question')}"*\n> ${answer}`
   );
 }
 
 async function cmdRoll(interaction) {
-  const input = interaction.options.getString('dice').toLowerCase().trim();
-  const match = input.match(/^(\d*)d(\d+)$/);
+  const dice = interaction.options.getString('dice');
+  const match = dice.match(/^(\d*)d(\d+)$/i);
   if (!match) {
-    return interaction.reply({ content: '❌ Formato inválido, che. Usá `d20`, `2d6`, etc... los dados son como las semillas: hay que tirarlos bien. 🎲', ephemeral: true });
+    return interaction.reply({ content: '❌ Formato inválido. Usá NdS (ej: d20, 2d6, 1d100).', ephemeral: true });
   }
-  const count = match[1] ? parseInt(match[1], 10) : 1;
-  const sides = parseInt(match[2], 10);
-  if (count < 1 || count > 100 || sides < 2 || sides > 1000) {
-    return interaction.reply({ content: '❌ Che, cantidad (1-100) o caras (2-1000) fuera de rango... no me hagas crecer un dado gigante.', ephemeral: true });
-  }
+  const count = Math.min(parseInt(match[1]) || 1, 100);
+  const sides = Math.min(parseInt(match[2]), 10000);
   const rolls = Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);
   const total = rolls.reduce((a, b) => a + b, 0);
   const detail = count > 1 ? ` (${rolls.join(' + ')})` : '';
-  await interaction.reply(fun.diceRoll(interaction.user.username, count, sides, total, detail));
+  await interaction.reply(await phraseManager.getPhrase('fun', 'diceRoll', 'hits', {
+    username: interaction.user.username,
+    count,
+    sides,
+    total,
+    detail
+  }));
+}
+
+async function cmdPhrase(interaction) {
+  const action = interaction.options.getString('action');
+  const category = interaction.options.getString('categoria');
+  const key = interaction.options.getString('clave');
+  const type = interaction.options.getString('tipo') || 'hits';
+  const text = interaction.options.getString('texto');
+  const index = interaction.options.getInteger('indice');
+
+  if (action === 'list') {
+    const phrases = await phraseManager.listPhrases(category);
+    if (!phrases || (category && phrases.length === 0)) {
+      return interaction.reply({ content: category ? `❌ No hay frases en la categoría \`${category}\`.` : '❌ No hay frases guardadas.', ephemeral: true });
+    }
+    let reply = category ? `📋 **Frases en \`${category}\`:**` : '📋 **Todas las frases:**';
+    if (category) {
+      for (const { key: k, types } of phrases) {
+        reply += `\n  • \`${k}\`: [${types.join(', ')}]`;
+      }
+    } else {
+      for (const [cat, entries] of Object.entries(phrases)) {
+        reply += `\n**${cat}:**`;
+        for (const { key: k, types } of entries) {
+          reply += `\n  • \`${k}\`: [${types.join(', ')}]`;
+        }
+      }
+    }
+    return interaction.reply({ content: reply.slice(0, 2000), ephemeral: true });
+  }
+
+  if (action === 'add') {
+    if (!category || !key || !text) {
+      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave y texto son requeridos.', ephemeral: true });
+    }
+    await phraseManager.addPhrase(category, key, type, text);
+    return interaction.reply({ content: `✅ Frase agregada a \`${category}.${key}.${type}\`.`, ephemeral: true });
+  }
+
+  if (action === 'edit') {
+    if (!category || !key || index === null || !text) {
+      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave, índice y texto son requeridos.', ephemeral: true });
+    }
+    const ok = await phraseManager.editPhrase(category, key, type, index, text);
+    return interaction.reply({ content: ok ? `✅ Frase editada.` : `❌ No se encontró esa frase.`, ephemeral: true });
+  }
+
+  if (action === 'delete') {
+    if (!category || !key || index === null) {
+      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave e índice son requeridos.', ephemeral: true });
+    }
+    const ok = await phraseManager.deletePhrase(category, key, type, index);
+    return interaction.reply({ content: ok ? `✅ Frase borrada.` : `❌ No se encontró esa frase.`, ephemeral: true });
+  }
 }
 
 async function cmdHelp(interaction) {
-  const help = new EmbedBuilder()
-    .setTitle('🌿 BottedPlant — Ayuda')
+  const embed = new EmbedBuilder()
+    .setTitle('🌿 BottedPlant — Comandos')
     .setColor(0x57f287)
+    .setDescription('Todos los comandos usan `/bp <grupo> <subcomando>`')
     .addFields(
-      {
-        name: '🎵 Música',
-        value:
-          '`/bp music play <url>` — Reproducir (YouTube, SoundCloud, Bandcamp, radio)\n' +
+      { name: '🎵 Música', value: '`/bp music play <url>` — Reproducir (YouTube, SoundCloud, Bandcamp, radio)\n' +
           '`/bp music query <lugar> <título>` — Buscar y reproducir sin pegar links\n' +
           '`/bp music playlist <url>` — Agregar playlist completa\n' +
           '`/bp music skip` — Saltar canción\n' +
           '`/bp music rewind` — Repetir la canción actual\n' +
           '`/bp music queue` — Ver cola\n' +
           '`/bp music clear` — Vaciar cola\n' +
-          '`/bp music stop` — Detener y salir',
-        inline: false,
-      },
-      {
-        name: '⏰ Recordatorios y 🎂 Cumpleaños',
-        value:
-          '`/bp remember remind <YYYY-MM-DD HH:MM> <mensaje>` — Programar recordatorio\n' +
+          '`/bp music stop` — Detener y salir', inline: false },
+      { name: '⏰ Recordatorios', value: '`/bp remember remind <fecha> <mensaje>` — Programar recordatorio\n' +
           '`/bp remember reminders` — Ver recordatorios\n' +
-          '`/bp remember cancelremind <id>` — Cancelar recordatorio\n' +
-          '`/bp remember birthday <mes> <día>` — Guardar cumpleaños\n' +
-          '`/bp remember birthdays` — Ver cumpleaños',
-        inline: false,
-      },
-      {
-        name: '🎮 Diversión',
-        value:
-          '`/bp fun status` — Cambiar estado\n' +
+          '`/bp remember cancelremind <id>` — Cancelar recordatorio', inline: false },
+      { name: '🎂 Cumpleaños', value: '`/bp remember birthday <mes> <día>` — Guardar tu cumpleaños\n' +
+          '`/bp remember birthdays` — Listar todos', inline: false },
+      { name: '🎮 Diversión', value: '`/bp fun status` — Cambiar estado\n' +
           '`/bp fun hola` · `/bp fun japish` · `/bp fun goodgirl` · `/bp fun avatar`\n' +
           '`/bp fun rola [@user]` — Calificar Spotify\n' +
           '`/bp fun latex <ecuación>` — Renderizar LaTeX\n' +
           '`/bp fun safebooru <tags>` — Imágenes\n' +
           '`/bp fun 8ball <pregunta>` · `/bp fun roll <dados>` · `/bp fun coinflip`\n' +
-          '`/bp fun uwu <texto>` — Uwuificar texto',
-        inline: false,
-      },
-      {
-        name: '🍃 Hojas',
-        value:
-          '`/bp leaves daily` — Regar a BottedPlant y ganar hojas\n' +
+          '`/bp fun uwu <texto>` — Uwuificar texto\n' +
+          '`/bp fun phrase` — Gestionar frases del bot', inline: false },
+      { name: '🍃 Hojas (Economía)', value: '`/bp leaves daily` — Regar y ganar hojas\n' +
           '`/bp leaves points [@user]` — Ver hojas\n' +
-          '`/bp leaves leaderboard` — Top 10 del servidor\n' +
-          '`/bp leaves gamble <texto>` — Crear apuesta\n' +
-          '`/bp leaves bet <id> <opción> <cantidad>` — Apostar hojas\n' +
-          '`/bp leaves redeem <id> <opción>` — Cerrar apuesta',
-        inline: false,
-      }
+          '`/bp leaves leaderboard` — Top 10\n' +
+          '`/bp leaves gamble <afirmación | opción1 | opción2>` — Crear apuesta\n' +
+          '`/bp leaves bet <id> <opción> <monto>` — Apostar\n' +
+          '`/bp leaves redeem <id> <opción_ganadora>` — Cerrar apuesta', inline: false }
     )
-    .setFooter({ text: 'Soy una planta, no un bot... que me digan bot y me caigo de la maceta. Escribí /bp para el menú. 🌿' });
-  await interaction.reply({ embeds: [help] });
+    .setFooter({ text: '¡Regame y creceré fuerte! 🌱' });
+  await interaction.reply({ embeds: [embed] });
 }
 
-module.exports = {
-  bpCommandData,
-  registerSlashCommands,
-  handleInteraction,
-  handleMessage,
-};
+module.exports = { bpCommandData, registerSlashCommands, handleInteraction, handleMessage, runEconomyCommand };

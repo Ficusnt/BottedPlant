@@ -1,12 +1,36 @@
 // shitpost.js - Random meme responses with media support
 const fs = require('fs').promises;
 const path = require('path');
-const reactions = require('./reactions');
+const phraseManager = require('./phraseManager');
 
 const mediaDir = path.join(__dirname, '.', 'data', 'media');
 
-// Use shitpost phrases from centralized reactions file
-const SHITPOSTS = reactions.shitposts;
+// Load shitpost phrases from phraseManager
+let SHITPOSTS = [];
+
+async function loadShitposts() {
+  if (SHITPOSTS.length > 0) return;
+  const cat = await phraseManager.getCategory('shitpost');
+  if (cat) {
+    for (const key of Object.keys(cat)) {
+      const entry = cat[key];
+      SHITPOSTS.push({
+        text: key,
+        hits: entry.hits || [],
+        crits: entry.crits || [],
+        fails: entry.fails || [],
+      });
+    }
+  }
+  if (SHITPOSTS.length === 0) {
+    // Fallback defaults
+    SHITPOSTS = [
+      { text: 'bien', hits: ['Bien ahí 🌿', 'Sí, che 🍃', 'Dale que va 🌱'], crits: ['¡BIEN ALLÁ CARAJO! 🌿✨'], fails: ['...¿qué? 🌱'] },
+      { text: 'mal', hits: ['Mal ahí 🌱', 'No che 🍂', 'Qué sé yo 🌿'], crits: ['¡MAL PERO MUY MAL! 🌿✨'], fails: ['...quizás sí 🌱'] },
+      { text: 'planta', hits: ['🌿 *fotosintetiza*', 'Soy una planta, no me hables 🍃', 'Regame y hablamos 🌱'], crits: ['¡SOY LA REINA DEL JARDÍN! 🌿✨'], fails: ['*se seca* 🌵'] },
+    ];
+  }
+}
 
 // Load media files from data/media directory
 let mediaFiles = [];
@@ -34,26 +58,26 @@ async function loadMedia() {
 function hasShitpostTrigger(content) {
   if (!content) return false;
   const lower = content.toLowerCase();
-  return SHITPOSTS.some((s) => s.text.toLowerCase().split(' ').some((word) => lower.includes(word)))
+  return SHITPOSTS.some((s) => s.text.toLowerCase().split(' ').some((word) => lower.includes(word)));
 }
 
 // Get random shitpost response
 function getShitpostResponse(content) {
   const lower = content.toLowerCase();
-  const triggers = SHITPOSTS.filter((s) => s.text.toLowerCase().split(' ').some((word) => lower.includes(word)))
+  const triggers = SHITPOSTS.filter((s) => s.text.toLowerCase().split(' ').some((word) => lower.includes(word)));
   if (triggers.length === 0) return null;
   const trigger = triggers[Math.floor(Math.random() * triggers.length)];
-  const roll = Math.floor(Math.random()*20)+1;
-  if (roll === 1) return reactions.rand(trigger.fail);
-  if (roll === 20) return reactions.rand(trigger.crit);
-  return reactions.rand(trigger.hits);
+  const roll = Math.floor(Math.random() * 20) + 1;
+  if (roll === 1) return phraseManager.rand(trigger.fails);
+  if (roll === 20) return phraseManager.rand(trigger.crits);
+  return phraseManager.rand(trigger.hits);
 }
 
 // Get random media file
 async function getRandomMedia() {
   await loadMedia();
   if (mediaFiles.length === 0) return null;
-  return mediaFiles[Math.floor(Math.random()*mediaFiles.length)];
+  return mediaFiles[Math.floor(Math.random() * mediaFiles.length)];
 }
 
 // Send shitpost response with optional media
@@ -76,4 +100,5 @@ module.exports = {
   getRandomMedia,
   sendShitpost,
   loadMedia,
+  loadShitposts,
 };

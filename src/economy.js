@@ -2,8 +2,7 @@
 const { EmbedBuilder } = require('discord.js');
 const dataStore = require('./dataStore');
 const { hasShitpostTrigger, getShitpostResponse, getRandomMedia, sendShitpost } = require('./shitpost');
-const reactions = require('./reactions');
-const { economy } = reactions;
+const phraseManager = require('./phraseManager');
 
 const MILESTONES = {
   1: 100,
@@ -18,22 +17,14 @@ const MILESTONES = {
 
 async function runEconomyCommand(sub, interaction) {
   switch (sub) {
-    case 'daily':
-      return cmdDaily(interaction);
-    case 'points':
-      return cmdPoints(interaction);
-    case 'leaderboard':
-      return cmdLeaderboard(interaction);
-    case 'gamble':
-      return cmdGamble(interaction);
-    case 'bet':
-      return cmdBet(interaction);
-    case 'redeem':
-      return cmdRedeem(interaction);
-    case 'uwu':
-      return cmdUwu(interaction);
-    default:
-      return null;
+    case 'daily': return cmdDaily(interaction);
+    case 'points': return cmdPoints(interaction);
+    case 'leaderboard': return cmdLeaderboard(interaction);
+    case 'gamble': return cmdGamble(interaction);
+    case 'bet': return cmdBet(interaction);
+    case 'redeem': return cmdRedeem(interaction);
+    case 'uwu': return cmdUwu(interaction);
+    default: return null;
   }
 }
 
@@ -52,7 +43,7 @@ async function cmdDaily(interaction) {
     const lastDay = new Date(last.getFullYear(), last.getMonth(), last.getDate());
     const diffDays = Math.round((today - lastDay) / 86400000);
     if (diffDays === 0) {
-      return interaction.reply(economy.dailyAlready);
+      return interaction.reply(await phraseManager.getPhrase('economy', 'dailyAlready'));
     }
     streak = diffDays === 1 ? entry.streak + 1 : 1;
   }
@@ -67,7 +58,7 @@ async function cmdDaily(interaction) {
 
   await dataStore.setDailyState(gid, uid, streak, total);
 
-  return interaction.reply(economy.dailySuccess(gained, bonusPct, streak, total));
+  return interaction.reply(await phraseManager.getPhrase('economy', 'dailySuccess', 'hits', { gained, bonusPct, streak, total }));
 }
 
 async function cmdPoints(interaction) {
@@ -103,7 +94,7 @@ async function cmdPoints(interaction) {
 async function cmdLeaderboard(interaction) {
   const top = await dataStore.getTopUsers(interaction.guildId, 10);
   if (!top.length) {
-    return interaction.reply(economy.pointsEmpty);
+    return interaction.reply(await phraseManager.getPhrase('economy', 'pointsEmpty'));
   }
   const lines = top.map((u, i) => {
     const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
@@ -121,14 +112,14 @@ async function cmdGamble(interaction) {
   const parts = text.split('|').map((s) => s.trim()).filter(Boolean);
   if (parts.length < 3) {
     return interaction.reply({
-      content: economy.gambleBadFormat,
+      content: await phraseManager.getPhrase('economy', 'gambleBadFormat'),
       ephemeral: true,
     });
   }
   const statement = parts[0];
   const choices = parts.slice(1);
   if (choices.length > 10) {
-    return interaction.reply({ content: economy.gambleTooMany, ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleTooMany'), ephemeral: true });
   }
   const id = `${interaction.guildId}-${Date.now()}`;
   await dataStore.createGamble(id, {
@@ -139,7 +130,7 @@ async function cmdGamble(interaction) {
     closed: false,
   });
   const list = choices.map((c, i) => `**${i + 1}.** ${c}`).join('\n');
-  return interaction.reply(economy.gambleCreated(id, statement, list));
+  return interaction.reply(await phraseManager.getPhrase('economy', 'gambleCreated', 'hits', { id, statement, list }));
 }
 
 async function cmdBet(interaction) {
@@ -147,15 +138,15 @@ async function cmdBet(interaction) {
   const choice = interaction.options.getInteger('choice');
   const amount = interaction.options.getInteger('amount');
   const gamble = await dataStore.getGamble(id);
-  if (!gamble) return interaction.reply({ content: economy.gambleNotFound, ephemeral: true });
-  if (gamble.closed) return interaction.reply({ content: economy.gambleClosed, ephemeral: true });
+  if (!gamble) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleNotFound'), ephemeral: true });
+  if (gamble.closed) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleClosed'), ephemeral: true });
   if (gamble.creator === interaction.user.id) {
-    return interaction.reply({ content: economy.gambleSelfBet, ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleSelfBet'), ephemeral: true });
   }
   if (choice < 1 || choice > gamble.choices.length) {
-    return interaction.reply({ content: economy.gambleBadChoice, ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadChoice'), ephemeral: true });
   }
-  if (amount <= 0) return interaction.reply({ content: economy.gambleBadAmount, ephemeral: true });
+  if (amount <= 0) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadAmount'), ephemeral: true });
 
   const key = String(choice);
   const uid = interaction.user.id;
@@ -164,7 +155,7 @@ async function cmdBet(interaction) {
   const userPoints = await dataStore.getUserPoints(interaction.guildId, uid);
   if (!await dataStore.deductPoints(interaction.guildId, uid, amount)) {
     return interaction.reply({
-      content: economy.gambleNotEnough(userPoints),
+      content: await phraseManager.getPhrase('economy', 'gambleNotEnough', 'hits', { userPoints }),
       ephemeral: true,
     });
   }
@@ -174,23 +165,23 @@ async function cmdBet(interaction) {
   await dataStore.saveGamble(id, gamble);
 
   const totalOnChoice = Object.values(gamble.bets[key]).reduce((a, b) => a + b, 0);
-  return interaction.reply(economy.gambleBetPlaced(amount, choice, gamble.choices[choice - 1], totalOnChoice));
+  return interaction.reply(await phraseManager.getPhrase('economy', 'gambleBetPlaced', 'hits', { amount, choice, choiceText: gamble.choices[choice - 1], totalOnChoice }));
 }
 
 async function cmdRedeem(interaction) {
   const id = interaction.options.getString('id');
   const winning = interaction.options.getInteger('choice');
   const gamble = await dataStore.getGamble(id);
-  if (!gamble) return interaction.reply({ content: economy.gambleRedeemNotFound, ephemeral: true });
-  if (gamble.closed) return interaction.reply({ content: economy.gambleRedeemClosed, ephemeral: true });
+  if (!gamble) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemNotFound'), ephemeral: true });
+  if (gamble.closed) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemClosed'), ephemeral: true });
   if (winning < 1 || winning > gamble.choices.length) {
-    return interaction.reply({ content: economy.gambleRedeemBadChoice, ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemBadChoice'), ephemeral: true });
   }
 
   const isCreator = gamble.creator === interaction.user.id;
-  const isAdmin = interaction.memberPermissions?.has('ManageMessages') || false;
+  const isAdmin = interaction.memberPermissions.has('ManageMessages') || false;
   if (!isCreator && !isAdmin) {
-    return interaction.reply({ content: economy.gambleRedeemNoPerm, ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemNoPerm'), ephemeral: true });
   }
 
   gamble.closed = true;
@@ -208,13 +199,13 @@ async function cmdRedeem(interaction) {
   if (creatorCut > 0) await dataStore.addPoints(interaction.guildId, gamble.creator, creatorCut);
 
   if (winTotal === 0) {
-    msg = economy.gambleRedeemNoWinners(gamble.statement, winning, gamble.choices[winning - 1], creatorCut);
+    msg = await phraseManager.getPhrase('economy', 'gambleRedeemNoWinners', 'hits', { statement: gamble.statement, winning, choiceText: gamble.choices[winning - 1], creatorCut });
   } else {
     for (const [uid, amt] of Object.entries(winBets)) {
       const share = Math.floor(pool * (amt / winTotal));
       if (share > 0) await dataStore.addPoints(interaction.guildId, Number(uid), share);
     }
-    msg = economy.gambleRedeemWinners(gamble.statement, winning, gamble.choices[winning - 1], total, creatorCut, pool);
+    msg = await phraseManager.getPhrase('economy', 'gambleRedeemWinners', 'hits', { statement: gamble.statement, winning, choiceText: gamble.choices[winning - 1], total, creatorCut, pool });
   }
   await dataStore.saveGamble(id, gamble);
   return interaction.reply(msg);
@@ -222,7 +213,7 @@ async function cmdRedeem(interaction) {
 
 // ---------------- UwU ----------------
 
-function uwuify(input) {
+async function uwuify(input) {
   let text = input
     .replace(/[rl]/g, 'w')
     .replace(/[RL]/g, 'W')
@@ -231,10 +222,10 @@ function uwuify(input) {
     .replace(/th/gi, 'd')
     .replace(/n([aeiou])/g, 'ny$1')
     .replace(/N([aeiou])/g, 'Ny$1')
-    .replace(/!+/g, '!!')
-    .replace(/\?+/g, '??')
+    .replace(/!+/g, '!')
+    .replace(/\?+/g, '?')
     .trim();
-  return text + reactions.rand(reactions.uwuEndings);
+  return text + phraseManager.rand(await phraseManager.getUwuEnding());
 }
 
 async function cmdUwu(interaction) {
@@ -243,11 +234,9 @@ async function cmdUwu(interaction) {
 
 // ---------------- Message triggers (d20) ----------------
 
-const { triggers: TRIGGERS, rand } = reactions;
-
 async function handleMessage(message) {
   if (message.author.bot || !message.guild) return;
-  const content = message.content?.trim();
+  const content = message.content.trim();
   if (!content || content.startsWith('/')) return;
 
   // Check for "planta" trigger first - 100% trigger chance
@@ -271,7 +260,7 @@ async function handleMessage(message) {
   if (hasShitpostTrigger(content) && Math.random() < 0.25) {
     const response = getShitpostResponse(content);
     if (response) {
-      // 30% chance to send media with the response if available
+      // 30% chance to send media with response if available
       if (Math.random() < 0.3) {
         const mediaFile = await getRandomMedia();
         if (mediaFile) {
@@ -284,18 +273,13 @@ async function handleMessage(message) {
     }
   }
 
-  // Fall back to regular triggers - 25% random trigger chance
-  for (const trigger of TRIGGERS) {
-    if (!trigger.pattern.test(content)) continue;
-    // 25% chance to actually respond
-    if (Math.random() > 0.25) return;
-    const roll = Math.floor(Math.random() * 20) + 1;
-    let response;
-    if (roll === 1) response = rand(trigger.fail);
-    else if (roll === 20) response = rand(trigger.crit);
-    else response = rand(trigger.hits);
-    await message.channel.send(response).catch(() => {});
-    return;
+  // Fall back to regular triggers using phraseManager - 25% random trigger chance
+  if (Math.random() <= 0.25) {
+    const triggerResponse = await phraseManager.getTriggerResponse('triggers', content);
+    if (triggerResponse && triggerResponse.text) {
+      await message.channel.send(triggerResponse.text).catch(() => {});
+      return;
+    }
   }
 }
 

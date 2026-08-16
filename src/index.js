@@ -6,7 +6,7 @@ const config = require('./config');
 const { registerSlashCommands, handleInteraction, handleMessage } = require('./bpCommand');
 const { scheduleReminders } = require('./handlers/reminders');
 const dataStore = require('./dataStore');
-const reactions = require('./reactions');
+const phraseManager = require('./phraseManager');
 
 if (!config.token) {
   console.error('DISCORD_TOKEN is missing. Create a .env file from .env.example');
@@ -39,36 +39,51 @@ distube
   .on('playSong', (queue, song) => {
     // Plain text only: title, duration, requester (no embed, no phrases)
     const duration = require('./embeds').formatDuration(song.duration);
-    const requester = song.member?.displayName || 'Alguien';
-    queue.textChannel.send(` **${song.name}** \`${duration}\` — pedida por **${requester}**\n${song.url}`).catch((e) => console.error('[distube] playSong send error:', e));
+    const requester = song.member.displayName || 'Alguien';
+    queue.textChannel
+      .send(`🎵 **${song.name}** — pedida por **${requester}**`)
+      .catch((e) => console.error('[distube] playSong send error:', e));
   })
   .on('addSong', (queue, song) => {
     const embed = require('./embeds').trackEmbed(song, ' Añadida a la cola');
-    queue.textChannel.send({ content: song.url, embeds: [embed] }).catch((e) => console.error('[distube] addSong send error:', e));
+    queue.textChannel
+      .send({ content: song.url, embeds: [embed] })
+      .catch((e) => console.error('[distube] addSong send error:', e));
   })
   .on('addList', (queue, playlist) => {
     const embed = require('./embeds').playlistEmbed(playlist);
-    queue.textChannel?.send({ embeds: [embed] }).catch((e) => console.error('[distube] addList send error:', e));
+    queue.textChannel
+      .send({ embeds: [embed] })
+      .catch((e) => console.error('[distube] addList send error:', e));
   })
-  .on('finish', (queue) => {
-    queue.textChannel?.send(reactions.distubeEvents.finish).catch(() => {});
+  .on('finish', async (queue) => {
+    const msg = await phraseManager.getPhrase('distube', 'finish');
+    queue.textChannel.send(msg).catch(() => {});
   })
-  .on('empty', (queue) => {
-    queue.textChannel?.send(reactions.distubeEvents.empty).catch(() => {});
+  .on('empty', async (queue) => {
+    const msg = await phraseManager.getPhrase('distube', 'empty');
+    queue.textChannel.send(msg).catch(() => {});
   })
-  .on('error', (channel, error) => {
+  .on('error', async (channel, error) => {
     console.error('DisTube error:', error);
-    channel?.send(reactions.distubeEvents.error(error.message.slice(0, 400))).catch(() => {});
+    const msg = await phraseManager.getPhrase('distube', 'error', 'hits', {
+      errorMsg: error.message.slice(0, 400),
+    });
+    channel.send(msg).catch(() => {});
   });
 
 // ---- Client events ----
-// discord.js v14.27+ renames 'ready' → 'clientReady' (the old name stops emitting in v15)
+// discord.js v14.27+ renames 'ready' → 'clientReady' (old name stops emitting in v15)
 client.once('clientReady', () => {
-  console.log(`¡Me conecté a Discord! Soy una planta digital ^_^`);
-  console.log(`Soy ${client.user.tag} (${client.user.id})`);
-  client.user.setActivity(`🍃 el unico bot que no te deja plantado — /bp help`, { type: ActivityType.Listening });
+  console.log('¡Me conecté a Discord! Soy una planta digital ^_^');
+  console.log('Soy \\ (°) /');
+  client.user.setActivity('🍃 el unico bot que no te deja plantado — /bp help', {
+    type: ActivityType.Listening,
+  });
 
-  registerSlashCommands(client).catch((err) => console.error('Error registering slash commands:', err));
+  registerSlashCommands(client).catch((err) =>
+    console.error('Error registering slash commands:', err)
+  );
   scheduleReminders(client);
   checkBirthdays().catch((err) => console.error('[BIRTHDAY] Error in initial check:', err));
   setInterval(() => {
@@ -99,13 +114,16 @@ async function checkBirthdays() {
     try {
       const channel =
         guild.channels.cache.find((c) => c.name === 'general' || c.name.includes('general')) ||
-        guild.channels.cache.find((c) => c.type === 0 && c.permissionsFor(guild.members.me)?.has('SendMessages'));
+        guild.channels.cache.find(
+          (c) => c.type === 0 && c.permissionsFor(guild.members.me).has('SendMessages')
+        );
       if (!channel) continue;
 
-      const mentions = unannounced
-        .map(([uid]) => `<@${uid}>`)
-        .join(' ');
-      await channel.send(reactions.reminders.birthdayAnnouncement(mentions));
+      const mentions = unannounced.map(([uid]) => `<@${uid}>`).join(' ');
+      const msg = await phraseManager.getPhrase('reminders', 'birthdayAnnouncement', 'hits', {
+        mentions,
+      });
+      await channel.send(msg);
       for (const [uid] of unannounced) await dataStore.markBirthdayAnnounced(uid, year);
       console.log(`[BIRTHDAY] Announced ${unannounced.length} birthday(s) in ${guild.name}`);
     } catch (err) {
@@ -122,7 +140,7 @@ setInterval(() => {
     if (queue && queue.voiceChannel) {
       const members = queue.voiceChannel.members.filter((m) => !m.user.bot);
       if (members.size === 0) {
-        console.log(`[Voice] No users in ${queue.voiceChannel.name}, disconnecting...`);
+        console.log(`[Voice] No users in ${guild.name}, disconnecting.`);
         distube.stop(guild.id);
         queue.voiceChannel.leave().catch((err) => console.error('[Voice] Error leaving channel:', err));
       }
