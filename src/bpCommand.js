@@ -437,10 +437,12 @@ async function searchTracks(place, query) {
 
 // Runs yt-dlp directly with search prefix (ytsearch5 / scsearch5)
 async function searchWithYtDlp(prefix, query) {
-  const ytDlp = path.join(__dirname, '.', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.exe');
-  const dataDir = path.join(__dirname, '.', 'data');
+  // Go up one level from src/ to project root for node_modules
+  const projectRoot = path.join(__dirname, '..');
+  const ytDlp = path.join(projectRoot, 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.exe');
+  const dataDir = path.join(projectRoot, 'data');
   const cookieFile = path.join(dataDir, 'cookies.txt');
-  const confFile = path.join(__dirname, '.', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
+  const confFile = path.join(projectRoot, 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
 
   const args = ['--dump-single-json', `${prefix}:${query}`];
   if (fs.existsSync(cookieFile) && fs.statSync(cookieFile).size > 0) {

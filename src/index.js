@@ -57,16 +57,16 @@ distube
       .catch((e) => console.error('[distube] addList send error:', e));
   })
   .on('finish', async (queue) => {
-    const msg = await phraseManager.getPhrase('distube', 'finish');
+    const msg = await phraseManager.getPhrase('distubeEvents', 'finish');
     queue.textChannel.send(msg).catch(() => {});
   })
   .on('empty', async (queue) => {
-    const msg = await phraseManager.getPhrase('distube', 'empty');
+    const msg = await phraseManager.getPhrase('distubeEvents', 'empty');
     queue.textChannel.send(msg).catch(() => {});
   })
   .on('error', async (channel, error) => {
     console.error('DisTube error:', error);
-    const msg = await phraseManager.getPhrase('distube', 'error', 'hits', {
+    const msg = await phraseManager.getPhrase('distubeEvents', 'error', 'hits', {
       errorMsg: error.message.slice(0, 400),
     });
     channel.send(msg).catch(() => {});
