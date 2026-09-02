@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, MessageFlags } = require('discord.js');
 const { execFile } = require('child_process');
 const { promisify } = require('util');
 const path = require('path');
@@ -258,7 +258,7 @@ async function handleInteractionSafely(fn, interaction) {
       if (interaction.deferred || interaction.replied) {
         await interaction.editReply({ content: msg }).catch(() => {});
       } else {
-        await interaction.reply({ content: msg, ephemeral: true }).catch(() => {});
+        await interaction.reply({ content: msg, flags: MessageFlags.Ephemeral }).catch(() => {});
       }
     } catch (replyErr) {
       console.error('[bp] Could not reply to failed interaction:', replyErr);
@@ -331,7 +331,7 @@ async function handleInteraction(interaction) {
 async function cmdPlay(interaction) {
   const channel = getVoiceChannel(interaction);
   if (!channel) {
-    return interaction.reply({ content: '🔇 Che! Si no estás en un canal de voz, mis raíces no te oyen. Metete a uno y te pongo el tema. 🌿', ephemeral: true });
+    return interaction.reply({ content: '🔇 Che! Si no estás en un canal de voz, mis raíces no te oyen. Metete a uno y te pongo el tema. 🌿', flags: MessageFlags.Ephemeral });
   }
   const query = interaction.options.getString('url');
   await interaction.deferReply();
@@ -347,13 +347,13 @@ async function cmdPlay(interaction) {
 async function cmdPlaylist(interaction) {
   const channel = getVoiceChannel(interaction);
   if (!channel) {
-    return interaction.reply({ content: '🔇 Che, no te escucho desde acá... entrá a un canal de voz y regame con música. 🌿', ephemeral: true });
+    return interaction.reply({ content: '🔇 Che, no te escucho desde acá... entrá a un canal de voz y regame con música. 🌿', flags: MessageFlags.Ephemeral });
   }
   const url = interaction.options.getString('url');
   if (!isPlaylistUrl(url)) {
     return interaction.reply({
       content: '❌ Eso no parece una playlist, che. Usá `/bp music play <url>` para canciones sueltas... mi familia es toda una playlist de hojas, así que algo sé. 🍃',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
   await interaction.deferReply();
@@ -369,7 +369,7 @@ async function cmdPlaylist(interaction) {
 async function cmdQuery(interaction) {
   const channel = getVoiceChannel(interaction);
   if (!channel) {
-    return interaction.reply({ content: '🔇 ¡Che! Sin canal de voz no hay búsqueda... mis hojas no captan señales sin vos. 🌿', ephemeral: true });
+    return interaction.reply({ content: '🔇 ¡Che! Sin canal de voz no hay búsqueda... mis hojas no captan señales sin vos. 🌿', flags: MessageFlags.Ephemeral });
   }
   const place = interaction.options.getString('place');
   const title = interaction.options.getString('title');
@@ -409,7 +409,7 @@ async function handleQuerySelect(interaction) {
   if (!channel) {
     return interaction.reply({
       content: '🔇 Che, ya no estás en el canal de voz... enraizate de nuevo y usá `/bp music query` o `/bp music play <url>`. :P',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 
@@ -500,11 +500,11 @@ async function searchBandcamp(query) {
 async function cmdStop(interaction) {
   const queue = getQueue(interaction);
   if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? Yo no me muevo de mi maceta, así que seguro escuché mal.:o', ephemeral: true });
+    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? Yo no me muevo de mi maceta, así que seguro escuché mal.:o', flags: MessageFlags.Ephemeral });
   }
   const channel = getVoiceChannel(interaction);
   if (!channel || queue.voiceChannel.id !== channel.id) {
-    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz. Yo no me muevo de mi maceta, así que vení vos.:P', ephemeral: true });
+    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz. Yo no me muevo de mi maceta, así que vení vos.:P', flags: MessageFlags.Ephemeral });
   }
   interaction.client.distube.stop(interaction.guildId);
   await interaction.reply(await phraseManager.getPhrase('music', 'stop'));
@@ -513,7 +513,7 @@ async function cmdStop(interaction) {
 async function cmdSkip(interaction) {
   const queue = getQueue(interaction);
   if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? Veces me quedo callado, como las plantas en invierno. ❄️:o', ephemeral: true });
+    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? Veces me quedo callado, como las plantas en invierno. ❄️:o', flags: MessageFlags.Ephemeral });
   }
   if (queue.songs.length <= 1) {
     return interaction.reply(await phraseManager.getPhrase('music', 'skipNoMore'));
@@ -526,11 +526,11 @@ async function cmdSkip(interaction) {
 async function cmdRewind(interaction) {
   const queue = getQueue(interaction);
   if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? La melodía se me escapó entre las ramas.:o', ephemeral: true });
+    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? La melodía se me escapó entre las ramas.:o', flags: MessageFlags.Ephemeral });
   }
   const channel = getVoiceChannel(interaction);
   if (!channel || queue.voiceChannel.id !== channel.id) {
-    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz. Mis hojas no se estiran tanto. 🍃', ephemeral: true });
+    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz. Mis hojas no se estiran tanto. 🍃', flags: MessageFlags.Ephemeral });
   }
   interaction.client.distube.seek(interaction.guildId, 0);
   await interaction.reply(await phraseManager.getPhrase('music', 'rewind', 'hits', { songName: queue.songs[0].name }));
@@ -539,7 +539,7 @@ async function cmdRewind(interaction) {
 async function cmdQueue(interaction) {
   const queue = getQueue(interaction);
   if (!queue || !queue.songs.length) {
-    return interaction.reply({ content: '❌ La cola está vacía. ¡agregá algo con `/bp music play`! No me dejes sin música que me pongo triste. 🌿', ephemeral: true });
+    return interaction.reply({ content: '❌ La cola está vacía. ¡agregá algo con `/bp music play`! No me dejes sin música que me pongo triste. 🌿', flags: MessageFlags.Ephemeral });
   }
   const embed = queueEmbed(queue);
   await interaction.reply({ embeds: [embed] });
@@ -548,7 +548,7 @@ async function cmdQueue(interaction) {
 async function cmdClear(interaction) {
   const queue = getQueue(interaction);
   if (!queue || !queue.songs.length) {
-    return interaction.reply({ content: '❌ La cola ya está vacía, che. No hay nada que limpiar. 🍃', ephemeral: true });
+    return interaction.reply({ content: '❌ La cola ya está vacía, che. No hay nada que limpiar. 🍃', flags: MessageFlags.Ephemeral });
   }
   queue.songs = [queue.songs[0]]; // keep current song
   await interaction.reply('🗑 Cola vaciada. Solo queda la canción actual. 🌿');
@@ -561,7 +561,7 @@ async function cmdRemind(interaction) {
   const msg = interaction.options.getString('message');
   const dt = new Date(dtStr.replace(' ', 'T'));
   if (isNaN(dt.getTime()) || dt < new Date()) {
-    return interaction.reply({ content: '❌ Fecha inválida o en el pasado. Formato: YYYY-MM-DD HH:MM', ephemeral: true });
+    return interaction.reply({ content: '❌ Fecha inválida o en el pasado. Formato: YYYY-MM-DD HH:MM', flags: MessageFlags.Ephemeral });
   }
   const delay = dt.getTime() - Date.now();
   const id = await require('./handlers/reminders').createReminder(
@@ -580,14 +580,14 @@ async function cmdReminders(interaction) {
     return interaction.reply(await phraseManager.getPhrase('reminders', 'listEmpty'));
   }
   const lines = reminders.map((r) => `\`${r.id}\` — ${new Date(r.time).toLocaleString('es-AR')} — ${r.message.slice(0, 80)}`);
-  await interaction.reply({ content: `📋 **Tus recordatorios:**\n${lines.join('\n')}`, ephemeral: true });
+  await interaction.reply({ content: `📋 **Tus recordatorios:**\n${lines.join('\n')}`, flags: MessageFlags.Ephemeral });
 }
 
 async function cmdCancelRemind(interaction) {
   const id = interaction.options.getString('id');
   const ok = await require('./handlers/reminders').cancelReminder(interaction.guildId, interaction.user.id, id);
   if (!ok) {
-    return interaction.reply({ content: '❌ No se encontró ese recordatorio. ¿Seguro que es tuyo? 👀', ephemeral: true });
+    return interaction.reply({ content: '❌ No se encontró ese recordatorio. ¿Seguro que es tuyo? 👀', flags: MessageFlags.Ephemeral });
   }
   await interaction.reply(await phraseManager.getPhrase('reminders', 'cancelled', 'hits', { id }));
 }
@@ -615,7 +615,7 @@ async function cmdBirthdays(interaction) {
     return interaction.reply(await phraseManager.getPhrase('reminders', 'birthdaysEmpty'));
   }
   const lines = guildBirthdays.map(([uid, b]) => `<@${uid}> — ${b.day}/${b.month}`);
-  await interaction.reply({ content: `🎂 **Cumpleaños del servidor:**\n${lines.join('\n')}`, ephemeral: true });
+  await interaction.reply({ content: `🎂 **Cumpleaños del servidor:**\n${lines.join('\n')}`, flags: MessageFlags.Ephemeral });
 }
 
 // ---------------- Fun ----------------
@@ -704,7 +704,7 @@ async function cmdRoll(interaction) {
   const dice = interaction.options.getString('dice');
   const match = dice.match(/^(\d*)d(\d+)$/i);
   if (!match) {
-    return interaction.reply({ content: '❌ Formato inválido. Usá NdS (ej: d20, 2d6, 1d100).', ephemeral: true });
+    return interaction.reply({ content: '❌ Formato inválido. Usá NdS (ej: d20, 2d6, 1d100).', flags: MessageFlags.Ephemeral });
   }
   const count = Math.min(parseInt(match[1]) || 1, 100);
   const sides = Math.min(parseInt(match[2]), 10000);
@@ -731,7 +731,7 @@ async function cmdPhrase(interaction) {
   if (action === 'list') {
     const phrases = await phraseManager.listPhrases(category);
     if (!phrases || (category && phrases.length === 0)) {
-      return interaction.reply({ content: category ? `❌ No hay frases en la categoría \`${category}\`.` : '❌ No hay frases guardadas.', ephemeral: true });
+      return interaction.reply({ content: category ? `❌ No hay frases en la categoría \`${category}\`.` : '❌ No hay frases guardadas.', flags: MessageFlags.Ephemeral });
     }
     let reply = category ? `📋 **Frases en \`${category}\`:**` : '📋 **Todas las frases:**';
     if (category) {
@@ -746,31 +746,31 @@ async function cmdPhrase(interaction) {
         }
       }
     }
-    return interaction.reply({ content: reply.slice(0, 2000), ephemeral: true });
+    return interaction.reply({ content: reply.slice(0, 2000), flags: MessageFlags.Ephemeral });
   }
 
   if (action === 'add') {
     if (!category || !key || !text) {
-      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave y texto son requeridos.', ephemeral: true });
+      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave y texto son requeridos.', flags: MessageFlags.Ephemeral });
     }
     await phraseManager.addPhrase(category, key, type, text);
-    return interaction.reply({ content: `✅ Frase agregada a \`${category}.${key}.${type}\`.`, ephemeral: true });
+    return interaction.reply({ content: `✅ Frase agregada a \`${category}.${key}.${type}\`.`, flags: MessageFlags.Ephemeral });
   }
 
   if (action === 'edit') {
     if (!category || !key || index === null || !text) {
-      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave, índice y texto son requeridos.', ephemeral: true });
+      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave, índice y texto son requeridos.', flags: MessageFlags.Ephemeral });
     }
     const ok = await phraseManager.editPhrase(category, key, type, index, text);
-    return interaction.reply({ content: ok ? `✅ Frase editada.` : `❌ No se encontró esa frase.`, ephemeral: true });
+    return interaction.reply({ content: ok ? `✅ Frase editada.` : `❌ No se encontró esa frase.`, flags: MessageFlags.Ephemeral });
   }
 
   if (action === 'delete') {
     if (!category || !key || index === null) {
-      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave e índice son requeridos.', ephemeral: true });
+      return interaction.reply({ content: '❌ Faltan parámetros: categoría, clave e índice son requeridos.', flags: MessageFlags.Ephemeral });
     }
     const ok = await phraseManager.deletePhrase(category, key, type, index);
-    return interaction.reply({ content: ok ? `✅ Frase borrada.` : `❌ No se encontró esa frase.`, ephemeral: true });
+    return interaction.reply({ content: ok ? `✅ Frase borrada.` : `❌ No se encontró esa frase.`, flags: MessageFlags.Ephemeral });
   }
 }
 

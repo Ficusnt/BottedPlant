@@ -6,6 +6,7 @@ const config = require('./config');
 const { registerSlashCommands, handleInteraction, handleMessage } = require('./bpCommand');
 const { scheduleReminders } = require('./handlers/reminders');
 const dataStore = require('./dataStore');
+const { loadShitposts, loadMedia } = require('./shitpost');
 const phraseManager = require('./phraseManager');
 
 if (!config.token) {
@@ -85,6 +86,8 @@ client.once('clientReady', () => {
     console.error('Error registering slash commands:', err)
   );
   scheduleReminders(client);
+  loadShitposts().catch((err) => console.error('[SHITPOST] Error loading shitposts:', err));
+  loadMedia().catch((err) => console.error('[SHITPOST] Error loading media:', err));
   checkBirthdays().catch((err) => console.error('[BIRTHDAY] Error in initial check:', err));
   setInterval(() => {
     checkBirthdays().catch((err) => console.error('[BIRTHDAY] Error in scheduled check:', err));

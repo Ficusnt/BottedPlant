@@ -10,12 +10,13 @@ let SHITPOSTS = [];
 
 async function loadShitposts() {
   if (SHITPOSTS.length > 0) return;
-  const cat = await phraseManager.getCategory('shitpost');
+  const cat = await phraseManager.getCategory('shitposts');
   if (cat) {
     for (const key of Object.keys(cat)) {
       const entry = cat[key];
       SHITPOSTS.push({
         text: key,
+        keywords: entry.keywords || [],
         hits: entry.hits || [],
         crits: entry.crits || [],
         fails: entry.fails || [],
@@ -58,13 +59,13 @@ async function loadMedia() {
 function hasShitpostTrigger(content) {
   if (!content) return false;
   const lower = content.toLowerCase();
-  return SHITPOSTS.some((s) => s.text.toLowerCase().split(' ').some((word) => lower.includes(word)));
+  return SHITPOSTS.some((s) => (s.keywords && s.keywords.some((k) => lower.includes(k.toLowerCase()))) || (s.text && s.text.toLowerCase().split(' ').some((word) => lower.includes(word))));
 }
 
 // Get random shitpost response
 function getShitpostResponse(content) {
   const lower = content.toLowerCase();
-  const triggers = SHITPOSTS.filter((s) => s.text.toLowerCase().split(' ').some((word) => lower.includes(word)));
+  const triggers = SHITPOSTS.filter((s) => (s.keywords && s.keywords.some((k) => lower.includes(k.toLowerCase()))) || (s.text && s.text.toLowerCase().split(' ').some((word) => lower.includes(word))));
   if (triggers.length === 0) return null;
   const trigger = triggers[Math.floor(Math.random() * triggers.length)];
   const roll = Math.floor(Math.random() * 20) + 1;

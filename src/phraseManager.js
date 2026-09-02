@@ -9,6 +9,10 @@ const path = require('path');
 
 const PHRASES_FILE = path.join(__dirname, 'data', 'phrases.json');
 
+// Fallback returned when a requested phrase/key doesn't exist, so callers never
+// receive null (which could crash `interaction.reply(null)`).
+const MISSING_PHRASE = '🌿 *frase extraviada entre mis raíces...*';
+
 let phrasesData = null;
 let lastLoaded = 0;
 
@@ -29,8 +33,9 @@ async function loadPhrases() {
   }
 }
 async function getPhrases() { if (!phrasesData) await loadPhrases(); return phrasesData; }
+async function getCategory(category){ const data=await getPhrases(); return data.categories[category]||null; }
 async function reloadPhrases() { console.log('[PhraseManager] Hot-reloading phrases...'); await loadPhrases(); return phrasesData; }
-async function getPhrase(category, key, type='hits', vars={}) { const data=await getPhrases(); const cat=data.categories[category]; if(!cat){console.warn('[PhraseManager] Category not found: '+category);return null;} const entry=cat[key]; if(!entry){console.warn('[PhraseManager] Key not found: '+category+'.'+key);return null;} const responses=entry[type]; if(!responses||!responses.length){console.warn('[PhraseManager] No '+type+' responses for '+category+'.'+key); if(type!=='hits'&&entry.hits&&entry.hits.length){return interpolate(rand(entry.hits),vars);} return null;} return interpolate(rand(responses),vars); }
+async function getPhrase(category, key, type='hits', vars={}) { const data=await getPhrases(); const cat=data.categories[category]; if(!cat){console.warn('[PhraseManager] Category not found: '+category); return interpolate(MISSING_PHRASE,vars);} const entry=cat[key]; if(!entry){console.warn('[PhraseManager] Key not found: '+category+'.'+key); return interpolate(MISSING_PHRASE,vars);} const responses=entry[type]; if(!responses||!responses.length){console.warn('[PhraseManager] No '+type+' responses for '+category+'.'+key); if(type!=='hits'&&entry.hits&&entry.hits.length){return interpolate(rand(entry.hits),vars);} return interpolate(MISSING_PHRASE,vars);} return interpolate(rand(responses),vars); }
 function rand(arr){ if(!arr||!arr.length) return ''; return arr[Math.floor(Math.random()*arr.length)]; }
 function interpolate(text,vars){ if(!text) return ''; return text.replace(/\{(\w+)\}/g,(match,key)=>vars[key]!==undefined?vars[key]:match); }
 async function getTriggerResponse(category,content){ const data=await getPhrases(); const cat=data.categories[category]; if(!cat) return null; const lower=content.toLowerCase(); let match=null,matchKey=null; for(const[key,entry] of Object.entries(cat)){ const patterns=entry.patterns||entry.keywords; if(!patterns||!patterns.length) continue; if(patterns.some(p=>lower.includes(p.toLowerCase()))){match=entry;matchKey=key;break;}} if(!match) return null; const roll=Math.floor(Math.random()*20)+1; let responseType,responseText; if(roll===1){responseType='fail';responseText=rand(match.fails||match.hits||[]);} else if(roll===20){responseType='crit';responseText=rand(match.crits||match.hits||[]);} else {responseType='hit';responseText=rand(match.hits||[]);} let mediaFile=null; if(match.media&&match.media.length&&Math.random()<(match.mediaChance||data.media?.globalChance||0.08)){const canSend=await checkMediaCooldown(content); if(canSend){mediaFile=rand(match.media);await updateMediaCooldown(content);}} return {text:responseText,type:responseType,roll:roll,key:matchKey,mediaFile:mediaFile};}
@@ -45,4 +50,4 @@ async function savePhrases(data){try{await fs.writeFile(PHRASES_FILE,JSON.string
 async function getMediaFolder(){const data=await getPhrases();return path.join(__dirname,data.media?.folder||'data/media');}
 async function listMedia(){const mediaDir=await getMediaFolder();try{const files=await fs.readdir(mediaDir);return files.filter(f=>{const ext=path.extname(f).toLowerCase();return ['.jpg','.jpeg','.png','.gif','.mp4','.webm'].includes(ext);});}catch(err){console.error('[PhraseManager] Error listing media:',err);return[];}}
 loadPhrases().catch(err=>console.error('[PhraseManager] Initial load failed:',err));
-module.exports={loadPhrases,reloadPhrases,getPhrase,getTriggerResponse,getUwuEnding,listPhrases,addPhrase,editPhrase,deletePhrase,savePhrases,getMediaFolder,listMedia,rand,interpolate};
+module.exports={loadPhrases,reloadPhrases,getPhrase,getTriggerResponse,getCategory,getUwuEnding,listPhrases,addPhrase,editPhrase,deletePhrase,savePhrases,getMediaFolder,listMedia,rand,interpolate};

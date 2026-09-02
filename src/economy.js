@@ -1,5 +1,5 @@
 // economy.js — Hojas (leaves), betting, triggers, uwu (ported from GigaSlothy)
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, MessageFlags } = require('discord.js');
 const dataStore = require('./dataStore');
 const { hasShitpostTrigger, getShitpostResponse, getRandomMedia, sendShitpost } = require('./shitpost');
 const phraseManager = require('./phraseManager');
@@ -113,13 +113,13 @@ async function cmdGamble(interaction) {
   if (parts.length < 3) {
     return interaction.reply({
       content: await phraseManager.getPhrase('economy', 'gambleBadFormat'),
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
   const statement = parts[0];
   const choices = parts.slice(1);
   if (choices.length > 10) {
-    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleTooMany'), ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleTooMany'), flags: MessageFlags.Ephemeral });
   }
   const id = `${interaction.guildId}-${Date.now()}`;
   await dataStore.createGamble(id, {
@@ -138,15 +138,15 @@ async function cmdBet(interaction) {
   const choice = interaction.options.getInteger('choice');
   const amount = interaction.options.getInteger('amount');
   const gamble = await dataStore.getGamble(id);
-  if (!gamble) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleNotFound'), ephemeral: true });
-  if (gamble.closed) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleClosed'), ephemeral: true });
+  if (!gamble) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleNotFound'), flags: MessageFlags.Ephemeral });
+  if (gamble.closed) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleClosed'), flags: MessageFlags.Ephemeral });
   if (gamble.creator === interaction.user.id) {
-    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleSelfBet'), ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleSelfBet'), flags: MessageFlags.Ephemeral });
   }
   if (choice < 1 || choice > gamble.choices.length) {
-    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadChoice'), ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadChoice'), flags: MessageFlags.Ephemeral });
   }
-  if (amount <= 0) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadAmount'), ephemeral: true });
+  if (amount <= 0) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadAmount'), flags: MessageFlags.Ephemeral });
 
   const key = String(choice);
   const uid = interaction.user.id;
@@ -156,7 +156,7 @@ async function cmdBet(interaction) {
   if (!await dataStore.deductPoints(interaction.guildId, uid, amount)) {
     return interaction.reply({
       content: await phraseManager.getPhrase('economy', 'gambleNotEnough', 'hits', { userPoints }),
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 
@@ -172,16 +172,16 @@ async function cmdRedeem(interaction) {
   const id = interaction.options.getString('id');
   const winning = interaction.options.getInteger('choice');
   const gamble = await dataStore.getGamble(id);
-  if (!gamble) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemNotFound'), ephemeral: true });
-  if (gamble.closed) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemClosed'), ephemeral: true });
+  if (!gamble) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemNotFound'), flags: MessageFlags.Ephemeral });
+  if (gamble.closed) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemClosed'), flags: MessageFlags.Ephemeral });
   if (winning < 1 || winning > gamble.choices.length) {
-    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemBadChoice'), ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemBadChoice'), flags: MessageFlags.Ephemeral });
   }
 
   const isCreator = gamble.creator === interaction.user.id;
   const isAdmin = interaction.memberPermissions.has('ManageMessages') || false;
   if (!isCreator && !isAdmin) {
-    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemNoPerm'), ephemeral: true });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemNoPerm'), flags: MessageFlags.Ephemeral });
   }
 
   gamble.closed = true;
@@ -277,7 +277,11 @@ async function handleMessage(message) {
   if (Math.random() <= 0.25) {
     const triggerResponse = await phraseManager.getTriggerResponse('triggers', content);
     if (triggerResponse && triggerResponse.text) {
-      await message.channel.send(triggerResponse.text).catch(() => {});
+      if (triggerResponse.mediaFile) {
+        await sendShitpost(message, triggerResponse.text, triggerResponse.mediaFile);
+      } else {
+        await message.channel.send(triggerResponse.text).catch(() => {});
+      }
       return;
     }
   }

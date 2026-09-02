@@ -223,6 +223,30 @@
         "hits": [
           "🎲 {username} tiró {count}d{sides}: **{total}**{detail}"
         ]
+      },
+      "hola": {
+        "hits": [
+          "🌿 ¡Hola hola! ¿Viniste a regarme o solo a saludar? c:",
+          "¡Buenas! Acá verde y contenta de verte 🌱"
+        ]
+      },
+      "japish": {
+        "hits": [
+          "JAPISH JAPISH. 🍃",
+          "¡GRAGH! >:c"
+        ]
+      },
+      "goodgirl": {
+        "hits": [
+          "🐶 ¡Buenacita! Digo... buena planta. Me diste agua y crecí dos hojas de orgullo. 🌿",
+          "✨ ¡Eso! Si me regás todos los días, soy la planta más buena del barrio. c:"
+        ]
+      },
+      "coinflip": {
+        "hits": [
+          "🪙 Cara. 100% seguro... o no. ¿Quién mira las monedas estando plantada? 🌿",
+          "🪙 Seca. Y sí, estuve dudando entre la tierra y el sol. 🌱"
+        ]
       }
     },
     "distubeEvents": {
