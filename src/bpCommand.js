@@ -655,8 +655,8 @@ async function cmdSafebooru(interaction) {
   const tags = interaction.options.getString('tags');
   await interaction.deferReply();
   try {
-    const url = `https://safebooru.donmai.us/posts.json?limit=10000&random=true&tags=${encodeURIComponent(tags)}`;
-    const res = await fetch(url);
+    const url = `https://safebooru.donmai.us/posts.json?limit=100&random=true&tags=${encodeURIComponent(tags)}`;
+    const res = await fetch(url, { headers: { "User-Agent": "BottedPlant/1.0" } });
     if (!res.ok) throw new Error(`Safebooru respondió ${res.status}`);
     const posts = await res.json();
     if (!posts.length) {
