@@ -65,12 +65,16 @@ distube
     const msg = await phraseManager.getPhrase('distubeEvents', 'empty');
     queue.textChannel.send(msg).catch(() => {});
   })
-  .on('error', async (channel, error) => {
+  .on('error', async (error, queue, song) => {
     console.error('DisTube error:', error);
+    const textChannel = queue?.textChannel;
+    if (!textChannel) return;
+
+    const errorMsg = error?.message?.slice(0, 400) || 'Unknown error';
     const msg = await phraseManager.getPhrase('distubeEvents', 'error', 'hits', {
-      errorMsg: error.message.slice(0, 400),
+      errorMsg,
     });
-    channel.send(msg).catch(() => {});
+    textChannel.send(msg).catch(() => {});
   });
 
 // ---- Client events ----
