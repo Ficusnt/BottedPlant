@@ -4,51 +4,19 @@ const path = require('path');
 // Load config to get the resolved cookies file (respects YTDLP_COOKIES_FILE env var)
 const config = require('../src/config');
 
-const dataDir = path.join(__dirname, '..', 'data');
 const conf = path.join(__dirname, '..', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
 
-// Filter cookies to only keep .youtube.com and .soundcloud.com domains
-function filterCookies(sourcePath, destPath) {
-  if (!fs.existsSync(sourcePath)) return false;
-  
-  const content = fs.readFileSync(sourcePath, 'utf8');
-  const lines = content.split('\n');
-  const filtered = lines.filter(line => {
-    // Keep comments and blank lines
-    if (line.startsWith('#') || line.trim() === '') return true;
-    // Keep only .youtube.com and .soundcloud.com cookies
-    return line.includes('.youtube.com\t') || line.includes('.soundcloud.com\t');
-  });
-  
-  if (filtered.length <= lines.filter(l => l.startsWith('#') || l.trim() === '').length) {
-    console.log('[setup] No relevant cookies found after filtering');
-    return false;
-  }
-  
-  fs.writeFileSync(destPath, filtered.join('\n'), 'utf8');
-  console.log(`[setup] Filtered cookies: ${filtered.length - lines.filter(l => l.startsWith('#') || l.trim() === '').length} relevant cookies kept`);
-  return true;
-}
-
-// Derive filtered cookie file name from source file name (respects YTDLP_COOKIES_FILE naming)
-let filteredCookieFile = path.join(dataDir, 'cookies-filtered.txt');
-if (config.cookiesFile) {
-  const sourceName = path.basename(config.cookiesFile);
-  const parsed = path.parse(sourceName);
-  filteredCookieFile = path.join(dataDir, `${parsed.name}-filtered${parsed.ext}`);
-}
-
-const hasCookies = config.cookiesFile && filterCookies(config.cookiesFile, filteredCookieFile);
-
 let content;
-if (hasCookies) {
+if (config.cookiesFile && fs.existsSync(config.cookiesFile)) {
+  // Use the cookie file directly (already filtered by generate-cookies.js)
   content = `# YouTube cookie-based authentication (recommended)
 # This bypasses bot detection by using authenticated browser cookies
---cookies "${filteredCookieFile}"
+--cookies "${config.cookiesFile.replace(/\\/g, '\\\\')}"
 --extractor-args "youtube:player_client=web"
 --extractor-args "youtube:client=web"
 -f bestaudio/best
 `;
+  console.log(`[setup] Using cookies: ${config.cookiesFile}`);
 } else {
   content = `# Modern YouTube bot detection bypass without cookies
 # Fallback to embed hack when cookies are not available
@@ -61,11 +29,16 @@ if (hasCookies) {
 --extractor-args "youtube:youtube_include_thumbnails=1"
 -f bestaudio/best
 `;
+  if (config.cookiesFile) {
+    console.log('[setup] Cookie file specified but not found:', config.cookiesFile);
+  } else {
+    console.log('[setup] No cookie file configured (YTDLP_COOKIES_FILE not set)');
+  }
 }
 
 try {
   fs.writeFileSync(conf, content, 'utf8');
-  console.log(`[setup] Created yt-dlp.conf with ${hasCookies ? 'cookie-based authentication' : 'embed hack'}`);
+  console.log(`[setup] Created yt-dlp.conf`);
 } catch (e) {
   console.warn('[setup] Skipped:', e.message);
 }
