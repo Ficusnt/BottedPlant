@@ -6,9 +6,54 @@ const fs = require('fs');
 const dataStore = require('./dataStore');
 const { queueEmbed, formatDuration } = require('./embeds');
 const { cmdLeave } = require('./cmdLeave');
-const { handleMessage, runEconomyCommand } = require('./economy');
 const phraseManager = require('./phraseManager');
 const config = require('./config');
+
+// Import modular command handlers
+const {
+  handleMusicPlay,
+  handleMusicPlaylist,
+  handleMusicQuery,
+  handleMusicSkip,
+  handleMusicStop,
+  handleMusicPause,
+  handleMusicResume,
+  handleMusicQueue,
+  handleMusicNowPlaying,
+  handleMusicVolume,
+  handleMusicLoop,
+  handleMusicShuffle,
+  handleMusicRewind,
+  handleMusicLeave,
+} = require('./commands/musicCommands');
+
+const {
+  handleRememberAdd,
+  handleRememberList,
+  handleRememberCancel,
+  handleBirthdayAdd,
+  handleBirthdayList,
+  handleBirthdayRemove,
+} = require('./commands/rememberCommands');
+
+const {
+  handleFunUwu,
+  handleFunShitpost,
+  handleFunRoll,
+  handleFunChoose,
+  handleFun8ball,
+} = require('./commands/funCommands');
+
+const {
+  handleLeavesDaily,
+  handleLeavesPoints,
+  handleLeavesLeaderboard,
+  handleLeavesGamble,
+  handleLeavesBet,
+  handleLeavesRedeem,
+} = require('./commands/economyCommands');
+
+const { handleMessage } = require('./economy');
 
 const execFileAsync = promisify(execFile);
 
@@ -38,171 +83,191 @@ function bpCommandData() {
         .addSubcommand((sub) =>
           sub
             .setName('query')
-            .setDescription('Buscar un título en YouTube, SoundCloud o Bandcamp y reproducirlo')
+            .setDescription('Buscar y elegir qué reproducir')
+            .addStringOption((opt) => opt.setName('query').setDescription('Qué buscar').setRequired(true))
+        )
+        .addSubcommand((sub) =>
+          sub.setName('skip').setDescription('Saltar la canción actual')
+        )
+        .addSubcommand((sub) =>
+          sub.setName('stop').setDescription('Detener la reproducción y limpiar la cola')
+        )
+        .addSubcommand((sub) =>
+          sub.setName('pause').setDescription('Pausar la reproducción')
+        )
+        .addSubcommand((sub) =>
+          sub.setName('resume').setDescription('Reanudar la reproducción')
+        )
+        .addSubcommand((sub) =>
+          sub
+            .setName('queue')
+            .setDescription('Ver la cola de reproducción')
+            .addIntegerOption((opt) => opt.setName('page').setDescription('Página (por defecto 1)').setMinValue(1))
+        )
+        .addSubcommand((sub) =>
+          sub.setName('nowplaying').setDescription('Ver la canción actual')
+        )
+        .addSubcommand((sub) =>
+          sub
+            .setName('volume')
+            .setDescription('Cambiar el volumen (0-200)')
+            .addIntegerOption((opt) => opt.setName('level').setDescription('Nivel de volumen').setRequired(true).setMinValue(0).setMaxValue(200))
+        )
+        .addSubcommand((sub) =>
+          sub
+            .setName('loop')
+            .setDescription('Cambiar modo de repetición')
             .addStringOption((opt) =>
               opt
-                .setName('place')
-                .setDescription('Dónde buscar')
+                .setName('mode')
+                .setDescription('Modo: off, song, queue')
                 .setRequired(true)
                 .addChoices(
-                  { name: 'YouTube', value: 'youtube' },
-                  { name: 'SoundCloud', value: 'soundcloud' },
-                  { name: 'Bandcamp', value: 'bandcamp' }
+                  { name: 'Apagado', value: 'off' },
+                  { name: 'Canción', value: 'song' },
+                  { name: 'Cola', value: 'queue' }
                 )
             )
-            .addStringOption((opt) => opt.setName('title').setDescription('Título a buscar').setRequired(true))
         )
-        .addSubcommand((sub) => sub.setName('stop').setDescription('Detener y salir del canal de voz'))
-        .addSubcommand((sub) => sub.setName('leave').setDescription('Salir del canal de voz'))
-        .addSubcommand((sub) => sub.setName('skip').setDescription('Saltar la canción actual'))
-        .addSubcommand((sub) => sub.setName('rewind').setDescription('Rebobinar la canción actual desde el principio'))
-        .addSubcommand((sub) => sub.setName('queue').setDescription('Mostrar la cola de reproducción'))
-        .addSubcommand((sub) => sub.setName('clear').setDescription('Vaciar la cola de reproducción'))
+        .addSubcommand((sub) =>
+          sub.setName('shuffle').setDescription('Mezclar la cola aleatoriamente')
+        )
+        .addSubcommand((sub) =>
+          sub.setName('rewind').setDescription('Volver a la canción anterior')
+        )
+        .addSubcommand((sub) =>
+          sub.setName('leave').setDescription('Salir del canal de voz')
+        )
     )
-    // ⏰ Remember group
+    // 🔔 Reminders group
     .addSubcommandGroup((group) =>
       group
         .setName('remember')
-        .setDescription('Recordatorios y cumpleaños')
+        .setDescription('Recordatorios personales')
         .addSubcommand((sub) =>
           sub
-            .setName('remind')
-            .setDescription('Programar un recordatorio')
-            .addStringOption((opt) => opt.setName('datetime').setDescription('Fecha y hora: YYYY-MM-DD HH:MM').setRequired(true))
-            .addStringOption((opt) => opt.setName('message').setDescription('Mensaje del recordatorio').setRequired(true))
+            .setName('add')
+            .setDescription('Crear un recordatorio')
+            .addStringOption((opt) => opt.setName('texto').setDescription('Qué recordar').setRequired(true))
+            .addStringOption((opt) => opt.setName('cuando').setDescription('Cuándo (ISO 8601 o relativo, ej: 2025-12-25T10:00, en 1 hora)').setRequired(true))
+            .addChannelOption((opt) => opt.setName('canal').setDescription('Canal donde avisar (por defecto este)'))
         )
-        .addSubcommand((sub) => sub.setName('reminders').setDescription('Listar tus recordatorios pendientes'))
         .addSubcommand((sub) =>
           sub
-            .setName('cancelremind')
+            .setName('list')
+            .setDescription('Ver tus recordatorios')
+            .addUserOption((opt) => opt.setName('usuario').setDescription('Ver recordatorios de otro usuario'))
+        )
+        .addSubcommand((sub) =>
+          sub
+            .setName('cancel')
             .setDescription('Cancelar un recordatorio')
             .addStringOption((opt) => opt.setName('id').setDescription('ID del recordatorio').setRequired(true))
         )
-        // 🎂 Birthdays
+    )
+    // 🎂 Birthdays group
+    .addSubcommandGroup((group) =>
+      group
+        .setName('birthday')
+        .setDescription('Cumpleaños')
         .addSubcommand((sub) =>
           sub
-            .setName('birthday')
-            .setDescription('Guardar tu cumpleaños')
-            .addIntegerOption((opt) => opt.setName('month').setDescription('Mes (1-12)').setRequired(true).setMinValue(1).setMaxValue(12))
-            .addIntegerOption((opt) => opt.setName('day').setDescription('Día (1-31)').setRequired(true).setMinValue(1).setMaxValue(31))
+            .setName('add')
+            .setDescription('Agregar un cumpleaños')
+            .addUserOption((opt) => opt.setName('usuario').setDescription('Usuario').setRequired(true))
+            .addStringOption((opt) => opt.setName('fecha').setDescription('Fecha (DD/MM)').setRequired(true))
+            .addChannelOption((opt) => opt.setName('canal').setDescription('Canal para anunciar (por defecto este)'))
         )
-        .addSubcommand((sub) => sub.setName('birthdays').setDescription('Listar todos los cumpleaños'))
+        .addSubcommand((sub) =>
+          sub.setName('list').setDescription('Ver todos los cumpleaños del servidor')
+        )
+        .addSubcommand((sub) =>
+          sub
+            .setName('remove')
+            .setDescription('Eliminar un cumpleaños')
+            .addStringOption((opt) => opt.setName('id').setDescription('ID del cumpleaños').setRequired(true))
+        )
     )
     // 🎮 Fun group
     .addSubcommandGroup((group) =>
       group
         .setName('fun')
         .setDescription('Comandos de diversión')
-        .addSubcommand((sub) => sub.setName('status').setDescription('Cambiar el estado del bot'))
-        .addSubcommand((sub) => sub.setName('hola').setDescription('Respondo con "ola"'))
-        .addSubcommand((sub) => sub.setName('japish').setDescription('Basoooura.'))
-        .addSubcommand((sub) => sub.setName('goodgirl').setDescription('¿Soy una buena chica?'))
-        .addSubcommand((sub) => sub.setName('avatar').setDescription('Mostrar el avatar del bot'))
         .addSubcommand((sub) =>
           sub
-            .setName('rola')
-            .setDescription('Calificar la canción de Spotify (0-10)')
-            .addUserOption((opt) => opt.setName('user').setDescription('Usuario (opcional, por defecto vos)'))
+            .setName('uwu')
+            .setDescription('Uwuficar un texto')
+            .addStringOption((opt) => opt.setName('texto').setDescription('Texto a uwuficar').setRequired(true))
         )
         .addSubcommand((sub) =>
           sub
-            .setName('latex')
-            .setDescription('Renderizar una ecuación en LaTeX')
-            .addStringOption((opt) => opt.setName('equation').setDescription('Ecuación (ej: x^2+y^2=z^2)').setRequired(true))
-        )
-        .addSubcommand((sub) =>
-          sub
-            .setName('safebooru')
-            .setDescription('Buscar imagen en Safebooru')
-            .addStringOption((opt) => opt.setName('tags').setDescription('Tags (ej: ahegao)').setRequired(true))
-        )
-        .addSubcommand((sub) =>
-          sub
-            .setName('8ball')
-            .setDescription('Preguntale a la bola mágica')
-            .addStringOption((opt) => opt.setName('question').setDescription('Tu pregunta').setRequired(true))
+            .setName('shitpost')
+            .setDescription('Activar shitpost manualmente')
+            .addStringOption((opt) => opt.setName('trigger').setDescription('Trigger a buscar').setRequired(true))
         )
         .addSubcommand((sub) =>
           sub
             .setName('roll')
-            .setDescription('Tirar dados (ej: d20, 2d6)')
-            .addStringOption((opt) => opt.setName('dice').setDescription('Formato NdS').setRequired(true))
-        )
-        .addSubcommand((sub) => sub.setName('coinflip').setDescription('Tirar una moneda'))
-        .addSubcommand((sub) =>
-          sub
-            .setName('uwu')
-            .setDescription('Uwuificar un texto')
-            .addStringOption((o) => o.setName('text').setDescription('Texto a uwuificar').setRequired(true))
+            .setDescription('Tirar dados')
+            .addIntegerOption((opt) => opt.setName('caras').setDescription('Caras del dado (default 20)').setMinValue(2).setMaxValue(1000))
+            .addIntegerOption((opt) => opt.setName('tiradas').setDescription('Cuántas veces tirar (default 1)').setMinValue(1).setMaxValue(20))
         )
         .addSubcommand((sub) =>
           sub
-            .setName('phrase')
-            .setDescription('Gestionar frases del bot (listar, agregar, editar, borrar)')
-            .addStringOption((opt) =>
-              opt
-                .setName('action')
-                .setDescription('Acción a realizar')
-                .setRequired(true)
-                .addChoices(
-                  { name: 'listar', value: 'list' },
-                  { name: 'agregar', value: 'add' },
-                  { name: 'editar', value: 'edit' },
-                  { name: 'borrar', value: 'delete' }
-                )
-            )
-            .addStringOption((opt) =>
-              opt
-                .setName('categoria')
-                .setDescription('Categoría de la frase')
-                .setRequired(false)
-            )
-            .addStringOption((opt) => opt.setName('clave').setDescription('Clave de la frase').setRequired(false))
-            .addStringOption((opt) => opt.setName('tipo').setDescription('Tipo de respuesta (hits, crits, fails)').setRequired(false).addChoices(
-              { name: 'hit (respuesta normal)', value: 'hits' },
-              { name: 'crit (crítico - 5%)', value: 'crits' },
-              { name: 'fail (fallo - 5%)', value: 'fails' }
-            ))
-            .addStringOption((opt) => opt.setName('texto').setDescription('Texto de la frase').setRequired(false))
-            .addIntegerOption((opt) => opt.setName('indice').setDescription('Índice de la frase a editar/borrar').setRequired(false))
+            .setName('choose')
+            .setDescription('Elegir entre opciones')
+            .addStringOption((opt) => opt.setName('opciones').setDescription('Opciones separadas por comas').setRequired(true))
+        )
+        .addSubcommand((sub) =>
+          sub
+            .setName('8ball')
+            .setDescription('Preguntarle a la bola mágica')
+            .addStringOption((opt) => opt.setName('pregunta').setDescription('Tu pregunta').setRequired(true))
         )
     )
-    // 🍃 Leaves group
+    // 💰 Economy group (leaves)
     .addSubcommandGroup((group) =>
       group
         .setName('leaves')
-        .setDescription('Hojas — economía y apuestas')
-        .addSubcommand((s) => s.setName('daily').setDescription('Regá a BottedPlant y ganá hojas (racha diaria)'))
-        .addSubcommand((s) =>
-          s
+        .setDescription('Sistema de hojas (economía)')
+        .addSubcommand((sub) =>
+          sub.setName('daily').setDescription('Reclamar tus hojas diarias')
+        )
+        .addSubcommand((sub) =>
+          sub
             .setName('points')
             .setDescription('Ver tus hojas')
-            .addUserOption((o) => o.setName('user').setDescription('Usuario (opcional)'))
+            .addUserOption((opt) => opt.setName('usuario').setDescription('Usuario (por defecto vos)'))
         )
-        .addSubcommand((s) => s.setName('leaderboard').setDescription('Top 10 de hojas del servidor'))
-        .addSubcommand((s) =>
-          s
+        .addSubcommand((sub) =>
+          sub.setName('leaderboard').setDescription('Ver el top de hojas del servidor')
+        )
+        .addSubcommand((sub) =>
+          sub
             .setName('gamble')
             .setDescription('Crear una apuesta')
-            .addStringOption((o) => o.setName('text').setDescription('Afirmación | opción 1 | opción 2').setRequired(true))
+            .addStringOption((opt) => opt.setName('texto').setDescription('Formato: enunciado | opción1 | opción2 | ...').setRequired(true))
         )
-        .addSubcommand((s) =>
-          s
+        .addSubcommand((sub) =>
+          sub
             .setName('bet')
-            .setDescription('Apostar hojas a una apuesta')
-            .addStringOption((o) => o.setName('id').setDescription('ID de la apuesta').setRequired(true))
-            .addIntegerOption((o) => o.setName('choice').setDescription('Número de opción').setRequired(true))
-            .addIntegerOption((o) => o.setName('amount').setDescription('Cantidad de hojas').setRequired(true))
+            .setDescription('Apostar en una apuesta existente')
+            .addStringOption((opt) => opt.setName('id').setDescription('ID de la apuesta').setRequired(true))
+            .addIntegerOption((opt) => opt.setName('opcion').setDescription('Número de opción (1, 2, 3...)').setRequired(true).setMinValue(1))
+            .addIntegerOption((opt) => opt.setName('cantidad').setDescription('Cantidad de hojas a apostar').setRequired(true).setMinValue(1))
         )
-        .addSubcommand((s) =>
-          s
+        .addSubcommand((sub) =>
+          sub
             .setName('redeem')
-            .setDescription('Cerrar la apuesta y repartir ganancias')
-            .addStringOption((o) => o.setName('id').setDescription('ID de la apuesta').setRequired(true))
-            .addIntegerOption((o) => o.setName('choice').setDescription('Opción ganadora').setRequired(true))
+            .setDescription('Resolver una apuesta (solo creador o admin)')
+            .addStringOption((opt) => opt.setName('id').setDescription('ID de la apuesta').setRequired(true))
+            .addIntegerOption((opt) => opt.setName('opcion').setDescription('Opción ganadora').setRequired(true).setMinValue(1))
         )
     )
-    .addSubcommand((sub) => sub.setName('help').setDescription('Mostrar todos los comandos'));
+    // 📖 Help
+    .addSubcommand((sub) =>
+      sub.setName('help').setDescription('Mostrar ayuda del bot')
+    );
 }
 
 // ---------------- Helpers ----------------
@@ -276,28 +341,79 @@ async function handleInteraction(interaction) {
   if (!interaction.isChatInputCommand()) return;
   if (interaction.commandName !== 'bp') return;
 
+  const group = interaction.options.getSubcommandGroup();
   const sub = interaction.options.getSubcommand();
 
   await handleInteractionSafely(async () => {
+    // ----- Music -----
+    if (group === 'music') {
+      switch (sub) {
+        case 'play': await handleMusicPlay(interaction); break;
+        case 'playlist': await handleMusicPlaylist(interaction); break;
+        case 'query': await handleMusicQuery(interaction); break;
+        case 'skip': await handleMusicSkip(interaction); break;
+        case 'stop': await handleMusicStop(interaction); break;
+        case 'pause': await handleMusicPause(interaction); break;
+        case 'resume': await handleMusicResume(interaction); break;
+        case 'queue': await handleMusicQueue(interaction); break;
+        case 'nowplaying': await handleMusicNowPlaying(interaction); break;
+        case 'volume': await handleMusicVolume(interaction); break;
+        case 'loop': await handleMusicLoop(interaction); break;
+        case 'shuffle': await handleMusicShuffle(interaction); break;
+        case 'rewind': await handleMusicRewind(interaction); break;
+        case 'leave': await handleMusicLeave(interaction); break;
+      }
+      return;
+    }
+
+    // ----- Reminders -----
+    if (group === 'remember') {
+      switch (sub) {
+        case 'add': await handleRememberAdd(interaction); break;
+        case 'list': await handleRememberList(interaction); break;
+        case 'cancel': await handleRememberCancel(interaction); break;
+      }
+      return;
+    }
+
+    // ----- Birthdays -----
+    if (group === 'birthday') {
+      switch (sub) {
+        case 'add': await handleBirthdayAdd(interaction); break;
+        case 'list': await handleBirthdayList(interaction); break;
+        case 'remove': await handleBirthdayRemove(interaction); break;
+      }
+      return;
+    }
+
+    // ----- Fun -----
+    if (group === 'fun') {
+      switch (sub) {
+        case 'uwu': await handleFunUwu(interaction); break;
+        case 'shitpost': await handleFunShitpost(interaction); break;
+        case 'roll': await handleFunRoll(interaction); break;
+        case 'choose': await handleFunChoose(interaction); break;
+        case '8ball': await handleFun8ball(interaction); break;
+      }
+      return;
+    }
+
+    // ----- Economy (leaves) -----
+    if (group === 'leaves') {
+      switch (sub) {
+        case 'daily': await handleLeavesDaily(interaction); break;
+        case 'points': await handleLeavesPoints(interaction); break;
+        case 'leaderboard': await handleLeavesLeaderboard(interaction); break;
+        case 'gamble': await handleLeavesGamble(interaction); break;
+        case 'bet': await handleLeavesBet(interaction); break;
+        case 'redeem': await handleLeavesRedeem(interaction); break;
+      }
+      return;
+    }
+
+    // ----- Standalone subcommands (no group) -----
     switch (sub) {
-      // ----- Music -----
-      case 'play': await cmdPlay(interaction); break;
-      case 'playlist': await cmdPlaylist(interaction); break;
-      case 'query': await cmdQuery(interaction); break;
-      case 'stop': await cmdStop(interaction); break;
-      case 'leave': await cmdLeave(interaction); break;
-      case 'skip': await cmdSkip(interaction); break;
-      case 'rewind': await cmdRewind(interaction); break;
-      case 'queue': await cmdQueue(interaction); break;
-      case 'clear': await cmdClear(interaction); break;
-      // ----- Reminders -----
-      case 'remind': await cmdRemind(interaction); break;
-      case 'reminders': await cmdReminders(interaction); break;
-      case 'cancelremind': await cmdCancelRemind(interaction); break;
-      // ----- Birthdays -----
-      case 'birthday': await cmdBirthday(interaction); break;
-      case 'birthdays': await cmdBirthdays(interaction); break;
-      // ----- Fun -----
+      case 'help': await cmdHelp(interaction); break;
       case 'status': await cmdStatus(interaction); break;
       case 'hola': await interaction.reply(await phraseManager.getPhrase('fun', 'hola')); break;
       case 'japish': await interaction.reply(await phraseManager.getPhrase('fun', 'japish')); break;
@@ -306,21 +422,8 @@ async function handleInteraction(interaction) {
       case 'rola': await cmdRola(interaction); break;
       case 'latex': await cmdLatex(interaction); break;
       case 'safebooru': await cmdSafebooru(interaction); break;
-      case '8ball': await cmd8Ball(interaction); break;
-      case 'roll': await cmdRoll(interaction); break;
       case 'coinflip': await interaction.reply(await phraseManager.getPhrase('fun', 'coinflip')); break;
-      case 'uwu': await runEconomyCommand('uwu', interaction); break;
       case 'phrase': await cmdPhrase(interaction); break;
-      // ----- Economy (leaves) -----
-      case 'daily':
-      case 'points':
-      case 'leaderboard':
-      case 'gamble':
-      case 'bet':
-      case 'redeem':
-        await runEconomyCommand(sub, interaction);
-        break;
-      case 'help': await cmdHelp(interaction); break;
       default:
         await interaction.reply(await phraseManager.getPhrase('fun', 'unknownCommand'));
     }
@@ -328,296 +431,6 @@ async function handleInteraction(interaction) {
 }
 
 // ---------------- Music ----------------
-
-async function cmdPlay(interaction) {
-  const channel = getVoiceChannel(interaction);
-  if (!channel) {
-    return interaction.reply({ content: '🔇 Che! Si no estás en un canal de voz, mis raíces no te oyen. Metete a uno y te pongo el tema. 🌿', flags: MessageFlags.Ephemeral });
-  }
-  const query = interaction.options.getString('url');
-  await interaction.deferReply();
-
-  const distube = interaction.client.distube;
-  await distube.play(channel, query, {
-    member: interaction.member,
-    textChannel: interaction.channel,
-  });
-  await interaction.editReply(`🔍 Buscando \`${query.slice(0, 100)}\`... ya va, que hasta las plantas tenemos nuestros tiempos. 🌿`);
-}
-
-async function cmdPlaylist(interaction) {
-  const channel = getVoiceChannel(interaction);
-  if (!channel) {
-    return interaction.reply({ content: '🔇 Che, no te escucho desde acá... entrá a un canal de voz y regame con música. 🌿', flags: MessageFlags.Ephemeral });
-  }
-  const url = interaction.options.getString('url');
-  if (!isPlaylistUrl(url)) {
-    return interaction.reply({
-      content: '❌ Eso no parece una playlist, che. Usá `/bp music play <url>` para canciones sueltas... mi familia es toda una playlist de hojas, así que algo sé. 🍃',
-      flags: MessageFlags.Ephemeral,
-    });
-  }
-  await interaction.deferReply();
-
-  const distube = interaction.client.distube;
-  await distube.play(channel, url, {
-    member: interaction.member,
-    textChannel: interaction.channel,
-  });
-  await interaction.editReply(`📃 Agregando playlist \`${url.slice(0, 100)}\` a la cola... ¡que crezca el repertorio! 🍃`);
-}
-
-async function cmdQuery(interaction) {
-  const channel = getVoiceChannel(interaction);
-  if (!channel) {
-    return interaction.reply({ content: '🔇 ¡Che! Sin canal de voz no hay búsqueda... mis hojas no captan señales sin vos. 🌿', flags: MessageFlags.Ephemeral });
-  }
-  const place = interaction.options.getString('place');
-  const title = interaction.options.getString('title');
-  await interaction.deferReply();
-
-  try {
-    const results = await searchTracks(place, title);
-
-    if (!results.length) {
-      return interaction.editReply(`🔍 No encontré nada para **"${title}"** en **${place}**... se me secaron las hojas de tanto buscar. :c`);
-    }
-
-    const menu = new StringSelectMenuBuilder()
-      .setCustomId('bp-query-select')
-      .setPlaceholder('Elegí un resultado...')
-      .addOptions(
-        results.slice(0, 5).map((res) => ({
-          label: res.name.slice(0, 100),
-          value: res.url,
-          description: `${res.uploader.name} · ${formatDuration(res.duration)}`.slice(0, 100),
-        }))
-      );
-
-    await interaction.editReply({
-      content: `🔍 Resultados de **"${title}"** en **${place}**: (elegí con cariño, que las plantas tenemos gustos) 🌱`,
-      components: [new ActionRowBuilder().addComponents(menu)],
-    });
-  } catch (err) {
-    console.error('Error in cmdQuery:', err);
-    await interaction.editReply(`❌ No pude buscar en **${place}**: \`${err.message?.slice(0, 200) || err}\`... hasta mis raíces se enredaron.`).catch(() => {});
-  }
-}
-
-async function handleQuerySelect(interaction) {
-  const url = interaction.values[0];
-  const channel = getVoiceChannel(interaction);
-  if (!channel) {
-    return interaction.reply({
-      content: '🔇 Che, ya no estás en el canal de voz... enraizate de nuevo y usá `/bp music query` o `/bp music play <url>`. :P',
-      flags: MessageFlags.Ephemeral,
-    });
-  }
-
-  await interaction.deferUpdate();
-  try {
-    await interaction.client.distube.play(channel, url, {
-      member: interaction.member,
-      textChannel: interaction.channel,
-    });
-    await interaction.editReply({ content: `▶️ ¡Dale! Eso me hace vibrar las hojas... 🎶🍃`, components: [] });
-  } catch (err) {
-    console.error('Error playing query selection:', err);
-    await interaction
-      .editReply({ content: `❌ No pude reproducir eso: \`${err.message?.slice(0, 200) || err}\`... se me cayó una hoja del disgusto. 🍂`, components: [] })
-      .catch(() => {});
-  }
-}
-
-// Entry point for /bp query — dispatches per platform.
-async function searchTracks(place, query) {
-  if (place === 'bandcamp') return searchBandcamp(query);
-  const prefix = place === 'soundcloud' ? 'scsearch5' : 'ytsearch5';
-  return searchWithYtDlp(prefix, query);
-}
-
-// Runs yt-dlp directly with search prefix (ytsearch5 / scsearch5)
-async function searchWithYtDlp(prefix, query) {
-  // Go up one level from src/ to project root for node_modules
-  const projectRoot = path.join(__dirname, '..');
-  const ytDlp = path.join(projectRoot, 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.exe');
-  const confFile = path.join(projectRoot, 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
-
-  const args = ['--dump-single-json', `${prefix}:${query}`];
-  if (config.cookiesFile && fs.existsSync(config.cookiesFile) && fs.statSync(config.cookiesFile).size > 0) {
-    args.unshift('--cookies', config.cookiesFile);
-  }
-  if (fs.existsSync(confFile)) {
-    args.unshift('--config-location', confFile);
-  }
-
-  const { stdout } = await execFileAsync(ytDlp, args, {
-    timeout: 45000,
-    maxBuffer: 16 * 1024 * 1024,
-  });
-  const data = JSON.parse(stdout);
-  const entries = Array.isArray(data) ? data : data.entries || [];
-  return entries.map((e) => ({
-    name: e.title || e.fulltitle || e.id,
-    url: e.webpage_url || e.url,
-    uploader: { name: e.uploader || e.artist || e.channel || 'Desconocido' },
-    duration: e.duration || 0,
-  }));
-}
-
-// Bandcamp's web search is JS-protected and its JSON APIs are blocked, so we
-// search via DuckDuckGo (site:bandcamp.com/track) and decode redirect URLs.
-async function searchBandcamp(query) {
-  const searchUrl =
-    'https://html.duckduckgo.com/html/?q=' +
-    encodeURIComponent('site:bandcamp.com/track ' + query);
-  const res = await fetch(searchUrl, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-    },
-  });
-  if (!res.ok) throw new Error(`DuckDuckGo respondió ${res.status}`);
-  const html = await res.text();
-
-  const results = [];
-  const anchorRe = /<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
-  let m;
-  while ((m = anchorRe.exec(html)) && results.length < 5) {
-    let link = m[1];
-    const uddg = /uddg=([^&]+)/.exec(link);
-    if (uddg) link = decodeURIComponent(uddg[1]);
-    if (!/\/\/[^.]*\.bandcamp\.com\/track\//.test(link)) continue;
-
-    const name = m[2].replace(/<[^>]+>/g, '').trim();
-    const uploader = (/\/\/([^.]+)\.bandcamp\.com\//.exec(link) || [])[1] || 'Desconocido';
-    results.push({ name, url: link, uploader: { name: uploader }, duration: 0 });
-  }
-  return results;
-}
-
-async function cmdStop(interaction) {
-  const queue = getQueue(interaction);
-  if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? Yo no me muevo de mi maceta, así que seguro escuché mal.:o', flags: MessageFlags.Ephemeral });
-  }
-  const channel = getVoiceChannel(interaction);
-  if (!channel || queue.voiceChannel.id !== channel.id) {
-    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz. Yo no me muevo de mi maceta, así que vení vos.:P', flags: MessageFlags.Ephemeral });
-  }
-  interaction.client.distube.stop(interaction.guildId);
-  await interaction.reply(await phraseManager.getPhrase('music', 'stop'));
-}
-
-async function cmdSkip(interaction) {
-  const queue = getQueue(interaction);
-  if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? Veces me quedo callado, como las plantas en invierno. ❄️:o', flags: MessageFlags.Ephemeral });
-  }
-  if (queue.songs.length <= 1) {
-    return interaction.reply(await phraseManager.getPhrase('music', 'skipNoMore'));
-  }
-  const song = queue.songs[0];
-  interaction.client.distube.skip(interaction.guildId);
-  await interaction.reply(await phraseManager.getPhrase('music', 'skip', 'hits', { songName: song.name }));
-}
-
-async function cmdRewind(interaction) {
-  const queue = getQueue(interaction);
-  if (!queue) {
-    return interaction.reply({ content: '❌ No estoy reproduciendo nada. ¿me perdí algo? La melodía se me escapó entre las ramas.:o', flags: MessageFlags.Ephemeral });
-  }
-  const channel = getVoiceChannel(interaction);
-  if (!channel || queue.voiceChannel.id !== channel.id) {
-    return interaction.reply({ content: '🔇 Che, tenemos que estar en el mismo canal de voz. Mis hojas no se estiran tanto. 🍃', flags: MessageFlags.Ephemeral });
-  }
-  interaction.client.distube.seek(interaction.guildId, 0);
-  await interaction.reply(await phraseManager.getPhrase('music', 'rewind', 'hits', { songName: queue.songs[0].name }));
-}
-
-async function cmdQueue(interaction) {
-  const queue = getQueue(interaction);
-  if (!queue || !queue.songs.length) {
-    return interaction.reply({ content: '❌ La cola está vacía. ¡agregá algo con `/bp music play`! No me dejes sin música que me pongo triste. 🌿', flags: MessageFlags.Ephemeral });
-  }
-  const embed = queueEmbed(queue);
-  await interaction.reply({ embeds: [embed] });
-}
-
-async function cmdClear(interaction) {
-  const queue = getQueue(interaction);
-  if (!queue || !queue.songs.length) {
-    return interaction.reply({ content: '❌ La cola ya está vacía, che. No hay nada que limpiar. 🍃', flags: MessageFlags.Ephemeral });
-  }
-  queue.songs = [queue.songs[0]]; // keep current song
-  await interaction.reply('🗑 Cola vaciada. Solo queda la canción actual. 🌿');
-}
-
-// ---------------- Reminders ----------------
-
-async function cmdRemind(interaction) {
-  const dtStr = interaction.options.getString('datetime');
-  const msg = interaction.options.getString('message');
-  const dt = new Date(dtStr.replace(' ', 'T'));
-  if (isNaN(dt.getTime()) || dt < new Date()) {
-    return interaction.reply({ content: '❌ Fecha inválida o en el pasado. Formato: YYYY-MM-DD HH:MM', flags: MessageFlags.Ephemeral });
-  }
-  const delay = dt.getTime() - Date.now();
-  const id = await require('./handlers/reminders').createReminder(
-    interaction.guildId,
-    interaction.user.id,
-    interaction.channelId,
-    msg,
-    delay
-  );
-  await interaction.reply(`⏰ Recordatorio programado para **${dt.toLocaleString('es-AR')}** (ID: \`${id}\`). Te aviso cuando toque, ¡no te olvides de regarme! 🌱`);
-}
-
-async function cmdReminders(interaction) {
-  const reminders = await require('./handlers/reminders').listReminders(interaction.guildId, interaction.user.id);
-  if (!reminders.length) {
-    return interaction.reply(await phraseManager.getPhrase('reminders', 'listEmpty'));
-  }
-  const lines = reminders.map((r) => `\`${r.id}\` — ${new Date(r.time).toLocaleString('es-AR')} — ${r.message.slice(0, 80)}`);
-  await interaction.reply({ content: `📋 **Tus recordatorios:**\n${lines.join('\n')}`, flags: MessageFlags.Ephemeral });
-}
-
-async function cmdCancelRemind(interaction) {
-  const id = interaction.options.getString('id');
-  const ok = await require('./handlers/reminders').cancelReminder(interaction.guildId, interaction.user.id, id);
-  if (!ok) {
-    return interaction.reply({ content: '❌ No se encontró ese recordatorio. ¿Seguro que es tuyo? 👀', flags: MessageFlags.Ephemeral });
-  }
-  await interaction.reply(await phraseManager.getPhrase('reminders', 'cancelled', 'hits', { id }));
-}
-
-// ---------------- Birthdays ----------------
-
-async function cmdBirthday(interaction) {
-  const month = interaction.options.getInteger('month');
-  const day = interaction.options.getInteger('day');
-  const gid = interaction.guildId;
-  const uid = interaction.user.id;
-  await dataStore.setBirthday(gid, uid, month, day, interaction.user.username);
-  await interaction.reply(`🎂 ¡Cumpleaños guardado! ${day}/${month} — te voy a regar de notificaciones ese día. 🌿`);
-}
-
-async function cmdBirthdays(interaction) {
-  const birthdays = await dataStore.getBirthdays();
-  const guildBirthdays = Object.entries(birthdays)
-    .filter(([uid, b]) => {
-      return interaction.guild.members.cache.has(uid);
-    })
-    .sort((a, b) => a[1].month - b[1].month || a[1].day - b[1].day);
-
-  if (!guildBirthdays.length) {
-    return interaction.reply(await phraseManager.getPhrase('reminders', 'birthdaysEmpty'));
-  }
-  const lines = guildBirthdays.map(([uid, b]) => `<@${uid}> — ${b.day}/${b.month}`);
-  await interaction.reply({ content: `🎂 **Cumpleaños del servidor:**\n${lines.join('\n')}`, flags: MessageFlags.Ephemeral });
-}
-
-// ---------------- Fun ----------------
 
 async function cmdStatus(interaction) {
   const states = ['☀️ regándome', '🌱 fotosintetizando', '🍃 dejando caer hojas', '💧 esperando que me rieguen', '🌿 creciendo derechita'];
@@ -811,4 +624,4 @@ async function cmdHelp(interaction) {
   await interaction.reply({ embeds: [embed] });
 }
 
-module.exports = { bpCommandData, registerSlashCommands, handleInteraction, handleMessage, runEconomyCommand };
+module.exports = { bpCommandData, registerSlashCommands, handleInteraction, handleMessage };
