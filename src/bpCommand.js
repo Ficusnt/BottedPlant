@@ -8,6 +8,7 @@ const { queueEmbed, formatDuration } = require('./embeds');
 const { cmdLeave } = require('./cmdLeave');
 const { handleMessage, runEconomyCommand } = require('./economy');
 const phraseManager = require('./phraseManager');
+const config = require('./config');
 
 const execFileAsync = promisify(execFile);
 
@@ -440,13 +441,11 @@ async function searchWithYtDlp(prefix, query) {
   // Go up one level from src/ to project root for node_modules
   const projectRoot = path.join(__dirname, '..');
   const ytDlp = path.join(projectRoot, 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.exe');
-  const dataDir = path.join(projectRoot, 'data');
-  const cookieFile = path.join(dataDir, 'cookies.txt');
   const confFile = path.join(projectRoot, 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
 
   const args = ['--dump-single-json', `${prefix}:${query}`];
-  if (fs.existsSync(cookieFile) && fs.statSync(cookieFile).size > 0) {
-    args.unshift('--cookies', cookieFile);
+  if (config.cookiesFile && fs.existsSync(config.cookiesFile) && fs.statSync(config.cookiesFile).size > 0) {
+    args.unshift('--cookies', config.cookiesFile);
   }
   if (fs.existsSync(confFile)) {
     args.unshift('--config-location', confFile);

@@ -35,6 +35,9 @@
     "pointsEmpty": {
       "hits": ["📭 Todavía no hay hojas por acá... y mirá que yo soy TODO hojas. ¡Usá `/bp leaves daily` para ganar más!"]
     },
+    "gambleUsage": {
+      "hits": ["❌ Che, te falta el texto. Usá: `/bp leaves gamble \"afirmación | texto ganar | texto perder\" \"opción1,opción2,...\"`"]
+    },
     "gambleBadFormat": {
       "hits": ["❌ Che, ese formato me dejó sin savia. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones)."]
     },
@@ -62,8 +65,23 @@
     "gambleNotEnough": {
       "hits": ["❌ No te alcanzan las hojas, fiera. Tenés **{userPoints}**."]
     },
+    "gambleBetUsage": {
+      "hits": ["❌ Te faltan parámetros. Usá: `/bp leaves bet <id> <opción> <monto>`"]
+    },
+    "gambleBetNotFound": {
+      "hits": ["❌ Esa apuesta no existe... ni entre mis raíces la encuentro."]
+    },
+    "gambleBetClosed": {
+      "hits": ["❌ Esa apuesta ya se cerró, querida."]
+    },
+    "gambleBetBadChoice": {
+      "hits": ["❌ Opción inválida... esa no creció en mi maceta."]
+    },
     "gambleBetPlaced": {
       "hits": ["🎯 Apostaste **{amount}** hojas a la opción **{choice}.** {choiceText}.\nTotal en esa opción: **{totalOnChoice}** hojas.\n🌿 (Las hojas no vuelan, pero apostadas seguro que se van volando.)"]
+    },
+    "gambleRedeemUsage": {
+      "hits": ["❌ Te faltan parámetros. Usá: `/bp leaves redeem <id> <opción ganadora>`"]
     },
     "gambleRedeemNotFound": {
       "hits": ["❌ Esa apuesta no existe... ni entre mis raíces la encuentro."]

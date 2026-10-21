@@ -4,8 +4,36 @@ const { execFile } = require('child_process');
 const { promisify } = require('util');
 const path = require('path');
 const fs = require('fs');
+require('dotenv').config();
 
 const execFileAsync = promisify(execFile);
+
+// Filter cookies to only keep relevant domains
+function filterCookies(cookieFile) {
+  if (!fs.existsSync(cookieFile)) return false;
+  
+  const content = fs.readFileSync(cookieFile, 'utf8');
+  const lines = content.split('\n');
+  const filtered = lines.filter(line => {
+    // Keep comments and blank lines
+    if (line.startsWith('#') || line.trim() === '') return true;
+    // Keep only relevant domain cookies
+    return line.includes('.youtube.com\t') 
+        || line.includes('.soundcloud.com\t') 
+        || line.includes('.bandcamp.com\t');
+  });
+  
+  const commentLines = lines.filter(l => l.startsWith('#') || l.trim() === '').length;
+  if (filtered.length <= commentLines) {
+    console.log('[generate] No relevant cookies found after filtering');
+    return false;
+  }
+  
+  // Write filtered cookies BACK to the same file
+  fs.writeFileSync(cookieFile, filtered.join('\n'), 'utf8');
+  console.log(`[generate] Filtered cookies in-place: ${filtered.length - commentLines} relevant cookies kept (youtube/soundcloud/bandcamp)`);
+  return true;
+}
 
 async function generateCookies() {
   console.log('🍪 Generating YouTube cookies for yt-dlp...');
@@ -25,7 +53,10 @@ async function generateCookies() {
     console.log('📁 Created data directory');
   }
 
-  const cookieFile = path.join(dataDir, 'cookies.txt');
+  // Use YTDLP_COOKIES_FILE from .env, fallback to data/cookies.txt
+  const cookieFile = process.env.YTDLP_COOKIES_FILE 
+    ? path.resolve(process.env.YTDLP_COOKIES_FILE)
+    : path.join(dataDir, 'cookies.txt');
 
   try {
     // Try to get cookies from different browsers
@@ -47,6 +78,10 @@ async function generateCookies() {
         if (fs.existsSync(cookieFile) && fs.statSync(cookieFile).size > 0) {
           console.log(`✅ Successfully generated cookies from ${browser}`);
           console.log(`📄 Cookies saved to: ${cookieFile}`);
+          
+          // Filter to keep only relevant domains
+          filterCookies(cookieFile);
+          
           console.log('💡 You can now use YouTube without bot detection issues!');
           return;
         }

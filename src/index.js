@@ -25,7 +25,13 @@ const client = new Client({
 });
 
 const disTubeOptions = {
-  plugins: [new SoundCloudPlugin(), new YtDlpPlugin({ update: false })],
+  plugins: [
+    new SoundCloudPlugin(),
+    new YtDlpPlugin({
+      update: false,
+      cookies: config.cookiesFile
+    })
+  ],
   emitNewSongOnly: true,
   savePreviousSongs: true,
 };
@@ -155,12 +161,15 @@ setInterval(() => {
   }
 }, 10 * 60 * 1000); // Check every 10 minutes
 
-client.on('guildCreate', (guild) => {
+client.on('guildCreate', async (guild) => {
   // Auto-register commands in newly joined servers
-  guild.commands
-    .set(require('./bpCommand').bpCommandData().toJSON())
-    .then(() => console.log(`Registered /bp in new guild: ${guild.name}`))
-    .catch((err) => console.error('Error registering commands in new guild:', err));
+  try {
+    const data = require('./bpCommand').bpCommandData().toJSON();
+    await guild.commands.set([data]);
+    console.log(`Registered /bp in new guild: ${guild.name}`);
+  } catch (err) {
+    console.error('Error registering commands in new guild:', err);
+  }
 });
 
 client.on('interactionCreate', (interaction) => {

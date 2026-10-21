@@ -1,7 +1,7 @@
 node_modules/
 data/media/
-data/cookies.txt
+data/cookies-yt.txt
 REFS/
 .env
 *.log
-CLAUDE.md
+TODO.md

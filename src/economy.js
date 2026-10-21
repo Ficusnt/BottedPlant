@@ -109,18 +109,40 @@ async function cmdLeaderboard(interaction) {
 
 async function cmdGamble(interaction) {
   const text = interaction.options.getString('text');
+  if (!text) {
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleUsage'), flags: MessageFlags.Ephemeral });
+  }
+  
   const parts = text.split('|').map((s) => s.trim()).filter(Boolean);
   if (parts.length < 3) {
-    return interaction.reply({
-      content: await phraseManager.getPhrase('economy', 'gambleBadFormat'),
-      flags: MessageFlags.Ephemeral,
-    });
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadFormat'), flags: MessageFlags.Ephemeral });
   }
+  
   const statement = parts[0];
   const choices = parts.slice(1);
-  if (choices.length > 10) {
-    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleTooMany'), flags: MessageFlags.Ephemeral });
+  
+  // Validate statement
+  if (!statement || statement.length > 200) {
+    return interaction.reply({ content: 'El enunciado debe tener entre 1 y 200 caracteres.', flags: MessageFlags.Ephemeral });
   }
+  
+  // Validate choices
+  if (choices.length < 2 || choices.length > 10) {
+    return interaction.reply({ content: 'Debe haber entre 2 y 10 opciones.', flags: MessageFlags.Ephemeral });
+  }
+  
+  for (const choice of choices) {
+    if (choice.length > 50) {
+      return interaction.reply({ content: 'Cada opción debe tener máximo 50 caracteres.', flags: MessageFlags.Ephemeral });
+    }
+  }
+  
+  // Check for duplicate choices
+  const uniqueChoices = new Set(choices);
+  if (uniqueChoices.size !== choices.length) {
+    return interaction.reply({ content: 'Las opciones no pueden repetirse.', flags: MessageFlags.Ephemeral });
+  }
+  
   const id = `${interaction.guildId}-${Date.now()}`;
   await dataStore.createGamble(id, {
     statement,
@@ -129,6 +151,7 @@ async function cmdGamble(interaction) {
     bets: {},
     closed: false,
   });
+  
   const list = choices.map((c, i) => `**${i + 1}.** ${c}`).join('\n');
   return interaction.reply(await phraseManager.getPhrase('economy', 'gambleCreated', 'hits', { id, statement, list }));
 }
@@ -137,30 +160,52 @@ async function cmdBet(interaction) {
   const id = interaction.options.getString('id');
   const choice = interaction.options.getInteger('choice');
   const amount = interaction.options.getInteger('amount');
+  const uid = interaction.user.id;
+  const gid = interaction.guildId;
+
+  // Validate required parameters
+  if (!id || !choice || !amount) {
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBetUsage'), flags: MessageFlags.Ephemeral });
+  }
+
+  // Validate amount
+  if (amount < 1) {
+    return interaction.reply({ content: 'La apuesta debe ser mayor a 0.', flags: MessageFlags.Ephemeral });
+  }
+  if (amount > 10000) {
+    return interaction.reply({ content: 'La apuesta no puede exceder 10,000 hojas.', flags: MessageFlags.Ephemeral });
+  }
+
   const gamble = await dataStore.getGamble(id);
-  if (!gamble) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleNotFound'), flags: MessageFlags.Ephemeral });
-  if (gamble.closed) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleClosed'), flags: MessageFlags.Ephemeral });
+  if (!gamble) {
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleNotFound'), flags: MessageFlags.Ephemeral });
+  }
+  if (gamble.closed) {
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleClosed'), flags: MessageFlags.Ephemeral });
+  }
   if (gamble.creator === interaction.user.id) {
     return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleSelfBet'), flags: MessageFlags.Ephemeral });
   }
   if (choice < 1 || choice > gamble.choices.length) {
     return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadChoice'), flags: MessageFlags.Ephemeral });
   }
-  if (amount <= 0) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleBadAmount'), flags: MessageFlags.Ephemeral });
 
-  const key = String(choice);
-  const uid = interaction.user.id;
-  const current = gamble.bets[key]?.[uid] || 0;
-
-  const userPoints = await dataStore.getUserPoints(interaction.guildId, uid);
-  if (!await dataStore.deductPoints(interaction.guildId, uid, amount)) {
-    return interaction.reply({
-      content: await phraseManager.getPhrase('economy', 'gambleNotEnough', 'hits', { userPoints }),
-      flags: MessageFlags.Ephemeral,
-    });
+  // Check user has enough points
+  const userPoints = await dataStore.getUserPoints(gid, uid);
+  if (userPoints < amount) {
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleNotEnough', 'hits', { userPoints }), flags: MessageFlags.Ephemeral });
   }
 
+  // Deduct points
+  const deducted = await dataStore.deductPoints(gid, uid, amount);
+  if (!deducted) {
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleNotEnough', 'hits', { userPoints }), flags: MessageFlags.Ephemeral });
+  }
+
+  // Record bet
+  const key = String(choice);
   gamble.bets[key] = gamble.bets[key] || {};
+  const current = gamble.bets[key][uid] || 0;
   gamble.bets[key][uid] = current + amount;
   await dataStore.saveGamble(id, gamble);
 
@@ -171,6 +216,12 @@ async function cmdBet(interaction) {
 async function cmdRedeem(interaction) {
   const id = interaction.options.getString('id');
   const winning = interaction.options.getInteger('choice');
+
+  // Validate required parameters
+  if (!id || !winning) {
+    return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemUsage'), flags: MessageFlags.Ephemeral });
+  }
+
   const gamble = await dataStore.getGamble(id);
   if (!gamble) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemNotFound'), flags: MessageFlags.Ephemeral });
   if (gamble.closed) return interaction.reply({ content: await phraseManager.getPhrase('economy', 'gambleRedeemClosed'), flags: MessageFlags.Ephemeral });
