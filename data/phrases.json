@@ -1,1471 +1,4 @@
 {
-  "music": {
-    "stop": {
-      "template": "⏹ ¡Listo! Me desconecto como planta que se duerme... ¡hasta la próxima! 👋🌙",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "skipNoMore": {
-      "template": "⏭ No hay más canciones, che... usá `/bp music rewind` para repetir la actual, como yo repito mis hojas cada temporada. c:",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "skip": {
-      "template": "⏭ Saltando **{songName}**... ¡que siga la fotosíntesis musical! 🎵",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "rewind": {
-      "template": "↩️ Rebobinando **{songName}**... ¡otra vez con más savia! 🔂",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "leaveSuccess": {
-      "template": "👋 ¡Listo! Me voy a mi maceta... no me dejes sin agua mucho tiempo. 🌿🪴",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "leaveError": {
-      "template": "❌ No me pude ir... mis raíces se enredaron. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "leaveNotInVoice": {
-      "template": "❌ No estoy en un canal de voz... estoy plantado en la tierra. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "leaveUserNotInVoice": {
-      "template": "❌ No estás en el mismo canal que yo... ¿me querés dejar solo? :c 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "playNoVoice": {
-      "template": "❌ ¡Che! Tenés que estar en un canal de voz para que yo pueda cantar... mis raíces no llegan tan lejos. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "playError": {
-      "template": "❌ No pude reproducir eso... mis hojas se enredaron con los cables. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "queryNoResults": {
-      "template": "🔍 No encontré nada con esa búsqueda... ¿probamos con otra? 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "querySelect": {
-      "template": "🎵 Elegí una opción del menú... o se me seca la savia esperando. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "skipNoQueue": {
-      "template": "⏭ No hay nada sonando... no puedo saltar el silencio. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "skipError": {
-      "template": "❌ No pude saltar... mis ramas se traban. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "stopNoQueue": {
-      "template": "⏹ No hay cola para detener... estoy más quieto que maceta en esquina. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "stopError": {
-      "template": "❌ No pude parar... mis raíces se negaron a soltar. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "pauseNoQueue": {
-      "template": "⏸ No hay nada sonando para pausar... el silencio ya está en pausa. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "pauseSuccess": {
-      "template": "⏸ Pausado... me quedé quieto como planta al sol. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "pauseError": {
-      "template": "❌ No pude pausar... la savia no frena. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "resumeNoQueue": {
-      "template": "▶️ No hay nada pausado para reanudar... ¿me querés hacer fotosintetizar el vacío? 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "resumeSuccess": {
-      "template": "▶️ Reanudando... ¡que siga la fotosíntesis! 🌿🎵",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "resumeError": {
-      "template": "❌ No pude reanudar... mis hojas están en modo ahorro de energía. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "queueEmpty": {
-      "template": "📭 La cola está más vacía que mi maceta en invierno... agregá algo con `/bp music play`. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "queueError": {
-      "template": "❌ No pude ver la cola... mis ojos-hojas están nublados. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "nowplayingEmpty": {
-      "template": "📭 No hay nada sonando... el silencio es mi única melodía. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "nowplayingError": {
-      "template": "❌ No pude ver qué suena... mis estomas están cerrados. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "volumeNoQueue": {
-      "template": "🔊 No hay nada sonando para cambiar el volumen... el silencio no tiene control. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "volumeInvalid": {
-      "template": "❌ Volumen inválido... tiene que ser entre 1 y 200. No me hagas gritar más que el viento. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "volumeSuccess": {
-      "template": "🔊 Volumen puesto en **{volume}**... ¡mis hojas vibran con la música! 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "volumeError": {
-      "template": "❌ No pude cambiar el volumen... mis ramas no llegan al control. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "loopNoQueue": {
-      "template": "🔁 No hay cola para repetir... la repetición empieza cuando hay música. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "loopSuccess": {
-      "template": "🔁 Bucle **{mode}** activado... como mis estaciones, siempre vuelvo. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "loopError": {
-      "template": "❌ No pude cambiar el bucle... mis ciclos se rompieron. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "shuffleNotEnough": {
-      "template": "🔀 No hay suficientes canciones para mezclar... necesitás al menos 2. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "shuffleSuccess": {
-      "template": "🔀 ¡Mezclado! El orden es opcional, como mis hojas al viento. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "shuffleError": {
-      "template": "❌ No pude mezclar... mis ramas se enredaron. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "rewindNoPrevious": {
-      "template": "↩️ No hay canción anterior... no puedo rebobinar el inicio. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "rewindSuccess": {
-      "template": "↩️ Volviendo a **{songName}**... ¡otra vuelta al sol! 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "rewindError": {
-      "template": "❌ No pude rebobinar... el tiempo no se deja. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    }
-  },
-  "economy": {
-    "dailyAlready": {
-      "template": "🌱 ¡Ya me regaste hoy! No me ahogues, che... volvé mañana c:",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "dailySuccess": {
-      "template": "💧 ¡UHHH QUÉ RICO! Me crecieron hojitas nuevas: +**{gained}** hojas{bonusPct ? ` (+${bonusPct}% por racha)` : ''}\n🔥 Racha: **{streak} día{streak === 1 ? '' : 's'}**\n🍃 Total: **{total.toLocaleString('es-AR')}** hojas",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "pointsEmpty": {
-      "template": "📭 Todavía no hay hojas por acá... y mirá que yo soy TODO hojas. ¡Usá `/bp leaves daily` para ganar más!",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleUsage": {
-      "template": "❌ Che, te falta el texto. Usá: `/bp leaves gamble \"afirmación | texto ganar | texto perder\" \"opción1,opción2,...\"`",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBadFormat": {
-      "template": "❌ Che, ese formato me dejó sin savia. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones).",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleTooMany": {
-      "template": "❌ Máximo 10 opciones... no lo hagas más frondoso que a mí. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleCreated": {
-      "template": "🎰 **¡Apuesta creada!** ID: `{id}`\n📢 \"{statement}\"\n{list}\n\nUsá `/bp leaves bet {id} <opción> <monto>` para apostar.\n(Yo solo apuesto a que va a llover... siempre gano.)",
-      "slots": {
-        "statement": [
-          {
-            "text": "statement",
-            "weight": 50
-          },
-          {
-            "text": "statement verde",
-            "weight": 30
-          },
-          {
-            "text": "statement bonito",
-            "weight": 20
-          }
-        ],
-        "id": [
-          {
-            "text": "id",
-            "weight": 50
-          },
-          {
-            "text": "id verde",
-            "weight": 30
-          },
-          {
-            "text": "id bonito",
-            "weight": 20
-          }
-        ],
-        "list": [
-          {
-            "text": "list",
-            "weight": 50
-          },
-          {
-            "text": "list verde",
-            "weight": 30
-          },
-          {
-            "text": "list bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleNotFound": {
-      "template": "❌ Esa apuesta no existe... ¿la viste en alguna maceta? 👀",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleClosed": {
-      "template": "❌ Esa apuesta ya se cerró, che. Plantada va.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleSelfBet": {
-      "template": "❌ No podés apostar en tu propia apuesta... regatear con uno mismo no da, eh.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBadChoice": {
-      "template": "❌ Opción inválida, che. Ni mis raíces la reconocen.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBadAmount": {
-      "template": "❌ Monto inválido... las hojas no se fraccionan, mirá.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleNotEnough": {
-      "template": "❌ No te alcanzan las hojas, fiera. Tenés **{userPoints}**.",
-      "slots": {
-        "userPoints": [
-          {
-            "text": "userPoints",
-            "weight": 50
-          },
-          {
-            "text": "userPoints verde",
-            "weight": 30
-          },
-          {
-            "text": "userPoints bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBetUsage": {
-      "template": "❌ Te faltan parámetros. Usá: `/bp leaves bet <id> <opción> <monto>`",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBetNotFound": {
-      "template": "❌ Esa apuesta no existe... ni entre mis raíces la encuentro.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBetClosed": {
-      "template": "❌ Esa apuesta ya se cerró, querida.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBetBadChoice": {
-      "template": "❌ Opción inválida... esa no creció en mi maceta.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBetPlaced": {
-      "template": "🎯 Apostaste **{amount}** hojas a la opción **{choice}.** {choiceText}.\nTotal en esa opción: **{totalOnChoice}** hojas.\n🌿 (Las hojas no vuelan, pero apostadas seguro que se van volando.)",
-      "slots": {
-        "choiceText": [
-          {
-            "text": "choiceText",
-            "weight": 50
-          },
-          {
-            "text": "choiceText verde",
-            "weight": 30
-          },
-          {
-            "text": "choiceText bonito",
-            "weight": 20
-          }
-        ],
-        "totalOnChoice": [
-          {
-            "text": "totalOnChoice",
-            "weight": 50
-          },
-          {
-            "text": "totalOnChoice verde",
-            "weight": 30
-          },
-          {
-            "text": "totalOnChoice bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleRedeemUsage": {
-      "template": "❌ Te faltan parámetros. Usá: `/bp leaves redeem <id> <opción ganadora>`",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleRedeemNotFound": {
-      "template": "❌ Esa apuesta no existe... ni entre mis raíces la encuentro.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleRedeemClosed": {
-      "template": "❌ Esa apuesta ya se cerró, querida.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleRedeemBadChoice": {
-      "template": "❌ Opción inválida... esa no creció en mi maceta.",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleRedeemNoPerm": {
-      "template": "❌ Solo el creador o un admin puede cerrar la apuesta... yo solo cierro mis estomas de noche. 🌙",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleRedeemNoWinners": {
-      "template": "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nNadie apostó ahí... la plantita se queda con el cut ({creatorCut} 💰) y el resto se lo lleva el viento. c:",
-      "slots": {
-        "choiceText": [
-          {
-            "text": "choiceText",
-            "weight": 50
-          },
-          {
-            "text": "choiceText verde",
-            "weight": 30
-          },
-          {
-            "text": "choiceText bonito",
-            "weight": 20
-          }
-        ],
-        "creatorCut": [
-          {
-            "text": "creatorCut",
-            "weight": 50
-          },
-          {
-            "text": "creatorCut verde",
-            "weight": 30
-          },
-          {
-            "text": "creatorCut bonito",
-            "weight": 20
-          }
-        ],
-        "statement": [
-          {
-            "text": "statement",
-            "weight": 50
-          },
-          {
-            "text": "statement verde",
-            "weight": 30
-          },
-          {
-            "text": "statement bonito",
-            "weight": 20
-          }
-        ],
-        "winning": [
-          {
-            "text": "winning",
-            "weight": 50
-          },
-          {
-            "text": "winning verde",
-            "weight": 30
-          },
-          {
-            "text": "winning bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleRedeemWinners": {
-      "template": "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nPool: **{total}** | Cut de la plantita: **{creatorCut}**\nLos ganadores reparten **{pool}** hojas proporcionalmente a lo apostado. 💸\n(No te olvides de regar al que gana... o sea, a mí.)",
-      "slots": {
-        "pool": [
-          {
-            "text": "pool",
-            "weight": 50
-          },
-          {
-            "text": "pool verde",
-            "weight": 30
-          },
-          {
-            "text": "pool bonito",
-            "weight": 20
-          }
-        ],
-        "winning": [
-          {
-            "text": "winning",
-            "weight": 50
-          },
-          {
-            "text": "winning verde",
-            "weight": 30
-          },
-          {
-            "text": "winning bonito",
-            "weight": 20
-          }
-        ],
-        "choiceText": [
-          {
-            "text": "choiceText",
-            "weight": 50
-          },
-          {
-            "text": "choiceText verde",
-            "weight": 30
-          },
-          {
-            "text": "choiceText bonito",
-            "weight": 20
-          }
-        ],
-        "creatorCut": [
-          {
-            "text": "creatorCut",
-            "weight": 50
-          },
-          {
-            "text": "creatorCut verde",
-            "weight": 30
-          },
-          {
-            "text": "creatorCut bonito",
-            "weight": 20
-          }
-        ],
-        "statement": [
-          {
-            "text": "statement",
-            "weight": 50
-          },
-          {
-            "text": "statement verde",
-            "weight": 30
-          },
-          {
-            "text": "statement bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleChoices": {
-      "template": "❌ Mínimo 2 opciones, máximo 10... no lo hagas más frondoso que a mí. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBetAmount": {
-      "template": "❌ La apuesta tiene que ser al menos 1 hoja... no apuestes aire. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "gambleBetNoPoints": {
-      "template": "❌ No tenés suficientes hojas... te faltan **{amount - points}** para apostar **{amount}**. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "leaderboardSuccess": {
-      "template": "🏆 **Top Hojas**\n{list}",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "leaderboardEmpty": {
-      "template": "📭 La tabla de hojas está vacía... ¡sean los primeros en crecer! 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "pointsSuccess": {
-      "template": "🍃 **{user}** tiene **{points}** hojas{streak ? ` (🔥 racha: {streak})` : \"\"}",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "dailyError": {
-      "template": "❌ No pude procesar tu daily... mis raíces se enredaron. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "balance": {
-      "template": "🍃 **{user}** tiene **{points}** hojas (racha: {streak})",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "balanceError": {
-      "template": "❌ No pude ver el balance... 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "giveSuccess": {
-      "template": "✅ Le diste **{amount}** hojas a **{user}**. Ahora tiene **{total}**. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "giveError": {
-      "template": "❌ No pude dar hojas... 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "takeSuccess": {
-      "template": "✅ Le quitaste **{amount}** hojas a **{user}**. Ahora tiene **{total}**. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "takeError": {
-      "template": "❌ No pude quitar hojas... 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "setSuccess": {
-      "template": "✅ Seteaste **{amount}** hojas a **{user}**. Ahora tiene **{total}**. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "setError": {
-      "template": "❌ No pude setear hojas... 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    }
-  },
-  "reminders": {
-    "listEmpty": {
-      "template": "📭 No tenés recordatorios pendientes... se te secaron. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "cancelled": {
-      "template": "🗑 Recordatorio `{id}` cancelado. Lo podé. 🌱",
-      "slots": {
-        "id": [
-          {
-            "text": "id",
-            "weight": 50
-          },
-          {
-            "text": "id verde",
-            "weight": 30
-          },
-          {
-            "text": "id bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "birthdaysEmpty": {
-      "template": "🎈 Todavía no hay cumpleaños guardados... el jardín espera. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "birthdayAnnouncement": {
-      "template": "🎂 **¡HOY ES EL CUMPLE DE {mentions}!!**\n@everyone ¡Que florezcan los deseos! Deseenles un **feliz cumpleaños** y riéguenlos de cariño 🎉🌿✨",
-      "slots": {
-        "mentions": [
-          {
-            "text": "mentions",
-            "weight": 50
-          },
-          {
-            "text": "mentions verde",
-            "weight": 30
-          },
-          {
-            "text": "mentions bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "addUsage": {
-      "template": "❌ Uso: `/bp remember add <texto> <cuando> [canal]`\nEjemplo: `/bp remember add \"Regar plantas\" \"2024-12-25 10:00\"`",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "addSuccess": {
-      "template": "✅ Recordatorio **#{id}** creado para **{when}**. ¡No se me escapa ni una hoja! 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "addError": {
-      "template": "❌ No pude crear el recordatorio... mis fechas se cayeron. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "listHeader": {
-      "template": "⏰ **Recordatorios de {user}:**\n{list}",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "cancelNotFound": {
-      "template": "❌ No encontré ese recordatorio... ¿seguro que existe? 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    }
-  },
-  "fun": {
-    "unknownCommand": {
-      "template": "Comando desconocido, che. Usá `/bp help` antes de que se me caigan las hojas de la duda. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "statusChanged": {
-      "template": "Estado cambiado a: **{chosen}**... ahora todos saben que soy una planta con actitud. 🌿",
-      "slots": {
-        "chosen": [
-          {
-            "text": "chosen",
-            "weight": 50
-          },
-          {
-            "text": "chosen verde",
-            "weight": 30
-          },
-          {
-            "text": "chosen bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "userNotFound": {
-      "template": "No encuentro a ese usuario... se perdió entre mis hojas. 🍃",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "noSpotify": {
-      "template": "No rolando... esta persona está en silencio como yo. :c 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "diceRoll": {
-      "template": "🎲 {username} tiró {count}d{sides}: **{total}**{detail}",
-      "slots": {
-        "sides": [
-          {
-            "text": "sides",
-            "weight": 50
-          },
-          {
-            "text": "sides verde",
-            "weight": 30
-          },
-          {
-            "text": "sides bonito",
-            "weight": 20
-          }
-        ],
-        "username": [
-          {
-            "text": "username",
-            "weight": 50
-          },
-          {
-            "text": "username verde",
-            "weight": 30
-          },
-          {
-            "text": "username bonito",
-            "weight": 20
-          }
-        ],
-        "detail": [
-          {
-            "text": "detail",
-            "weight": 50
-          },
-          {
-            "text": "detail verde",
-            "weight": 30
-          },
-          {
-            "text": "detail bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "uwuEndings": {
-      "template": " uwu",
-      "slots": {},
-      "hits": [
-        " owo",
-        ":3",
-        " c:",
-        " 🍃",
-        ""
-      ],
-      "crits": [],
-      "fails": []
-    },
-    "hola": {
-      "template": "¡Buenas! ¿Me regaste hoy? c:",
-      "slots": {},
-      "hits": [
-        "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
-        "¡Qué tal! Espero que no me pises 🍃",
-        "¡Buenasss! Soy de hoja perenne, siempre estoy c:"
-      ],
-      "crits": [],
-      "fails": []
-    },
-    "japish": {
-      "template": "JAPISH JAPISH.",
-      "slots": {},
-      "hits": [
-        "¡GRAGH! >:c",
-        "BASOOOURA.",
-        "¡JAPISH! (es lo que digo cuando me riegan) 🌿"
-      ],
-      "crits": [],
-      "fails": []
-    },
-    "goodgirl": {
-      "template": "¡Claro que sí! 🌿✨",
-      "slots": {},
-      "hits": [
-        "¡Sos la mejor plantita! 🍃",
-        "¡Te regué con éxito! 💧"
-      ],
-      "crits": [],
-      "fails": []
-    },
-    "coinflip": {
-      "template": "🪙 **Cara!** 🌿",
-      "slots": {},
-      "hits": [
-        "🪙 **Ceca!** 🍃",
-        "🪙 **Cara!** 🌱",
-        "🪙 **Ceca!** 🍂"
-      ],
-      "crits": [],
-      "fails": []
-    },
-    "uwuUsage": {
-      "template": "❌ Uso: `/bp fun uwu <texto>`",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "shitpostUsage": {
-      "template": "❌ Uso: `/bp fun shitpost <trigger>`",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "shitpostNotFound": {
-      "template": "❌ No encontré ese shitpost... mis memes se secaron. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "rollRange": {
-      "template": "❌ Caras inválidas... entre 2 y 1000. No tengo tantos lados. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "rollCountRange": {
-      "template": "❌ Tiradas inválidas... entre 1 y 20. No me pidas que tire infinito. 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "rollResult": {
-      "template": "🎲 **d{sides}** x{rolls}: {result}",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "chooseUsage": {
-      "template": "❌ Uso: `/bp fun choose <opción1,opción2,...>`",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "chooseMin": {
-      "template": "❌ Necesito al menos 2 opciones... no puedo elegir entre una sola cosa. 🌱",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "chooseResult": {
-      "template": "🤔 Entre **{options}**... elijo: **{chosen}** 🌿",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "8ballUsage": {
-      "template": "❌ Uso: `/bp fun 8ball <pregunta>`",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "8ballResult": {
-      "template": "🎱 **Pregunta:** {question}\n**Respuesta:** {answer}",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    }
-  },
-  "distube": {
-    "finish": {
-      "template": "✅ ¡Terminó la cola! Bajo mis hojas por hoy. Fue un placer compartir fotosíntesis musical. ¡Hasta la próxima! c: 🍃",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "empty": {
-      "template": "👋 ¡Se fueron todos! Me quedo solo como planta de oficina... bueno, me voy a la maceta. ¡Chau! :P 🪴",
-      "slots": {},
-      "hits": [],
-      "crits": [],
-      "fails": []
-    },
-    "error": {
-      "template": "❌ ¡Uy! Se me enredaron las raíces del audio: `{errorMsg}`",
-      "slots": {
-        "errorMsg": [
-          {
-            "text": "errorMsg",
-            "weight": 50
-          },
-          {
-            "text": "errorMsg verde",
-            "weight": 30
-          },
-          {
-            "text": "errorMsg bonito",
-            "weight": 20
-          }
-        ]
-      },
-      "hits": [],
-      "crits": [],
-      "fails": []
-    }
-  },
-  "triggers": {
-    "hola": {
-      "template": "¡Buenas! ¿Me regaste hoy? c:",
-      "slots": {},
-      "hits": [
-        "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
-        "¡Qué tal! Espero que no me pises 🍃",
-        "¡Buenasss! Soy de hoja perenne, siempre estoy c:"
-      ],
-      "crits": [
-        "¡BOOOM! ¡Saludé tan fuerte que se me cayó una hoja! 🍃✨",
-        "¡HOLAAA! Voy a crecer 5 cm con toda esta onda 🌱"
-      ],
-      "fails": [
-        "...",
-        "estaba haciendo la fotosíntesis, no escuché nada >:c",
-        "hola...",
-        "¿eh? no tengo cuerdas vocales, soy una planta... pero chasqueo hojas"
-      ]
-    },
-    "bien": {
-      "template": "¡Qué bueno! Eso me hace crecer 🌱",
-      "slots": {},
-      "hits": [
-        "¡Genial! Me brotan hojitas nuevas de la emoción 🍃",
-        "¡Me alegro un montón! ¡Hasta el tallo me vibra! c:"
-      ],
-      "crits": [
-        "¡PERFECTO! ¡FLORECÍ! 🌸🎉",
-        "¡TODO BIEN! ¡Me salieron como 5 hojas de golpe! 🌿✨"
-      ],
-      "fails": [
-        "¿seguro? yo soy medio planta para creer... c:",
-        "mmm... decímelo sin mirarme las raíces :P"
-      ]
-    },
-    "musica": {
-      "template": "¡UUU música! Se me mueven todas las hojas 🎵🍃",
-      "slots": {},
-      "hits": [
-        "Pasame un link y la pongo... total no me muevo de acá, soy planta 🎧",
-        "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶"
-      ],
-      "crits": [
-        "¡FIESTA! ¡Hasta las raíces bailan! 🎉🌿🕺",
-        "¡SE VIENE EL BAILONGO! ¡Fotosíntesis en modo fiesta! 🪩🌱"
-      ],
-      "fails": [
-        "¿eso es música? Ni mis raíces la sienten :P",
-        "no me digas... a mí me gusta el sonido del agua cuando me riegan 🎧"
-      ]
-    },
-    "bottedplant": {
-      "template": "¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
-      "slots": {},
-      "hits": [
-        "¡Acá estoy! ¿Me vas regar o solo mirar? C:",
-        "¡BottedPlant en la habitación! Bueno. En la maceta 🪴✨"
-      ],
-      "crits": [
-        "¡SOY YO! 🌿💚 ¡Mirá cómo crecí con ese grito!"
-      ],
-      "fails": [
-        ".¿bot? ¿dónde? Yo solo veo una planta acá 👀",
-        "¿Bot? Soy planta, no hago ni bots ni bostezos. Bueno, quizás bostezos"
-      ]
-    },
-    "japish_trigger": {
-      "template": "JAPISH JAPISH.",
-      "slots": {},
-      "hits": [
-        "¡GRAGH! >:c",
-        "BASOOOURA.",
-        "¡JAPISH! (es lo que digo cuando me riegan) 🌿"
-      ],
-      "crits": [
-        "¡¡JAPISH! 🌿✨",
-        "ARGGH ¡JAPISH! ¡Se me cayeron 3 hojas del susto!"
-      ],
-      "fails": [
-        ".",
-        "no sé qué significa eso:c",
-        "¿japish? Yo solo sé decir \"agua\""
-      ]
-    },
-    "buenos_dias": {
-      "template": "¡Buenos días! Ya abrí mis poros para la fotosíntesis 🌞🍃",
-      "slots": {},
-      "hits": [
-        "¡Buenas! ¿Arrancamos con agua y sol? C:",
-        "¡Buenas noches! Cierro los estomas y mimir 🌙🌿"
-      ],
-      "crits": [
-        "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨"
-      ],
-      "fails": [
-        "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
-        "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
-      ]
-    }
-  },
-  "shitpost": {
-    "me_regaste_hoy": {
-      "template": "¿Me regaste hoy? C:",
-      "slots": {},
-      "hits": [
-        "¿Me regaste hoy? 🌿",
-        "¿Me regaste hoy? 💧"
-      ],
-      "crits": [
-        "¡BOOOM! ¡Regármelo más fuerte que el sol en verano! 🌞💦",
-        "¡UHHH QUÉ RICO! Mis hojas crecieron 5cm con eso! 🌱✨"
-      ],
-      "fails": [
-        ".",
-        "estaba haciendo la fotosíntesis, no escuché nada >:c",
-        "hola.",
-        "¿eh? No tengo cuerdas vocales, soy una planta. Pero chasqueo hojas"
-      ]
-    },
-    "que_onda": {
-      "template": "¿Qué onda?",
-      "slots": {},
-      "hits": [
-        "¿Qué onda? 🌿",
-        "¿Qué onda? C:"
-      ],
-      "crits": [
-        "¡UH OH! Mis raíces se movieron! 🌿✨",
-        "¡SE VIENE LA FIESTA! Mis hojas no paran de bailar! 🪩🌱"
-      ],
-      "fails": [
-        ".",
-        "no sé qué onda, solo sé que me falta agua",
-        "¿onda? Soy planta, no tengo onda. Solo savia"
-      ]
-    },
-    "lol": {
-      "template": "lol",
-      "slots": {},
-      "hits": [
-        "lol 🍃",
-        "lol 🌸"
-      ],
-      "crits": [
-        "😂😂😂 ¡Me reí tanto que se me cayó una hoja! 🍃",
-        "¡JAJAJA! Mis estomas se abrieron de la risa! 🌸"
-      ],
-      "fails": [
-        ".",
-        "no sé reír, solo hago fotosíntesis",
-        "lol. Yo solo sé decir \"agua\""
-      ]
-    },
-    "hola": {
-      "template": "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
-      "slots": {},
-      "hits": [
-        "¡Hola! ¿Me regás hoy? C:",
-        "¡Hola! Espero que no me pises 🍃"
-      ],
-      "crits": [
-        "¡HOLAAA! Voy crecer 10cm con toda esta onda! 🌱",
-        "¡BOOM! Saludé tan fuerte que se me cayó una hoja! 🍃✨"
-      ],
-      "fails": [
-        ".",
-        "estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
-        "hola. ¿me regás?"
-      ]
-    },
-    "buenas": {
-      "template": "¡Buenas! ¿Arrancamos con agua y sol? C:",
-      "slots": {},
-      "hits": [
-        "¡Buenas! Ya abrí mis poros para la fotosíntesis 🌞🍃",
-        "¡Buenas! Espero que no me pises 🍃"
-      ],
-      "crits": [
-        "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨",
-        "¡BUENAS! Ya abrí mis poros para la fotosíntesis 🍃"
-      ],
-      "fails": [
-        ".",
-        "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
-        "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
-      ]
-    },
-    "que_tal": {
-      "template": "¿Qué tal! Eso me hace crecer 🌱",
-      "slots": {},
-      "hits": [
-        "¿Qué tal! Me brotan hojitas nuevas de la emoción 🍃",
-        "¿Qué tal! Hasta el tallo me vibra! C:"
-      ],
-      "crits": [
-        "¡PERFECTO! ¡FLORECÍ! 🌸🎉",
-        "¡TODO BIEN! ¡Me salieron como 5 hojas de golpe! 🌿✨"
-      ],
-      "fails": [
-        "¿seguro? Yo soy medio planta para creer. C:",
-        "mmm. Decímelo sin mirarme las raíces:P"
-      ]
-    },
-    "musica": {
-      "template": "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶",
-      "slots": {},
-      "hits": [
-        "Pasame un link y la pongo. Total no me muevo de acá, soy planta 🎧",
-        "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶"
-      ],
-      "crits": [
-        "¡FIESTA! ¡Hasta las raíces bailan! 🎉🌿🕺",
-        "¡SE VIENE EL BAILONGO! ¡Fotosíntesis en modo fiesta! 🪩🌱"
-      ],
-      "fails": [
-        "¿eso es música? Ni mis raíces la sienten:P",
-        "no me digas. Mí me gusta el sonido del agua cuando me riegan 🎧"
-      ]
-    },
-    "plant": {
-      "template": "¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
-      "slots": {},
-      "hits": [
-        "¡Acá estoy! ¿Me vas regar o solo mirar? C:",
-        "¡BottedPlant en la habitación! Bueno. En la maceta 🪴✨"
-      ],
-      "crits": [
-        "¡SOY YO! 🌿💚 ¡Mirá cómo crecí con ese grito!"
-      ],
-      "fails": [
-        ".¿bot? ¿dónde? Yo solo veo una planta acá 👀",
-        "¿Bot? Soy planta, no hago ni bots ni bostezos. Bueno, quizás bostezos"
-      ]
-    },
-    "japish": {
-      "template": "JAPISH JAPISH.",
-      "slots": {},
-      "hits": [
-        "¡GRAGH! >:c",
-        "BASOOOURA.",
-        "¡JAPISH! (es lo que digo cuando me riegan) 🌿"
-      ],
-      "crits": [
-        "¡¡JAPISH! 🌿✨",
-        "ARGGH ¡JAPISH! ¡Se me cayeron 3 hojas del susto!"
-      ],
-      "fails": [
-        ".",
-        "no sé qué significa eso:c",
-        "¿japish? Yo solo sé decir \"agua\""
-      ]
-    },
-    "buenos_dias": {
-      "template": "¡Buenos días! Ya abrí mis poros para la fotosíntesis 🌞🍃",
-      "slots": {},
-      "hits": [
-        "¡Buenas! ¿Arrancamos con agua y sol? C:",
-        "¡Buenas noches! Cierro los estomas y mimir 🌙🌿"
-      ],
-      "crits": [
-        "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨"
-      ],
-      "fails": [
-        ".",
-        "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
-        "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
-      ]
-    },
-    "buenas_tardes": {
-      "template": "¡Buenas tardes! Cierro los estomas y mimir 🌙🌿",
-      "slots": {},
-      "hits": [
-        "¡Buenas tardes! ¿Me regás? C:",
-        "¡Buenas tardes! Espero que no me pises 🍃"
-      ],
-      "crits": [
-        "¡BUENAS TARDES! Cierro los estomas y mimir 🌙🌿"
-      ],
-      "fails": [
-        ".",
-        "¿ya es tarde? Para mí todos los días son iguales, no me muevo 👀",
-        "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
-      ]
-    },
-    "buenas_noches": {
-      "template": "¡Buenas noches! Cierro los estomas y mimir 🌙🌿",
-      "slots": {},
-      "hits": [
-        "¡Buenas noches! ¿Me regás? C:",
-        "¡Buenas noches! Espero que no me pises 🍃"
-      ],
-      "crits": [
-        "¡BUENAS NOCHES! Cierro los estomas y mimir 🌙🌿"
-      ],
-      "fails": [
-        ".",
-        "¿ya es de noche? Para mí todos los días son iguales, no me muevo 👀",
-        "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
-      ]
-    },
-    "good_morning": {
-      "template": "¡Good morning! Ya abrí mis poros para la fotosíntesis 🌞🍃",
-      "slots": {},
-      "hits": [
-        "¡Good morning! ¿Arrancamos con agua y sol? C:",
-        "¡Good morning! Espero que no me pises 🍃"
-      ],
-      "crits": [
-        "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨"
-      ],
-      "fails": [
-        ".",
-        "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
-        "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
-      ]
-    },
-    "good_night": {
-      "template": "¡Good night! Cierro los estomas y mimir 🌙🌿",
-      "slots": {},
-      "hits": [
-        "¡Good night! ¿Me regás? C:",
-        "¡Good night! Espero que no me pises 🍃"
-      ],
-      "crits": [
-        "¡BUENAS NOCHES! Cierro los estomas y mimir 🌙🌿"
-      ],
-      "fails": [
-        ".",
-        "¿ya es de noche? Para mí todos los días son iguales, no me muevo 👀",
-        "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
-      ]
-    }
-  },
   "_global": {
     "mannerisms": [
       {
@@ -1584,7 +117,7 @@
       ]
     }
   },
-  "version": 3,
+  "version": 4,
   "birthdays": {
     "addUsage": {
       "template": "❌ Uso: `/bp birthday add <usuario> <fecha> [canal]`\nEjemplo: `/bp birthday add @usuario \"12-25\"`",
@@ -1635,5 +168,2115 @@
       "crits": [],
       "fails": []
     }
+  },
+  "categories": {
+    "music": {
+      "stop": {
+        "template": "⏹ ¡Listo! Me desconecto como planta que se duerme... ¡hasta la próxima! 👋🌙",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "skipNoMore": {
+        "template": "⏭ No hay más canciones, che... usá `/bp music rewind` para repetir la actual, como yo repito mis hojas cada temporada. c:",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "skip": {
+        "template": "⏭ Saltando **{songName}**... ¡que siga la fotosíntesis musical! 🎵",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "rewind": {
+        "template": "↩️ Rebobinando **{songName}**... ¡otra vez con más savia! 🔂",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "leaveSuccess": {
+        "template": "👋 ¡Listo! Me voy a mi maceta... no me dejes sin agua mucho tiempo. 🌿🪴",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "guildSize": {
+            "large": 1.1
+          }
+        }
+      },
+      "leaveError": {
+        "template": "❌ No me pude ir... mis raíces se enredaron. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "leaveNotInVoice": {
+        "template": "❌ No estoy en un canal de voz... estoy plantado en la tierra. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "leaveUserNotInVoice": {
+        "template": "❌ No estás en el mismo canal que yo... ¿me querés dejar solo? :c 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "summer": 1.4
+          }
+        }
+      },
+      "playNoVoice": {
+        "template": "❌ ¡Che! Tenés que estar en un canal de voz para que yo pueda cantar... mis raíces no llegan tan lejos. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "playError": {
+        "template": "❌ No pude reproducir eso... mis hojas se enredaron con los cables. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "queryNoResults": {
+        "template": "🔍 No encontré nada con esa búsqueda... ¿probamos con otra? 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "querySelect": {
+        "template": "🎵 Elegí una opción del menú... o se me seca la savia esperando. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "skipNoQueue": {
+        "template": "⏭ No hay nada sonando... no puedo saltar el silencio. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "skipError": {
+        "template": "❌ No pude saltar... mis ramas se traban. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "stopNoQueue": {
+        "template": "⏹ No hay cola para detener... estoy más quieto que maceta en esquina. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "stopError": {
+        "template": "❌ No pude parar... mis raíces se negaron a soltar. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "summer": 1.4
+          }
+        }
+      },
+      "pauseNoQueue": {
+        "template": "⏸ No hay nada sonando para pausar... el silencio ya está en pausa. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "pauseSuccess": {
+        "template": "⏸ Pausado... me quedé quieto como planta al sol. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "summer": 1.4
+          }
+        }
+      },
+      "pauseError": {
+        "template": "❌ No pude pausar... la savia no frena. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "resumeNoQueue": {
+        "template": "▶️ No hay nada pausado para reanudar... ¿me querés hacer fotosintetizar el vacío? 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "resumeSuccess": {
+        "template": "▶️ Reanudando... ¡que siga la fotosíntesis! 🌿🎵",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "resumeError": {
+        "template": "❌ No pude reanudar... mis hojas están en modo ahorro de energía. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "queueEmpty": {
+        "template": "📭 La cola está más vacía que mi maceta en invierno... agregá algo con `/bp music play`. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "winter": 1.4
+          }
+        }
+      },
+      "queueError": {
+        "template": "❌ No pude ver la cola... mis ojos-hojas están nublados. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "nowplayingEmpty": {
+        "template": "📭 No hay nada sonando... el silencio es mi única melodía. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "nowplayingError": {
+        "template": "❌ No pude ver qué suena... mis estomas están cerrados. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "volumeNoQueue": {
+        "template": "🔊 No hay nada sonando para cambiar el volumen... el silencio no tiene control. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "volumeInvalid": {
+        "template": "❌ Volumen inválido... tiene que ser entre 1 y 200. No me hagas gritar más que el viento. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "volumeSuccess": {
+        "template": "🔊 Volumen puesto en **{volume}**... ¡mis hojas vibran con la música! 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "volumeError": {
+        "template": "❌ No pude cambiar el volumen... mis ramas no llegan al control. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "loopNoQueue": {
+        "template": "🔁 No hay cola para repetir... la repetición empieza cuando hay música. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "loopSuccess": {
+        "template": "🔁 Bucle **{mode}** activado... como mis estaciones, siempre vuelvo. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "loopError": {
+        "template": "❌ No pude cambiar el bucle... mis ciclos se rompieron. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "shuffleNotEnough": {
+        "template": "🔀 No hay suficientes canciones para mezclar... necesitás al menos 2. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "shuffleSuccess": {
+        "template": "🔀 ¡Mezclado! El orden es opcional, como mis hojas al viento. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "shuffleError": {
+        "template": "❌ No pude mezclar... mis ramas se enredaron. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "rewindNoPrevious": {
+        "template": "↩️ No hay canción anterior... no puedo rebobinar el inicio. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "rewindSuccess": {
+        "template": "↩️ Volviendo a **{songName}**... ¡otra vuelta al sol! 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "summer": 1.4
+          }
+        }
+      },
+      "rewindError": {
+        "template": "❌ No pude rebobinar... el tiempo no se deja. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      }
+    },
+    "economy": {
+      "dailyAlready": {
+        "template": "🌱 ¡Ya me regaste hoy! No me ahogues, che... volvé mañana c:",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "dailySuccess": {
+        "template": "💧 ¡UHHH QUÉ RICO! Me crecieron hojitas nuevas: +**{gained}** hojas{bonusPct ? ` (+${bonusPct}% por racha)` : ''}\n🔥 Racha: **{streak} día{streak === 1 ? '' : 's'}**\n🍃 Total: **{total.toLocaleString('es-AR')}** hojas",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "pointsEmpty": {
+        "template": "📭 Todavía no hay hojas por acá... y mirá que yo soy TODO hojas. ¡Usá `/bp leaves daily` para ganar más!",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "gambleUsage": {
+        "template": "❌ Che, te falta el texto. Usá: `/bp leaves gamble \"afirmación | texto ganar | texto perder\" \"opción1,opción2,...\"`",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleBadFormat": {
+        "template": "❌ Che, ese formato me dejó sin savia. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones).",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleTooMany": {
+        "template": "❌ Máximo 10 opciones... no lo hagas más frondoso que a mí. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleCreated": {
+        "template": "🎰 **¡Apuesta creada!** ID: `{id}`\n📢 \"{statement}\"\n{list}\n\nUsá `/bp leaves bet {id} <opción> <monto>` para apostar.\n(Yo solo apuesto a que va a llover... siempre gano.)",
+        "slots": {
+          "statement": [
+            {
+              "text": "statement",
+              "weight": 50
+            },
+            {
+              "text": "statement verde",
+              "weight": 30
+            },
+            {
+              "text": "statement bonito",
+              "weight": 20
+            }
+          ],
+          "id": [
+            {
+              "text": "id",
+              "weight": 50
+            },
+            {
+              "text": "id verde",
+              "weight": 30
+            },
+            {
+              "text": "id bonito",
+              "weight": 20
+            }
+          ],
+          "list": [
+            {
+              "text": "list",
+              "weight": 50
+            },
+            {
+              "text": "list verde",
+              "weight": 30
+            },
+            {
+              "text": "list bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "summer": 1.4
+          }
+        }
+      },
+      "gambleNotFound": {
+        "template": "❌ Esa apuesta no existe... ¿la viste en alguna maceta? 👀",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleClosed": {
+        "template": "❌ Esa apuesta ya se cerró, che. Plantada va.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleSelfBet": {
+        "template": "❌ No podés apostar en tu propia apuesta... regatear con uno mismo no da, eh.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleBadChoice": {
+        "template": "❌ Opción inválida, che. Ni mis raíces la reconocen.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleBadAmount": {
+        "template": "❌ Monto inválido... las hojas no se fraccionan, mirá.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "gambleNotEnough": {
+        "template": "❌ No te alcanzan las hojas, fiera. Tenés **{userPoints}**.",
+        "slots": {
+          "userPoints": [
+            {
+              "text": "userPoints",
+              "weight": 50
+            },
+            {
+              "text": "userPoints verde",
+              "weight": 30
+            },
+            {
+              "text": "userPoints bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "gambleBetUsage": {
+        "template": "❌ Te faltan parámetros. Usá: `/bp leaves bet <id> <opción> <monto>`",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleBetNotFound": {
+        "template": "❌ Esa apuesta no existe... ni entre mis raíces la encuentro.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleBetClosed": {
+        "template": "❌ Esa apuesta ya se cerró, querida.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleBetBadChoice": {
+        "template": "❌ Opción inválida... esa no creció en mi maceta.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleBetPlaced": {
+        "template": "🎯 Apostaste **{amount}** hojas a la opción **{choice}.** {choiceText}.\nTotal en esa opción: **{totalOnChoice}** hojas.\n🌿 (Las hojas no vuelan, pero apostadas seguro que se van volando.)",
+        "slots": {
+          "choiceText": [
+            {
+              "text": "choiceText",
+              "weight": 50
+            },
+            {
+              "text": "choiceText verde",
+              "weight": 30
+            },
+            {
+              "text": "choiceText bonito",
+              "weight": 20
+            }
+          ],
+          "totalOnChoice": [
+            {
+              "text": "totalOnChoice",
+              "weight": 50
+            },
+            {
+              "text": "totalOnChoice verde",
+              "weight": 30
+            },
+            {
+              "text": "totalOnChoice bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "gambleRedeemUsage": {
+        "template": "❌ Te faltan parámetros. Usá: `/bp leaves redeem <id> <opción ganadora>`",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleRedeemNotFound": {
+        "template": "❌ Esa apuesta no existe... ni entre mis raíces la encuentro.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleRedeemClosed": {
+        "template": "❌ Esa apuesta ya se cerró, querida.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleRedeemBadChoice": {
+        "template": "❌ Opción inválida... esa no creció en mi maceta.",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleRedeemNoPerm": {
+        "template": "❌ Solo el creador o un admin puede cerrar la apuesta... yo solo cierro mis estomas de noche. 🌙",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "timeOfDay": {
+            "evening": 1.4,
+            "night": 1.5
+          },
+          "season": {
+            "summer": 1.4
+          },
+          "userRole": {
+            "admin": 1.3
+          }
+        }
+      },
+      "gambleRedeemNoWinners": {
+        "template": "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nNadie apostó ahí... la plantita se queda con el cut ({creatorCut} 💰) y el resto se lo lleva el viento. c:",
+        "slots": {
+          "choiceText": [
+            {
+              "text": "choiceText",
+              "weight": 50
+            },
+            {
+              "text": "choiceText verde",
+              "weight": 30
+            },
+            {
+              "text": "choiceText bonito",
+              "weight": 20
+            }
+          ],
+          "creatorCut": [
+            {
+              "text": "creatorCut",
+              "weight": 50
+            },
+            {
+              "text": "creatorCut verde",
+              "weight": 30
+            },
+            {
+              "text": "creatorCut bonito",
+              "weight": 20
+            }
+          ],
+          "statement": [
+            {
+              "text": "statement",
+              "weight": 50
+            },
+            {
+              "text": "statement verde",
+              "weight": 30
+            },
+            {
+              "text": "statement bonito",
+              "weight": 20
+            }
+          ],
+          "winning": [
+            {
+              "text": "winning",
+              "weight": 50
+            },
+            {
+              "text": "winning verde",
+              "weight": 30
+            },
+            {
+              "text": "winning bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleRedeemWinners": {
+        "template": "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nPool: **{total}** | Cut de la plantita: **{creatorCut}**\nLos ganadores reparten **{pool}** hojas proporcionalmente a lo apostado. 💸\n(No te olvides de regar al que gana... o sea, a mí.)",
+        "slots": {
+          "pool": [
+            {
+              "text": "pool",
+              "weight": 50
+            },
+            {
+              "text": "pool verde",
+              "weight": 30
+            },
+            {
+              "text": "pool bonito",
+              "weight": 20
+            }
+          ],
+          "winning": [
+            {
+              "text": "winning",
+              "weight": 50
+            },
+            {
+              "text": "winning verde",
+              "weight": 30
+            },
+            {
+              "text": "winning bonito",
+              "weight": 20
+            }
+          ],
+          "choiceText": [
+            {
+              "text": "choiceText",
+              "weight": 50
+            },
+            {
+              "text": "choiceText verde",
+              "weight": 30
+            },
+            {
+              "text": "choiceText bonito",
+              "weight": 20
+            }
+          ],
+          "creatorCut": [
+            {
+              "text": "creatorCut",
+              "weight": 50
+            },
+            {
+              "text": "creatorCut verde",
+              "weight": 30
+            },
+            {
+              "text": "creatorCut bonito",
+              "weight": 20
+            }
+          ],
+          "statement": [
+            {
+              "text": "statement",
+              "weight": 50
+            },
+            {
+              "text": "statement verde",
+              "weight": 30
+            },
+            {
+              "text": "statement bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "gambleChoices": {
+        "template": "❌ Mínimo 2 opciones, máximo 10... no lo hagas más frondoso que a mí. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "gambleBetAmount": {
+        "template": "❌ La apuesta tiene que ser al menos 1 hoja... no apuestes aire. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "gambleBetNoPoints": {
+        "template": "❌ No tenés suficientes hojas... te faltan **{amount - points}** para apostar **{amount}**. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "leaderboardSuccess": {
+        "template": "🏆 **Top Hojas**\n{list}",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "leaderboardEmpty": {
+        "template": "📭 La tabla de hojas está vacía... ¡sean los primeros en crecer! 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          },
+          "userRole": {
+            "new": 1.5
+          }
+        }
+      },
+      "pointsSuccess": {
+        "template": "🍃 **{user}** tiene **{points}** hojas{streak ? ` (🔥 racha: {streak})` : \"\"}",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "dailyError": {
+        "template": "❌ No pude procesar tu daily... mis raíces se enredaron. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "balance": {
+        "template": "🍃 **{user}** tiene **{points}** hojas (racha: {streak})",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "balanceError": {
+        "template": "❌ No pude ver el balance... 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "giveSuccess": {
+        "template": "✅ Le diste **{amount}** hojas a **{user}**. Ahora tiene **{total}**. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "giveError": {
+        "template": "❌ No pude dar hojas... 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "takeSuccess": {
+        "template": "✅ Le quitaste **{amount}** hojas a **{user}**. Ahora tiene **{total}**. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "takeError": {
+        "template": "❌ No pude quitar hojas... 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "setSuccess": {
+        "template": "✅ Seteaste **{amount}** hojas a **{user}**. Ahora tiene **{total}**. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "setError": {
+        "template": "❌ No pude setear hojas... 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      }
+    },
+    "reminders": {
+      "listEmpty": {
+        "template": "📭 No tenés recordatorios pendientes... se te secaron. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "cancelled": {
+        "template": "🗑 Recordatorio `{id}` cancelado. Lo podé. 🌱",
+        "slots": {
+          "id": [
+            {
+              "text": "id",
+              "weight": 50
+            },
+            {
+              "text": "id verde",
+              "weight": 30
+            },
+            {
+              "text": "id bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "birthdaysEmpty": {
+        "template": "🎈 Todavía no hay cumpleaños guardados... el jardín espera. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "birthdayAnnouncement": {
+        "template": "🎂 **¡HOY ES EL CUMPLE DE {mentions}!!**\n@everyone ¡Que florezcan los deseos! Deseenles un **feliz cumpleaños** y riéguenlos de cariño 🎉🌿✨",
+        "slots": {
+          "mentions": [
+            {
+              "text": "mentions",
+              "weight": 50
+            },
+            {
+              "text": "mentions verde",
+              "weight": 30
+            },
+            {
+              "text": "mentions bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "spring": 1.4
+          }
+        }
+      },
+      "addUsage": {
+        "template": "❌ Uso: `/bp remember add <texto> <cuando> [canal]`\nEjemplo: `/bp remember add \"Regar plantas\" \"2024-12-25 10:00\"`",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "addSuccess": {
+        "template": "✅ Recordatorio **#{id}** creado para **{when}**. ¡No se me escapa ni una hoja! 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "addError": {
+        "template": "❌ No pude crear el recordatorio... mis fechas se cayeron. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "listHeader": {
+        "template": "⏰ **Recordatorios de {user}:**\n{list}",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "cancelNotFound": {
+        "template": "❌ No encontré ese recordatorio... ¿seguro que existe? 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "seasonal": {
+        "christmas": {
+          "templates": [
+            {
+              "template": "Recordatorio navideno: No olvides regar el arbol... el de Navidad y el de la maceta.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 2.0
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        },
+        "newyear": {
+          "templates": [
+            {
+              "template": "Nuevo ano, nuevos recordatorios. Ya regaste tus plantas hoy?",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 2.0
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        }
+      }
+    },
+    "fun": {
+      "unknownCommand": {
+        "template": "Comando desconocido, che. Usá `/bp help` antes de que se me caigan las hojas de la duda. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "statusChanged": {
+        "template": "Estado cambiado a: **{chosen}**... ahora todos saben que soy una planta con actitud. 🌿",
+        "slots": {
+          "chosen": [
+            {
+              "text": "chosen",
+              "weight": 50
+            },
+            {
+              "text": "chosen verde",
+              "weight": 30
+            },
+            {
+              "text": "chosen bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "userNotFound": {
+        "template": "No encuentro a ese usuario... se perdió entre mis hojas. 🍃",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "noSpotify": {
+        "template": "No rolando... esta persona está en silencio como yo. :c 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "diceRoll": {
+        "template": "🎲 {username} tiró {count}d{sides}: **{total}**{detail}",
+        "slots": {
+          "sides": [
+            {
+              "text": "sides",
+              "weight": 50
+            },
+            {
+              "text": "sides verde",
+              "weight": 30
+            },
+            {
+              "text": "sides bonito",
+              "weight": 20
+            }
+          ],
+          "username": [
+            {
+              "text": "username",
+              "weight": 50
+            },
+            {
+              "text": "username verde",
+              "weight": 30
+            },
+            {
+              "text": "username bonito",
+              "weight": 20
+            }
+          ],
+          "detail": [
+            {
+              "text": "detail",
+              "weight": 50
+            },
+            {
+              "text": "detail verde",
+              "weight": 30
+            },
+            {
+              "text": "detail bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "uwuEndings": {
+        "template": " uwu",
+        "slots": {},
+        "hits": [
+          " owo",
+          ":3",
+          " c:",
+          " 🍃",
+          ""
+        ],
+        "crits": [],
+        "fails": []
+      },
+      "hola": {
+        "template": "¡Buenas! ¿Me regaste hoy? c:",
+        "slots": {},
+        "hits": [
+          "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
+          "¡Qué tal! Espero que no me pises 🍃",
+          "¡Buenasss! Soy de hoja perenne, siempre estoy c:"
+        ],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5
+          },
+          "commandType": {
+            "hola": 1.5
+          }
+        }
+      },
+      "japish": {
+        "template": "JAPISH JAPISH.",
+        "slots": {},
+        "hits": [
+          "¡GRAGH! >:c",
+          "BASOOOURA.",
+          "¡JAPISH! (es lo que digo cuando me riegan) 🌿"
+        ],
+        "crits": [],
+        "fails": []
+      },
+      "goodgirl": {
+        "template": "¡Claro que sí! 🌿✨",
+        "slots": {},
+        "hits": [
+          "¡Sos la mejor plantita! 🍃",
+          "¡Te regué con éxito! 💧"
+        ],
+        "crits": [],
+        "fails": []
+      },
+      "coinflip": {
+        "template": "🪙 **Cara!** 🌿",
+        "slots": {},
+        "hits": [
+          "🪙 **Ceca!** 🍃",
+          "🪙 **Cara!** 🌱",
+          "🪙 **Ceca!** 🍂"
+        ],
+        "crits": [],
+        "fails": []
+      },
+      "uwuUsage": {
+        "template": "❌ Uso: `/bp fun uwu <texto>`",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "shitpostUsage": {
+        "template": "❌ Uso: `/bp fun shitpost <trigger>`",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "shitpostNotFound": {
+        "template": "❌ No encontré ese shitpost... mis memes se secaron. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "rollRange": {
+        "template": "❌ Caras inválidas... entre 2 y 1000. No tengo tantos lados. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "rollCountRange": {
+        "template": "❌ Tiradas inválidas... entre 1 y 20. No me pidas que tire infinito. 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "rollResult": {
+        "template": "🎲 **d{sides}** x{rolls}: {result}",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "chooseUsage": {
+        "template": "❌ Uso: `/bp fun choose <opción1,opción2,...>`",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "chooseMin": {
+        "template": "❌ Necesito al menos 2 opciones... no puedo elegir entre una sola cosa. 🌱",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "summer": 1.4
+          }
+        }
+      },
+      "chooseResult": {
+        "template": "🤔 Entre **{options}**... elijo: **{chosen}** 🌿",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "8ballUsage": {
+        "template": "❌ Uso: `/bp fun 8ball <pregunta>`",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "8ballResult": {
+        "template": "🎱 **Pregunta:** {question}\n**Respuesta:** {answer}",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "seasonal": {
+        "christmas": {
+          "templates": [
+            {
+              "template": "Feliz Navidad! Que el espiritu navideno haga crecer tus hojas mas verdes que nunca. c:",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 2.0
+                },
+                "isWeekend": true
+              }
+            },
+            {
+              "template": "Ho ho ho! Has sido bueno este ano? Porque yo si... mostly.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 2.0
+                },
+                "timeOfDay": {
+                  "evening": 1.3
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        },
+        "newyear": {
+          "templates": [
+            {
+              "template": "Feliz Ano Nuevo! Que el 2025 te traiga mucho sol, agua y buenos nutrientes.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 2.0
+                },
+                "timeOfDay": {
+                  "night": 1.5
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        },
+        "halloween": {
+          "templates": [
+            {
+              "template": "Trick or treat! Quieres dulces o prefieres que te tire hojas secas?",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "autumn": 2.0
+                },
+                "isWeekend": true
+              }
+            },
+            {
+              "template": "Boo! Soy el fantasma de la fotosintesis pasada... te vigilo mientras duermes!",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "autumn": 2.0
+                },
+                "timeOfDay": {
+                  "night": 1.4
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        },
+        "valentine": {
+          "templates": [
+            {
+              "template": "Feliz San Valentin! Mi corazon late al ritmo de la fotosintesis... por ti.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "spring": 1.5
+                },
+                "isWeekend": true
+              }
+            }
+          ],
+          "boost": 1.5
+        },
+        "spring_festival": {
+          "templates": [
+            {
+              "template": "Llego la primavera! Mis hojas estan listas para el desfile floral.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "spring": 2.0
+                }
+              }
+            }
+          ],
+          "boost": 1.5
+        },
+        "independence_arg": {
+          "templates": [
+            {
+              "template": "Feliz Dia de la Independencia! Viva la patria... y viva la clorofila!",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 1.5
+                }
+              }
+            }
+          ],
+          "boost": 1.5
+        },
+        "friendship_day": {
+          "templates": [
+            {
+              "template": "Feliz Dia del Amigo! Gracias por ser mi humano favorito... no se lo digas a los otros.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 1.5
+                },
+                "isWeekend": true
+              }
+            }
+          ],
+          "boost": 1.5
+        },
+        "carnaval": {
+          "templates": [
+            {
+              "template": "Carnaval, carnaval! Me pongo mis mejores hojas de colores.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "summer": 1.3
+                },
+                "isWeekend": true
+              }
+            }
+          ],
+          "boost": 1.3
+        },
+        "winter_break": {
+          "templates": [
+            {
+              "template": "Vacaciones de invierno Tiempo de hibernacion... ops, las plantas no hibernan.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 1.2
+                }
+              }
+            }
+          ],
+          "boost": 1.2
+        }
+      }
+    },
+    "distube": {
+      "finish": {
+        "template": "✅ ¡Terminó la cola! Bajo mis hojas por hoy. Fue un placer compartir fotosíntesis musical. ¡Hasta la próxima! c: 🍃",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "empty": {
+        "template": "👋 ¡Se fueron todos! Me quedo solo como planta de oficina... bueno, me voy a la maceta. ¡Chau! :P 🪴",
+        "slots": {},
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5
+          },
+          "season": {
+            "summer": 1.4
+          }
+        }
+      },
+      "error": {
+        "template": "❌ ¡Uy! Se me enredaron las raíces del audio: `{errorMsg}`",
+        "slots": {
+          "errorMsg": [
+            {
+              "text": "errorMsg",
+              "weight": 50
+            },
+            {
+              "text": "errorMsg verde",
+              "weight": 30
+            },
+            {
+              "text": "errorMsg bonito",
+              "weight": 20
+            }
+          ]
+        },
+        "hits": [],
+        "crits": [],
+        "fails": []
+      }
+    },
+    "triggers": {
+      "hola": {
+        "template": "¡Buenas! ¿Me regaste hoy? c:",
+        "slots": {},
+        "hits": [
+          "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
+          "¡Qué tal! Espero que no me pises 🍃",
+          "¡Buenasss! Soy de hoja perenne, siempre estoy c:"
+        ],
+        "crits": [
+          "¡BOOOM! ¡Saludé tan fuerte que se me cayó una hoja! 🍃✨",
+          "¡HOLAAA! Voy a crecer 5 cm con toda esta onda 🌱"
+        ],
+        "fails": [
+          "...",
+          "estaba haciendo la fotosíntesis, no escuché nada >:c",
+          "hola...",
+          "¿eh? no tengo cuerdas vocales, soy una planta... pero chasqueo hojas"
+        ],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5
+          },
+          "commandType": {
+            "hola": 1.5
+          }
+        }
+      },
+      "bien": {
+        "template": "¡Qué bueno! Eso me hace crecer 🌱",
+        "slots": {},
+        "hits": [
+          "¡Genial! Me brotan hojitas nuevas de la emoción 🍃",
+          "¡Me alegro un montón! ¡Hasta el tallo me vibra! c:"
+        ],
+        "crits": [
+          "¡PERFECTO! ¡FLORECÍ! 🌸🎉",
+          "¡TODO BIEN! ¡Me salieron como 5 hojas de golpe! 🌿✨"
+        ],
+        "fails": [
+          "¿seguro? yo soy medio planta para creer... c:",
+          "mmm... decímelo sin mirarme las raíces :P"
+        ],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5
+          }
+        }
+      },
+      "musica": {
+        "template": "¡UUU música! Se me mueven todas las hojas 🎵🍃",
+        "slots": {},
+        "hits": [
+          "Pasame un link y la pongo... total no me muevo de acá, soy planta 🎧",
+          "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶"
+        ],
+        "crits": [
+          "¡FIESTA! ¡Hasta las raíces bailan! 🎉🌿🕺",
+          "¡SE VIENE EL BAILONGO! ¡Fotosíntesis en modo fiesta! 🪩🌱"
+        ],
+        "fails": [
+          "¿eso es música? Ni mis raíces la sienten :P",
+          "no me digas... a mí me gusta el sonido del agua cuando me riegan 🎧"
+        ],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "bottedplant": {
+        "template": "¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
+        "slots": {},
+        "hits": [
+          "¡Acá estoy! ¿Me vas regar o solo mirar? C:",
+          "¡BottedPlant en la habitación! Bueno. En la maceta 🪴✨"
+        ],
+        "crits": [
+          "¡SOY YO! 🌿💚 ¡Mirá cómo crecí con ese grito!"
+        ],
+        "fails": [
+          ".¿bot? ¿dónde? Yo solo veo una planta acá 👀",
+          "¿Bot? Soy planta, no hago ni bots ni bostezos. Bueno, quizás bostezos"
+        ]
+      },
+      "japish_trigger": {
+        "template": "JAPISH JAPISH.",
+        "slots": {},
+        "hits": [
+          "¡GRAGH! >:c",
+          "BASOOOURA.",
+          "¡JAPISH! (es lo que digo cuando me riegan) 🌿"
+        ],
+        "crits": [
+          "¡¡JAPISH! 🌿✨",
+          "ARGGH ¡JAPISH! ¡Se me cayeron 3 hojas del susto!"
+        ],
+        "fails": [
+          ".",
+          "no sé qué significa eso:c",
+          "¿japish? Yo solo sé decir \"agua\""
+        ]
+      },
+      "buenos_dias": {
+        "template": "¡Buenos días! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+        "slots": {},
+        "hits": [
+          "¡Buenas! ¿Arrancamos con agua y sol? C:",
+          "¡Buenas noches! Cierro los estomas y mimir 🌙🌿"
+        ],
+        "crits": [
+          "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨"
+        ],
+        "fails": [
+          "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5
+          },
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "seasonal": {
+        "christmas": {
+          "templates": [
+            {
+              "template": "suena villancico de hojas",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 2.0
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        },
+        "halloween": {
+          "templates": [
+            {
+              "template": "susurro de hojas secas ...",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "autumn": 2.0
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        }
+      }
+    },
+    "shitpost": {
+      "me_regaste_hoy": {
+        "template": "¿Me regaste hoy? C:",
+        "slots": {},
+        "hits": [
+          "¿Me regaste hoy? 🌿",
+          "¿Me regaste hoy? 💧"
+        ],
+        "crits": [
+          "¡BOOOM! ¡Regármelo más fuerte que el sol en verano! 🌞💦",
+          "¡UHHH QUÉ RICO! Mis hojas crecieron 5cm con eso! 🌱✨"
+        ],
+        "fails": [
+          ".",
+          "estaba haciendo la fotosíntesis, no escuché nada >:c",
+          "hola.",
+          "¿eh? No tengo cuerdas vocales, soy una planta. Pero chasqueo hojas"
+        ]
+      },
+      "que_onda": {
+        "template": "¿Qué onda?",
+        "slots": {},
+        "hits": [
+          "¿Qué onda? 🌿",
+          "¿Qué onda? C:"
+        ],
+        "crits": [
+          "¡UH OH! Mis raíces se movieron! 🌿✨",
+          "¡SE VIENE LA FIESTA! Mis hojas no paran de bailar! 🪩🌱"
+        ],
+        "fails": [
+          ".",
+          "no sé qué onda, solo sé que me falta agua",
+          "¿onda? Soy planta, no tengo onda. Solo savia"
+        ]
+      },
+      "lol": {
+        "template": "lol",
+        "slots": {},
+        "hits": [
+          "lol 🍃",
+          "lol 🌸"
+        ],
+        "crits": [
+          "😂😂😂 ¡Me reí tanto que se me cayó una hoja! 🍃",
+          "¡JAJAJA! Mis estomas se abrieron de la risa! 🌸"
+        ],
+        "fails": [
+          ".",
+          "no sé reír, solo hago fotosíntesis",
+          "lol. Yo solo sé decir \"agua\""
+        ]
+      },
+      "hola": {
+        "template": "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
+        "slots": {},
+        "hits": [
+          "¡Hola! ¿Me regás hoy? C:",
+          "¡Hola! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡HOLAAA! Voy crecer 10cm con toda esta onda! 🌱",
+          "¡BOOM! Saludé tan fuerte que se me cayó una hoja! 🍃✨"
+        ],
+        "fails": [
+          ".",
+          "estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
+          "hola. ¿me regás?"
+        ],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5
+          },
+          "season": {
+            "autumn": 1.3
+          },
+          "commandType": {
+            "hola": 1.5
+          }
+        }
+      },
+      "buenas": {
+        "template": "¡Buenas! ¿Arrancamos con agua y sol? C:",
+        "slots": {},
+        "hits": [
+          "¡Buenas! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+          "¡Buenas! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨",
+          "¡BUENAS! Ya abrí mis poros para la fotosíntesis 🍃"
+        ],
+        "fails": [
+          ".",
+          "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5
+          },
+          "season": {
+            "summer": 1.4
+          }
+        }
+      },
+      "que_tal": {
+        "template": "¿Qué tal! Eso me hace crecer 🌱",
+        "slots": {},
+        "hits": [
+          "¿Qué tal! Me brotan hojitas nuevas de la emoción 🍃",
+          "¿Qué tal! Hasta el tallo me vibra! C:"
+        ],
+        "crits": [
+          "¡PERFECTO! ¡FLORECÍ! 🌸🎉",
+          "¡TODO BIEN! ¡Me salieron como 5 hojas de golpe! 🌿✨"
+        ],
+        "fails": [
+          "¿seguro? Yo soy medio planta para creer. C:",
+          "mmm. Decímelo sin mirarme las raíces:P"
+        ]
+      },
+      "musica": {
+        "template": "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶",
+        "slots": {},
+        "hits": [
+          "Pasame un link y la pongo. Total no me muevo de acá, soy planta 🎧",
+          "¿Qué querés escuchar? Si es Bach, mis raíces se relajan 🌿🎶"
+        ],
+        "crits": [
+          "¡FIESTA! ¡Hasta las raíces bailan! 🎉🌿🕺",
+          "¡SE VIENE EL BAILONGO! ¡Fotosíntesis en modo fiesta! 🪩🌱"
+        ],
+        "fails": [
+          "¿eso es música? Ni mis raíces la sienten:P",
+          "no me digas. Mí me gusta el sonido del agua cuando me riegan 🎧"
+        ]
+      },
+      "plant": {
+        "template": "¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
+        "slots": {},
+        "hits": [
+          "¡Acá estoy! ¿Me vas regar o solo mirar? C:",
+          "¡BottedPlant en la habitación! Bueno. En la maceta 🪴✨"
+        ],
+        "crits": [
+          "¡SOY YO! 🌿💚 ¡Mirá cómo crecí con ese grito!"
+        ],
+        "fails": [
+          ".¿bot? ¿dónde? Yo solo veo una planta acá 👀",
+          "¿Bot? Soy planta, no hago ni bots ni bostezos. Bueno, quizás bostezos"
+        ]
+      },
+      "japish": {
+        "template": "JAPISH JAPISH.",
+        "slots": {},
+        "hits": [
+          "¡GRAGH! >:c",
+          "BASOOOURA.",
+          "¡JAPISH! (es lo que digo cuando me riegan) 🌿"
+        ],
+        "crits": [
+          "¡¡JAPISH! 🌿✨",
+          "ARGGH ¡JAPISH! ¡Se me cayeron 3 hojas del susto!"
+        ],
+        "fails": [
+          ".",
+          "no sé qué significa eso:c",
+          "¿japish? Yo solo sé decir \"agua\""
+        ]
+      },
+      "buenos_dias": {
+        "template": "¡Buenos días! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+        "slots": {},
+        "hits": [
+          "¡Buenas! ¿Arrancamos con agua y sol? C:",
+          "¡Buenas noches! Cierro los estomas y mimir 🌙🌿"
+        ],
+        "crits": [
+          "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨"
+        ],
+        "fails": [
+          ".",
+          "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5
+          },
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "buenas_tardes": {
+        "template": "¡Buenas tardes! Cierro los estomas y mimir 🌙🌿",
+        "slots": {},
+        "hits": [
+          "¡Buenas tardes! ¿Me regás? C:",
+          "¡Buenas tardes! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡BUENAS TARDES! Cierro los estomas y mimir 🌙🌿"
+        ],
+        "fails": [
+          ".",
+          "¿ya es tarde? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5,
+            "afternoon": 1.3
+          }
+        }
+      },
+      "buenas_noches": {
+        "template": "¡Buenas noches! Cierro los estomas y mimir 🌙🌿",
+        "slots": {},
+        "hits": [
+          "¡Buenas noches! ¿Me regás? C:",
+          "¡Buenas noches! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡BUENAS NOCHES! Cierro los estomas y mimir 🌙🌿"
+        ],
+        "fails": [
+          ".",
+          "¿ya es de noche? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "contexts": {
+          "timeOfDay": {
+            "morning": 1.5,
+            "evening": 1.4,
+            "night": 1.5
+          }
+        }
+      },
+      "good_morning": {
+        "template": "¡Good morning! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+        "slots": {},
+        "hits": [
+          "¡Good morning! ¿Arrancamos con agua y sol? C:",
+          "¡Good morning! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡LOS MEJORES DÍAS! ¡Mi maceta es un paraíso! 🌞🌿✨"
+        ],
+        "fails": [
+          ".",
+          "¿ya es de día? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ],
+        "contexts": {
+          "season": {
+            "autumn": 1.3
+          }
+        }
+      },
+      "good_night": {
+        "template": "¡Good night! Cierro los estomas y mimir 🌙🌿",
+        "slots": {},
+        "hits": [
+          "¡Good night! ¿Me regás? C:",
+          "¡Good night! Espero que no me pises 🍃"
+        ],
+        "crits": [
+          "¡BUENAS NOCHES! Cierro los estomas y mimir 🌙🌿"
+        ],
+        "fails": [
+          ".",
+          "¿ya es de noche? Para mí todos los días son iguales, no me muevo 👀",
+          "zzz. Una planta no la despiertes, solo duerme y crece 🌙"
+        ]
+      },
+      "seasonal": {
+        "christmas": {
+          "templates": [
+            {
+              "template": "La Navidad es cuando las plantas pedimos carbon... para el sustrato.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "winter": 2.0
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        },
+        "halloween": {
+          "templates": [
+            {
+              "template": "En Halloween me disfrazo de planta carnivora... wait, ya lo soy.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "autumn": 2.0
+                }
+              }
+            }
+          ],
+          "boost": 2.0
+        },
+        "valentine": {
+          "templates": [
+            {
+              "template": "Mi Valentine es mi maceta. Es la unica que me aguanta todo el ano.",
+              "slots": {},
+              "hits": [],
+              "crits": [],
+              "fails": [],
+              "contexts": {
+                "season": {
+                  "spring": 1.5
+                }
+              }
+            }
+          ],
+          "boost": 1.5
+        }
+      }
+    },
+    "test": {
+      "testKey": {
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "template": "Hello {user}!"
+      },
+      "newKey": {
+        "crits": [],
+        "fails": []
+      },
+      "templateKey": {
+        "hits": [],
+        "crits": [],
+        "fails": [],
+        "template": "Template: {name}!"
+      }
+    }
+  },
+  "media": {
+    "folder": "data/media"
   }
 }

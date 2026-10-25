@@ -1,0 +1,67 @@
+{
+  "seasons": [
+    {
+      "name": "christmas",
+      "start": "12-01",
+      "end": "12-31",
+      "boost": 2,
+      "description": "Navidad y fiestas de fin de año"
+    },
+    {
+      "name": "newyear",
+      "start": "12-30",
+      "end": "01-05",
+      "boost": 2,
+      "description": "Año Nuevo"
+    },
+    {
+      "name": "halloween",
+      "start": "10-25",
+      "end": "10-31",
+      "boost": 2,
+      "description": "Halloween / Noche de Brujas"
+    },
+    {
+      "name": "valentine",
+      "start": "02-10",
+      "end": "02-14",
+      "boost": 1.5,
+      "description": "Día de San Valentín"
+    },
+    {
+      "name": "spring_festival",
+      "start": "09-21",
+      "end": "09-23",
+      "boost": 1.5,
+      "description": "Fiesta de la Primavera (Argentina)"
+    },
+    {
+      "name": "independence_arg",
+      "start": "07-09",
+      "end": "07-09",
+      "boost": 1.5,
+      "description": "Día de la Independencia Argentina"
+    },
+    {
+      "name": "friendship_day",
+      "start": "07-20",
+      "end": "07-20",
+      "boost": 1.5,
+      "description": "Día del Amigo (Argentina)"
+    },
+    {
+      "name": "carnaval",
+      "start": "02-01",
+      "end": "02-28",
+      "boost": 1.3,
+      "description": "Carnaval"
+    },
+    {
+      "name": "winter_break",
+      "start": "07-15",
+      "end": "07-31",
+      "boost": 1.2,
+      "description": "Vacaciones de invierno"
+    }
+  ]
+}

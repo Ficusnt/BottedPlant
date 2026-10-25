@@ -1,4 +1,5 @@
-const dataStore = require('../dataStore');
+import * as dataStore from '../dataStore.js';
+import { logger } from '../logger.js';
 
 let scheduled = false;
 
@@ -21,13 +22,13 @@ function scheduleReminders(client) {
               );
             }
           } catch (err) {
-            console.error(`[reminders] Error sending reminder ${id}:`, err);
+            logger.error({ err, reminderId: id }, '[reminders] Error sending reminder');
           }
           await dataStore.removeReminder(id);
         }
       }
     } catch (err) {
-      console.error('[reminders] Error checking reminders:', err);
+      logger.error({ err }, '[reminders] Error checking reminders');
     }
   };
 
@@ -37,4 +38,4 @@ function scheduleReminders(client) {
   check();
 }
 
-module.exports = { scheduleReminders };
+export { scheduleReminders };

@@ -1,8 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import config from '../src/config.js';
 
-// Load config to get the resolved cookies file (respects YTDLP_COOKIES_FILE env var)
-const config = require('../src/config');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const conf = path.join(__dirname, '..', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.conf');
 
@@ -14,7 +16,7 @@ if (config.cookiesFile && fs.existsSync(config.cookiesFile)) {
 --cookies "${config.cookiesFile.replace(/\\/g, '\\\\')}"
 --extractor-args "youtube:player_client=web"
 --extractor-args "youtube:client=web"
--f bestaudio/best
+-f "bestaudio[ext=m4a]/bestaudio[ext=mp4]/bestaudio/best"
 `;
   console.log(`[setup] Using cookies: ${config.cookiesFile}`);
 } else {
@@ -27,7 +29,7 @@ if (config.cookiesFile && fs.existsSync(config.cookiesFile)) {
 --extractor-args "youtube:youtube_include_hls_manifest=0"
 --extractor-args "youtube:youtube_include_mp4_manifest=1"
 --extractor-args "youtube:youtube_include_thumbnails=1"
--f bestaudio/best
+-f "bestaudio[ext=m4a]/bestaudio[ext=mp4]/bestaudio/best"
 `;
   if (config.cookiesFile) {
     console.log('[setup] Cookie file specified but not found:', config.cookiesFile);

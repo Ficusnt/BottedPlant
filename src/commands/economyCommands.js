@@ -1,14 +1,14 @@
 /**
- * economyCommands.js - Economy/leaves slash command handlers
- * Extracted from bpCommand.js for modularity
+ * @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction
  */
 
-const { EmbedBuilder, MessageFlags } = require('discord.js');
-const dataStore = require('../dataStore');
-const phraseManager = require('../phraseManager');
+import { EmbedBuilder, MessageFlags } from 'discord.js';
+import * as dataStore from '../dataStore.js';
+import * as phraseManager from '../phraseManager.js';
 
 /**
  * Handle /bp leaves daily
+ * @param {ChatInputCommandInteraction} interaction
  */
 async function handleLeavesDaily(interaction) {
   await interaction.deferReply({ flags: MessageFlags.Ephemeral });
@@ -22,8 +22,11 @@ async function handleLeavesDaily(interaction) {
   let streak = 1;
   if (entry.lastDaily) {
     const last = new Date(entry.lastDaily);
+    /** @type {Date} */
     const lastDay = new Date(last.getFullYear(), last.getMonth(), last.getDate());
-    const diffDays = Math.round((today - lastDay) / 86400000);
+    /** @type {Date} */
+    const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = Math.round((todayDate.getTime() - lastDay.getTime()) / 86400000);
     if (diffDays === 0) {
       return interaction.editReply({ 
         content: await phraseManager.getPhrase('economy', 'dailyAlready')
@@ -292,7 +295,7 @@ async function handleLeavesRedeem(interaction) {
   return interaction.editReply(msg);
 }
 
-module.exports = {
+export {
   handleLeavesDaily,
   handleLeavesPoints,
   handleLeavesLeaderboard,

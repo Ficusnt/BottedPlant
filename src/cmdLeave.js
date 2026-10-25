@@ -1,5 +1,6 @@
-const phraseManager = require('./phraseManager');
-const { MessageFlags } = require('discord.js');
+import * as phraseManager from './phraseManager.js';
+import { MessageFlags } from 'discord.js';
+import { logger } from './logger.js';
 
 function getVoiceChannel(interaction) {
   return interaction.member.voice.channel || null;
@@ -25,9 +26,9 @@ async function cmdLeave(interaction) {
     await voiceState.channel.leave();
     await interaction.editReply(await phraseManager.getPhrase('music', 'leaveSuccess'));
   } catch (err) {
-    console.error('Error disconnecting from voice:', err);
+    logger.error({ err }, 'Error disconnecting from voice');
     await interaction.editReply(await phraseManager.getPhrase('music', 'leaveError'));
   }
 }
 
-module.exports = { cmdLeave };
+export { cmdLeave };

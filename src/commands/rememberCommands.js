@@ -3,9 +3,10 @@
  * Extracted from bpCommand.js for modularity
  */
 
-const { EmbedBuilder, MessageFlags } = require('discord.js');
-const dataStore = require('../dataStore');
-const phraseManager = require('../phraseManager');
+import { EmbedBuilder, MessageFlags } from 'discord.js';
+import * as dataStore from '../dataStore.js';
+import * as phraseManager from '../phraseManager.js';
+import { logger } from '../logger.js';
 
 /**
  * Handle /bp remember add
@@ -36,7 +37,7 @@ async function handleRememberAdd(interaction) {
       when: new Date(when).toLocaleString('es-AR')
     }));
   } catch (error) {
-    console.error('[Remember] Add error:', error);
+    logger.error({ err: error }, '[Remember] Add error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('reminders', 'addError')
     });
@@ -111,7 +112,7 @@ async function handleBirthdayAdd(interaction) {
       date
     }));
   } catch (error) {
-    console.error('[Birthday] Add error:', error);
+    logger.error({ err: error }, '[Birthday] Add error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('birthdays', 'addError')
     });
@@ -124,7 +125,7 @@ async function handleBirthdayAdd(interaction) {
 async function handleBirthdayList(interaction) {
   await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-  const birthdays = await dataStore.getBirthdays(interaction.guildId);
+  const birthdays = await dataStore.getBirthdaysForGuild(interaction.guildId);
 
   if (!birthdays || birthdays.length === 0) {
     return interaction.editReply({ 
@@ -159,7 +160,7 @@ async function handleBirthdayRemove(interaction) {
   return interaction.editReply(await phraseManager.getPhrase('birthdays', 'removed', 'hits', { id }));
 }
 
-module.exports = {
+export {
   handleRememberAdd,
   handleRememberList,
   handleRememberCancel,

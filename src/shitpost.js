@@ -1,16 +1,20 @@
 // shitpost.js - Random meme responses with media support 
-const fs = require('fs').promises;
-const path = require('path');
-const phraseManager = require('./phraseManager');
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import * as phraseManager from './phraseManager.js';
+import { checkTriggers } from './phraseManager.js';
 
-const mediaDir = path.join(__dirname, '.', 'data', 'media');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const mediaDir = path.join(__dirname, '..', 'data', 'media');
 
 // Load shitpost phrases from phraseManager
 let SHITPOSTS = [];
 
 async function loadShitposts() {
   if (SHITPOSTS.length > 0) return;
-  const cat = await phraseManager.getCategory('shitposts');
+  const cat = await phraseManager.getCategory('shitpost');
   if (cat) {
     for (const key of Object.keys(cat)) {
       const entry = cat[key];
@@ -22,14 +26,6 @@ async function loadShitposts() {
         fails: entry.fails || [],
       });
     }
-  }
-  if (SHITPOSTS.length === 0) {
-    // Fallback defaults
-    SHITPOSTS = [
-      { text: 'bien', hits: ['Bien ahí 🌿', 'Sí, che 🍃', 'Dale que va 🌱'], crits: ['¡BIEN ALLÁ CARAJO! 🌿✨'], fails: ['...¿qué? 🌱'] },
-      { text: 'mal', hits: ['Mal ahí 🌱', 'No che 🍂', 'Qué sé yo 🌿'], crits: ['¡MAL PERO MUY MAL! 🌿✨'], fails: ['...quizás sí 🌱'] },
-      { text: 'planta', hits: ['🌿 *fotosintetiza*', 'Soy una planta, no me hables 🍃', 'Regame y hablamos 🌱'], crits: ['¡SOY LA REINA DEL JARDÍN! 🌿✨'], fails: ['*se seca* 🌵'] },
-    ];
   }
 }
 
@@ -55,23 +51,83 @@ async function loadMedia() {
   }
 }
 
-// Check if message contains any shitpost trigger
-function hasShitpostTrigger(content) {
-  if (!content) return false;
-  const lower = content.toLowerCase();
-  return SHITPOSTS.some((s) => (s.keywords && s.keywords.some((k) => lower.includes(k.toLowerCase()))) || (s.text && s.text.toLowerCase().split(' ').some((word) => lower.includes(word))));
+// Cooldown & deduplication state
+const SHITPOST_COOLDOWN_MS = 2 * 60 * 1000; // 2 minutes
+const SHITPOST_HISTORY_SIZE = 5; // Track last 5 responses per channel
+const channelCooldowns = new Map(); // channelId -> timestamp
+const channelHistory = new Map();   // channelId -> array of recent responses
+
+// Find all matching shitpost entries for given content
+// Uses shared checkTriggers from phraseManager.js
+function findMatchingShitposts(content) {
+  if (!content) return [];
+  return checkTriggers(content, SHITPOSTS);
 }
 
-// Get random shitpost response
-function getShitpostResponse(content) {
-  const lower = content.toLowerCase();
-  const triggers = SHITPOSTS.filter((s) => (s.keywords && s.keywords.some((k) => lower.includes(k.toLowerCase()))) || (s.text && s.text.toLowerCase().split(' ').some((word) => lower.includes(word))));
+// Check if message contains any shitpost trigger (no cooldown check - fast path)
+function hasShitpostTrigger(content) {
+  return findMatchingShitposts(content).length > 0;
+}
+
+// Check if channel is on cooldown
+function isOnCooldown(channelId) {
+  const lastTime = channelCooldowns.get(channelId);
+  if (!lastTime) return false;
+  return Date.now() - lastTime < SHITPOST_COOLDOWN_MS;
+}
+
+// Mark channel as having sent a shitpost (starts cooldown)
+function markShitpostSent(channelId) {
+  channelCooldowns.set(channelId, Date.now());
+}
+
+// Get random shitpost response with cooldown + deduplication
+function getShitpostResponse(content, channelId) {
+  if (!content) return null;
+
+  // Cooldown check (per channel)
+  if (channelId && isOnCooldown(channelId)) {
+    return null;
+  }
+
+  const triggers = findMatchingShitposts(content);
   if (triggers.length === 0) return null;
+
   const trigger = triggers[Math.floor(Math.random() * triggers.length)];
   const roll = Math.floor(Math.random() * 20) + 1;
-  if (roll === 1) return phraseManager.rand(trigger.fails);
-  if (roll === 20) return phraseManager.rand(trigger.crits);
-  return phraseManager.rand(trigger.hits);
+  let response;
+  if (roll === 1) response = phraseManager.rand(trigger.fails);
+  else if (roll === 20) response = phraseManager.rand(trigger.crits);
+  else response = phraseManager.rand(trigger.hits);
+
+  // Deduplication: avoid repeating recent responses in this channel
+  if (channelId && response) {
+    const history = channelHistory.get(channelId) || [];
+    if (history.includes(response)) {
+      // Try to pick a different response from the same trigger (max 3 attempts)
+      let attempts = 3;
+      while (attempts-- > 0) {
+        let altResponse;
+        const altRoll = Math.floor(Math.random() * 20) + 1;
+        if (altRoll === 1) altResponse = phraseManager.rand(trigger.fails);
+        else if (altRoll === 20) altResponse = phraseManager.rand(trigger.crits);
+        else altResponse = phraseManager.rand(trigger.hits);
+        if (!history.includes(altResponse)) {
+          response = altResponse;
+          break;
+        }
+      }
+    }
+    // Update history
+    history.push(response);
+    if (history.length > SHITPOST_HISTORY_SIZE) history.shift();
+    channelHistory.set(channelId, history);
+  }
+
+  // Mark cooldown
+  if (channelId) markShitpostSent(channelId);
+
+  return response;
 }
 
 // Get random media file
@@ -95,7 +151,9 @@ async function sendShitpost(message, text, mediaFile = null) {
   }
 }
 
-module.exports = {
+export {
+  SHITPOSTS,
+  findMatchingShitposts,
   hasShitpostTrigger,
   getShitpostResponse,
   getRandomMedia,

@@ -1,13 +1,23 @@
 /**
  * phraseManager.js - Centralized phrase dictionary system
  * Data-driven phrases loaded from data/phrases.json
- * Supports templates, weighted slots, global mannerisms, synonyms, and hot-reload
+ * Supports templates, weighted slots, global mannerisms, synonyms, seasonal rotation, and hot-reload
  */
 
-const fs = require('fs').promises;
-const path = require('path');
+import fs from 'fs/promises';
+import path from 'path';
+import { logger } from './logger.js';
 
-const PHRASES_FILE = path.join(__dirname, 'data', 'phrases.json');
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PHRASES_FILE = path.join(__dirname, '..', 'data', 'phrases.json');
+const SEASONS_FILE = path.join(__dirname, '..', 'data', 'seasons.json');
+
+// New module imports
+import { buildContext, selectWithContext, getCurrentSeason, updateRecentPhrases } from './contextSelector.js';
+import { applySynonyms as applySynonymsEngine, loadSynonyms } from './synonymEngine.js';
+import { loadSeasons, getSeasonalPhrases, getSeasonalBoosts } from './seasonalRotator.js';
 
 // Fallback returned when a requested phrase/key doesn't exist
 const MISSING_PHRASE = '🌿 *frase extraviada entre mis raíces...*';
@@ -17,6 +27,12 @@ let lastLoaded = 0;
 
 const mediaCooldowns = new Map();
 const mediaHourlyCount = new Map();
+
+// In-memory recent phrases tracking (per guild for anti-repeat)
+const recentPhrasesByGuild = new Map();
+
+// Keyword index for O(1) trigger lookup: keyword -> Set<triggerKey>
+let keywordIndex = null;
 
 // ============================================================================
 // Weighted Random Selection
@@ -80,29 +96,112 @@ function applyGlobalMannerisms(text, data) {
 }
 
 function applySynonyms(text, data) {
-  const synonyms = data._global?.synonyms;
-  if (!synonyms) return text;
+  const synonyms = loadSynonyms(data);
+  if (!synonyms || Object.keys(synonyms).length === 0) return text;
   
-  let result = text;
-  for (const [original, alternatives] of Object.entries(synonyms)) {
-    const regex = new RegExp(`\\b${original}\\b`, 'gi');
-    result = result.replace(regex, (match) => {
-      if (Math.random() < 0.3 && alternatives.length > 0) {
-        const replacement = rand(alternatives);
-        return match[0] === match[0].toUpperCase() 
-          ? replacement.charAt(0).toUpperCase() + replacement.slice(1)
-          : replacement;
-      }
-      return match;
-    });
-  }
-  return result;
+  return applySynonymsEngine(text, synonyms, { probability: 0.3, wholeWordOnly: true, maxReplacements: 3 });
 }
 
 function postProcessPhrase(text, data) {
   let result = applyGlobalMannerisms(text, data);
   result = applySynonyms(result, data);
   return result;
+}
+
+// ============================================================================
+// Keyword Index for O(1) Trigger Lookup
+// ============================================================================
+
+function buildKeywordIndex() {
+  keywordIndex = new Map();
+  if (!phrasesData?.categories?.triggers) return;
+
+  for (const [triggerKey, triggerData] of Object.entries(phrasesData.categories.triggers)) {
+    // Use keywords field or fall back to triggerKey
+    const patterns = triggerData.keywords || triggerData.patterns || [triggerKey];
+    for (const pattern of patterns) {
+      // Extract meaningful keywords (words longer than 2 chars)
+      const words = pattern.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+      for (const word of words) {
+        if (!keywordIndex.has(word)) {
+          keywordIndex.set(word, new Set());
+        }
+        keywordIndex.get(word).add(triggerKey);
+      }
+    }
+  }
+}
+
+/**
+ * Shared trigger matching helper.
+ * Takes a message and an array of trigger objects (with keywords[] and/or text).
+ * Returns array of matching trigger objects.
+ * Uses the same keyword index logic as getTriggerResponse for consistency.
+ */
+export function checkTriggers(message, triggers) {
+  if (!message || !triggers || triggers.length === 0) return [];
+  const lower = message.toLowerCase();
+  
+  // Build a temporary keyword index for the provided triggers
+  const tempIndex = new Map();
+  for (const trigger of triggers) {
+    const keywords = trigger.keywords || [];
+    // Also index words from trigger.text as fallback
+    // Split on whitespace, underscores, and other word separators
+    const textWords = trigger.text ? trigger.text.toLowerCase().split(/[\s_]+/) : [];
+    
+    for (const kw of keywords) {
+      const key = kw.toLowerCase();
+      if (!tempIndex.has(key)) {
+        tempIndex.set(key, []);
+      }
+      tempIndex.get(key).push(trigger);
+    }
+    for (const word of textWords) {
+      if (word.length > 2) { // Only index words longer than 2 chars
+        const key = word;
+        if (!tempIndex.has(key)) {
+          tempIndex.set(key, []);
+        }
+        tempIndex.get(key).push(trigger);
+      }
+    }
+  }
+  
+  // Find candidate triggers by looking up message words in the temp index
+  const words = lower.split(/[\s,.;:!?¿¡()[\]{}]+/).filter(w => w.length > 2);
+  const candidates = new Map(); // trigger -> match count
+  
+  for (const word of words) {
+    const matches = tempIndex.get(word);
+    if (matches) {
+      for (const trigger of matches) {
+        candidates.set(trigger, (candidates.get(trigger) || 0) + 1);
+      }
+    }
+  }
+  
+  // If we have indexed matches, return those triggers
+  if (candidates.size > 0) {
+    // Sort by match count (descending) and return
+    return Array.from(candidates.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([trigger]) => trigger);
+  }
+  
+  // Fallback: check if any trigger.text words are in message
+  const fallback = [];
+  for (const trigger of triggers) {
+    const textWords = trigger.text ? trigger.text.toLowerCase().split(/[\s_]+/) : [];
+    for (const word of textWords) {
+      if (word.length > 2 && lower.includes(word)) {
+        fallback.push(trigger);
+        break;
+      }
+    }
+  }
+  
+  return fallback;
 }
 
 // ============================================================================
@@ -114,192 +213,226 @@ async function loadPhrases() {
     const content = await fs.readFile(PHRASES_FILE, 'utf8');
     phrasesData = JSON.parse(content);
     lastLoaded = Date.now();
-    console.log('[PhraseManager] Loaded phrases.json v' + phrasesData.version);
+    logger.info({ version: phrasesData.version }, '[PhraseManager] Loaded phrases.json');
+    
+    // Build keyword index for O(1) trigger lookup
+    buildKeywordIndex();
+    
     return phrasesData;
   } catch (err) {
-    console.error('[PhraseManager] Error loading phrases:', err);
-    phrasesData = { 
-      version: 0, 
-      categories: {}, 
-      _global: {
-        mannerisms: [
-          {text: 'c:', weight: 15},
-          {text: 'uwu', weight: 10},
-          {text: 'owo', weight: 10},
-          {text: ':3', weight: 10},
-          {text: 'leaf', weight: 15},
-          {text: '', weight: 40}
-        ],
-        synonyms: {}
-      },
-      media: { folder: 'data/media', globalChance: 0.08, minIntervalMinutes: 30, maxPerHour: 5 }
-    };
-    return phrasesData;
+    logger.error({ err }, '[PhraseManager] Error loading phrases');
+    throw err;
   }
 }
 
-async function getPhrases() { 
-  if (!phrasesData) await loadPhrases(); 
-  return phrasesData; 
+async function reloadPhrases() {
+  phrasesData = null;
+  keywordIndex = null;
+  return loadPhrases();
 }
 
-async function getCategory(category) { 
-  const data = await getPhrases(); 
-  return data.categories[category] || null; 
+async function getPhrases() {
+  if (!phrasesData) await loadPhrases();
+  return phrasesData;
 }
 
-async function reloadPhrases() { 
-  console.log('[PhraseManager] Hot-reloading phrases...'); 
-  await loadPhrases(); 
-  return phrasesData; 
-}
-
-async function getPhrase(category, key, type = 'hits', vars = {}) {
+/**
+ * Original getPhrase - backward compatible
+ * @param {string} category
+ * @param {string} key
+ * @param {Object} vars
+ * @returns {Promise<string>}
+ */
+async function getPhrase(category, key, vars = {}) {
   const data = await getPhrases();
-  const cat = data.categories[category];
-  if (!cat) {
-    console.warn('[PhraseManager] Category not found: ' + category);
-    return postProcessPhrase(interpolate(MISSING_PHRASE, vars), data);
-  }
-  
+  const cat = data.categories?.[category];
+  if (!cat) return MISSING_PHRASE;
+
+  // Handle legacy format (hits/crits/fails arrays)
   const entry = cat[key];
-  if (!entry) {
-    console.warn('[PhraseManager] Key not found: ' + category + '.' + key);
-    return postProcessPhrase(interpolate(MISSING_PHRASE, vars), data);
-  }
-  
-  // Support both old format (hits: []) and new format (template + slots)
-  let responseText = '';
-  
+  if (!entry) return MISSING_PHRASE;
+
+  // New template/slot format
   if (entry.template) {
-    // New format: template + slots
-    responseText = renderTemplate(entry.template, vars, entry.slots);
-  } else if (entry[type] && entry[type].length) {
-    // Old format: array of hits/crits/fails
-    responseText = rand(entry[type]);
-    responseText = interpolate(responseText, vars);
-  } else if (entry.hits && entry.hits.length) {
-    // Fallback to hits
-    responseText = rand(entry.hits);
-    responseText = interpolate(responseText, vars);
-  } else {
-    console.warn('[PhraseManager] No ' + type + ' responses for ' + category + '.' + key);
-    return postProcessPhrase(interpolate(MISSING_PHRASE, vars), data);
+    const template = entry.template;
+    const slots = entry.slots || {};
+    const weight = entry.weight || 1;
+    let text = renderTemplate(template, vars, slots);
+    text = postProcessPhrase(text, data);
+    return text;
   }
+
+  // Legacy array format fallback
+  let pool = [];
+  if (entry.hits) pool = pool.concat(entry.hits);
+  if (entry.crits) pool = pool.concat(entry.crits);
+  if (entry.fails) pool = pool.concat(entry.fails);
   
-  return postProcessPhrase(responseText, data);
+  if (!pool.length) return MISSING_PHRASE;
+  
+  let text = rand(pool);
+  text = postProcessPhrase(text, data);
+  return text;
+}
+
+/**
+ * NEW: Context-aware phrase selection with seasonal, synonym, and anti-repeat
+ * @param {string} category
+ * @param {string} key
+ * @param {Object} vars - Template variables
+ * @param {Object} contextOptions - Optional context overrides
+ * @param {Object} contextOptions.interaction - Discord interaction/message
+ * @param {string[]} contextOptions.recentPhrases - Override recent phrases
+ * @returns {Promise<string>}
+ */
+async function getPhraseWithContext(category, key, vars = {}, contextOptions = {}) {
+  const data = await getPhrases();
+  const cat = data.categories?.[category];
+  if (!cat) return MISSING_PHRASE;
+
+  const entry = cat[key];
+  if (!entry) return MISSING_PHRASE;
+
+  // Build context from interaction + overrides
+  const interaction = contextOptions.interaction || null;
+  const recentPhrases = contextOptions.recentPhrases || 
+    (interaction?.guild ? recentPhrasesByGuild.get(interaction.guild.id) || [] : []);
+  
+  const context = buildContext(interaction, {
+    recentPhrases,
+    ...contextOptions
+  });
+
+  // Load seasonal config
+  const seasons = await loadSeasons();
+  const season = getCurrentSeason(new Date(), seasons);
+
+  // Get templates (with seasonal boost)
+  let templates = [];
+  if (entry.template) {
+    // Single template entry
+    templates = [{
+      text: entry.template,
+      weight: entry.weight || 1,
+      slots: entry.slots || {},
+      contexts: entry.contexts || {}
+    }];
+  } else if (entry.templates) {
+    // Multiple templates
+    templates = entry.templates.map(t => ({
+      text: t.text || t.template,
+      weight: t.weight || 1,
+      slots: t.slots || {},
+      contexts: t.contexts || {}
+    }));
+  }
+
+  // Add seasonal templates
+  const seasonalTemplates = getSeasonalPhrases(category, season, data);
+  if (seasonalTemplates.length) {
+    templates = [...seasonalTemplates, ...templates];
+  }
+
+  if (!templates.length) {
+    // Legacy format fallback
+    return getPhrase(category, key, vars);
+  }
+
+  // Select template with context weighting
+  const selectedTemplate = selectWithContext(templates, context);
+  if (!selectedTemplate) return MISSING_PHRASE;
+
+  // Find the full template object to get slots
+  const fullTemplate = templates.find(t => t.text === selectedTemplate);
+  const slots = fullTemplate?.slots || {};
+
+  // Render with slots and variables
+  let text = renderTemplate(selectedTemplate, vars, slots);
+  
+  // Post-process (mannerisms + synonyms)
+  text = postProcessPhrase(text, data);
+
+  // Update recent phrases tracking
+  if (interaction?.guild) {
+    const updated = updateRecentPhrases(recentPhrases, text, 10);
+    recentPhrasesByGuild.set(interaction.guild.id, updated);
+  }
+
+  return text;
 }
 
 // ============================================================================
-// Trigger Response
+// Trigger Response System (unchanged)
 // ============================================================================
 
-async function getTriggerResponse(category, content) {
+async function getTriggerResponse(message, vars = {}) {
   const data = await getPhrases();
-  const cat = data.categories[category];
-  if (!cat) return null;
-  
-  const lower = content.toLowerCase();
-  let match = null, matchKey = null;
-  
-  for (const [key, entry] of Object.entries(cat)) {
-    const patterns = entry.patterns || entry.keywords;
-    if (!patterns || !patterns.length) continue;
-    if (patterns.some(p => lower.includes(p.toLowerCase()))) {
-      match = entry;
-      matchKey = key;
-      break;
+  const triggers = data.categories?.triggers;
+  if (!triggers) return null;
+
+  const lowerMsg = message.toLowerCase();
+  // Use same word splitting as buildKeywordIndex for consistency
+  const words = lowerMsg.split(/\s+/).filter(w => w.length > 2);
+
+  // Use keyword index to find candidate triggers
+  const candidateKeys = new Set();
+  for (const word of words) {
+    const keys = keywordIndex?.get(word);
+    if (keys) {
+      for (const key of keys) {
+        candidateKeys.add(key);
+      }
     }
   }
-  
-  if (!match) return null;
-  
-  const roll = Math.floor(Math.random() * 20) + 1;
-  let responseType, responseText;
-  
-  if (roll === 1) {
-    responseType = 'fail';
-    responseText = rand(match.fails || match.hits || []);
-  } else if (roll === 20) {
-    responseType = 'crit';
-    responseText = rand(match.crits || match.hits || []);
-  } else {
-    responseType = 'hit';
-    responseText = rand(match.hits || []);
-  }
-  
-  responseText = postProcessPhrase(interpolate(responseText, {}), data);
-  
-  let mediaFile = null;
-  if (match.media && match.media.length && Math.random() < (match.mediaChance || data.media?.globalChance || 0.08)) {
-    const canSend = await checkMediaCooldown(content);
-    if (canSend) {
-      mediaFile = rand(match.media);
-      await updateMediaCooldown(content);
+
+  // If no candidates found via index, fall back to checking all triggers
+  const keysToCheck = candidateKeys.size > 0 ? candidateKeys : new Set(Object.keys(triggers));
+
+  for (const triggerKey of keysToCheck) {
+    const triggerData = triggers[triggerKey];
+    // Use triggerKey as pattern (since new format doesn't have patterns/keywords fields)
+    const patterns = triggerData.patterns || triggerData.keywords || [triggerKey];
+
+    for (const pattern of patterns) {
+      if (lowerMsg.includes(pattern.toLowerCase())) {
+        // Use the trigger entry directly (hits/crits/fails format)
+        // Use context-aware selection for triggers too
+        const interaction = vars._interaction || null;
+        // Return the trigger data so caller can handle hit/crit/fail logic
+        return { triggerKey, triggerData, interaction };
+      }
     }
   }
-  
-  return { text: responseText, type: responseType, roll: roll, key: matchKey, mediaFile: mediaFile };
+
+  return null;
 }
 
 // ============================================================================
-// Media Cooldowns
+// Category & Utility Functions
 // ============================================================================
 
-async function checkMediaCooldown(content) {
+async function getCategory(category) {
   const data = await getPhrases();
-  const now = Date.now();
-  const minInterval = (data.media?.minIntervalMinutes || 30) * 60 * 1000;
-  const maxPerHour = data.media?.maxPerHour || 5;
-  const hourKey = Math.floor(now / (60 * 60 * 1000));
-  const hourly = mediaHourlyCount.get(hourKey) || { count: 0, hourStart: hourKey };
-  if (hourly.count >= maxPerHour) return false;
-  const lastMedia = mediaCooldowns.get('global') || 0;
-  if (now - lastMedia < minInterval) return false;
-  return true;
+  return data.categories?.[category] || {};
 }
-
-async function updateMediaCooldown(content) {
-  const now = Date.now();
-  mediaCooldowns.set('global', now);
-  const hourKey = Math.floor(now / (60 * 60 * 1000));
-  const hourly = mediaHourlyCount.get(hourKey) || { count: 0, hourStart: hourKey };
-  hourly.count++;
-  mediaHourlyCount.set(hourKey, hourly);
-  for (const [key, val] of mediaHourlyCount.entries()) {
-    if (key < hourKey - 1) mediaHourlyCount.delete(key);
-  }
-}
-
-// ============================================================================
-// Utility Exports
-// ============================================================================
 
 async function getUwuEnding() {
   const data = await getPhrases();
-  return weightedRandom(data._global?.mannerisms || [{text: ' uwu', weight: 1}]);
+  const endings = data._global?.uwuEndings || [' uwu', ' >w<', ' :3', ' c:', ' ^w^'];
+  return rand(endings);
 }
 
-async function listPhrases(category = null) {
+async function listPhrases() {
   const data = await getPhrases();
-  if (category) {
-    const cat = data.categories[category];
-    if (!cat) return null;
-    return Object.keys(cat).map(key => ({
-      key,
-      types: Object.keys(cat[key]).filter(k => 
-        (Array.isArray(cat[key][k]) && cat[key][k].length) || 
-        k === 'template'
-      )
-    }));
-  }
+  if (!data?.categories) return {};
   const result = {};
   for (const [catName, cat] of Object.entries(data.categories)) {
     result[catName] = Object.keys(cat).map(key => ({
       key,
       types: Object.keys(cat[key]).filter(k => 
         (Array.isArray(cat[key][k]) && cat[key][k].length) || 
-        k === 'template'
+        k === 'template' ||
+        k === 'templates'
       )
     }));
   }
@@ -339,17 +472,17 @@ async function savePhrases(data) {
     await fs.writeFile(PHRASES_FILE, JSON.stringify(data, null, 2), 'utf8');
     phrasesData = data;
     lastLoaded = Date.now();
-    console.log('[PhraseManager] Saved phrases.json');
+    logger.info('[PhraseManager] Saved phrases.json');
     return true;
   } catch (err) {
-    console.error('[PhraseManager] Error saving phrases:', err);
+    logger.error({ err }, '[PhraseManager] Error saving phrases');
     return false;
   }
 }
 
 async function getMediaFolder() {
   const data = await getPhrases();
-  return path.join(__dirname, data.media?.folder || 'data/media');
+  return path.join(__dirname, '..', data.media?.folder || 'data/media');
 }
 
 async function listMedia() {
@@ -368,22 +501,20 @@ async function listMedia() {
 
 loadPhrases().catch(err => console.error('[PhraseManager] Initial load failed:', err));
 
-module.exports = {
-  loadPhrases,
-  reloadPhrases,
-  getPhrase,
-  getTriggerResponse,
-  getCategory,
-  getUwuEnding,
-  listPhrases,
-  addPhrase,
-  editPhrase,
-  deletePhrase,
-  savePhrases,
-  getMediaFolder,
-  listMedia,
-  rand,
-  interpolate,
-  weightedRandom,
-  renderTemplate
-};
+/**
+ * @param {string} category
+ * @param {string} key
+ * @param {string} value
+ * @returns {Promise<boolean>}
+ */
+async function setPhrase(category, key, value) {
+  const data = await getPhrases();
+  if (!data.categories[category]) data.categories[category] = {};
+  if (!data.categories[category][key]) data.categories[category][key] = { hits: [], crits: [], fails: [] };
+  data.categories[category][key].template = value;
+  await savePhrases(data);
+  return true;
+}
+
+
+export { loadPhrases, reloadPhrases, getPhrases, getPhrase, getPhraseWithContext, getTriggerResponse, getCategory, getUwuEnding, listPhrases, addPhrase, editPhrase, deletePhrase, savePhrases, setPhrase, getMediaFolder, listMedia, rand, interpolate, weightedRandom, renderTemplate };

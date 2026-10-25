@@ -1,0 +1,407 @@
+const fs = require('fs').promises;
+const path = require('path');
+const { logger } = require('./logger');
+
+const dataDir = path.join(__dirname, '..', 'data');
+const storeFile = path.join(dataDir, 'store.json');
+
+let cache = null;
+let saveQueue = Promise.resolve();
+
+async function ensureDataDir() {
+  try {
+    await fs.mkdir(dataDir, { recursive: true });
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err;
+  }
+}
+
+async function load() {
+  if (cache) return cache;
+  try {
+    await ensureDataDir();
+    try {
+      const data = await fs.readFile(storeFile, 'utf8');
+      cache = JSON.parse(data);
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        cache = { reminders: {}, birthdays: {}, points: {}, gambles: {} };
+        await save();
+      } else {
+        throw err;
+      }
+    }
+    cache.reminders = cache.reminders || {};
+    cache.birthdays = cache.birthdays || {};
+    cache.points = cache.points || {};
+    cache.gambles = cache.gambles || {};
+    return cache;
+  } catch (err) {
+    logger.error({ err }, '[dataStore] Error loading store');
+    cache = { reminders: {}, birthdays: {}, points: {}, gambles: {} };
+    return cache;
+  }
+}
+
+async function save() {
+  saveQueue = saveQueue.then(async () => {
+    try {
+      await ensureDataDir();
+      await fs.writeFile(storeFile, JSON.stringify(cache, null, 2), 'utf8');
+    } catch (err) {
+      logger.error({ err }, '[dataStore] Error saving store');
+    }
+  });
+  return saveQueue;
+}
+
+async function getReminders() {
+  const store = await load();
+  return store.reminders;
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @returns {Promise<Array<Object>>}
+ */
+async function getRemindersForUser(guildId, userId) {
+  const store = await load();
+  return Object.values(store.reminders).filter(r => r.guildId === guildId && r.userId === userId);
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @param {string} text
+ * @param {string} when
+ * @param {string} channelId
+ * @returns {Promise<string>}
+ */
+async function addReminderForUser(guildId, userId, text, when, channelId) {
+  const store = await load();
+  const id = `${guildId}-${userId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  store.reminders[id] = {
+    id,
+    guildId,
+    userId,
+    text,
+    when: new Date(when).toISOString(),
+    channelId,
+    createdAt: new Date().toISOString(),
+  };
+  await save();
+  return id;
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @param {string} reminderId
+ * @returns {Promise<boolean>}
+ */
+async function cancelReminder(guildId, userId, reminderId) {
+  const store = await load();
+  const reminder = store.reminders[reminderId];
+  if (!reminder || reminder.guildId !== guildId || reminder.userId !== userId) {
+    return false;
+  }
+  delete store.reminders[reminderId];
+  await save();
+  return true;
+}
+
+/**
+ * @returns {Promise<Object<string, Object>>}
+ */
+async function getBirthdays() {
+  const store = await load();
+  return store.birthdays;
+}
+
+/**
+ * @param {string} guildId
+ * @returns {Promise<Array<Object>>}
+ */
+async function getBirthdaysForGuild(guildId) {
+  const store = await load();
+  return Object.entries(store.birthdays)
+    .filter(([, b]) => b.guildId === guildId)
+    .map(([userId, b]) => ({ userId, ...b }));
+}
+
+async function removeReminder(id) {
+  const store = await load();
+  const deleted = store.reminders[id];
+  delete store.reminders[id];
+  await save();
+  return deleted;
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @param {string} text
+ * @param {string} when
+ * @param {string} channelId
+ * @returns {Promise<string>}
+ */
+async function addReminder(guildId, userId, text, when, channelId) {
+  const store = await load();
+  const id = `${guildId}-${userId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  store.reminders[id] = {
+    id,
+    guildId,
+    userId,
+    text,
+    when: new Date(when).toISOString(),
+    channelId,
+    createdAt: new Date().toISOString(),
+  };
+  await save();
+  return id;
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @returns {Promise<Array<Object>>}
+ */
+async function getReminders(guildId, userId) {
+  const store = await load();
+  return Object.values(store.reminders).filter(r => r.guildId === guildId && r.userId === userId);
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @param {string} date
+ * @param {string} channelId
+ * @returns {Promise<Object>}
+ */
+async function addBirthday(guildId, userId, date, channelId) {
+  const store = await load();
+  store.birthdays[userId] = {
+    date,
+    channelId,
+    guildId,
+    lastAnnounced: null,
+  };
+  await save();
+  return store.birthdays[userId];
+}
+
+/**
+ * @param {string} guildId
+ * @returns {Promise<Array<Object>>}
+ */
+async function getBirthdaysForGuild(guildId) {
+  const store = await load();
+  return Object.entries(store.birthdays)
+    .filter(([, b]) => b.guildId === guildId)
+    .map(([userId, b]) => ({ userId, ...b }));
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @param {Object} birthday
+ * @returns {Promise<Object>}
+ */
+async function setBirthday(guildId, userId, birthday) {
+  const store = await load();
+  store.birthdays[userId] = { ...birthday, guildId };
+  await save();
+  return store.birthdays[userId];
+}
+
+/**
+ * @param {string} userId
+ * @returns {Promise<Object|null>}
+ */
+async function getBirthday(userId) {
+  const store = await load();
+  return store.birthdays[userId] || null;
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @returns {Promise<Object|undefined>}
+ */
+async function removeBirthday(guildId, userId) {
+  const store = await load();
+  if (store.birthdays[userId] && store.birthdays[userId].guildId === guildId) {
+    const deleted = store.birthdays[userId];
+    delete store.birthdays[userId];
+    await save();
+    return deleted;
+  }
+  return undefined;
+}
+
+async function markBirthdayAnnounced(userId, year) {
+  const store = await load();
+  if (store.birthdays[userId]) {
+    store.birthdays[userId].lastAnnounced = year;
+    await save();
+  }
+}
+
+async function wasBirthdayAnnounced(userId, year) {
+  const store = await load();
+  return store.birthdays[userId]?.lastAnnounced === year;
+}
+
+// ---------------- Guild Config ----------------
+
+async function getGuildConfig(guildId) {
+  const store = await load();
+  store.guilds = store.guilds || {};
+  return store.guilds[guildId] || {};
+}
+
+async function setGuildConfig(guildId, config) {
+  const store = await load();
+  store.guilds = store.guilds || {};
+  store.guilds[guildId] = { ...(store.guilds[guildId] || {}), ...config };
+  await save();
+  return store.guilds[guildId];
+}
+
+async function getAnnouncementChannelId(guildId) {
+  const config = await getGuildConfig(guildId);
+  return config.announcementChannelId || null;
+}
+
+async function setAnnouncementChannelId(guildId, channelId) {
+  return setGuildConfig(guildId, { announcementChannelId: channelId });
+}
+
+// ---------------- Points ----------------
+
+async function getPointsEntry(guildId, userId) {
+  const store = await load();
+  const g = store.points[guildId] || {};
+  return g[userId] || { points: 0, streak: 0, lastDaily: null };
+}
+
+async function getUserPoints(guildId, userId) {
+  const entry = await getPointsEntry(guildId, userId);
+  return entry.points;
+}
+
+async function addPoints(guildId, userId, amount) {
+  const store = await load();
+  const entry = await getPointsEntry(guildId, userId);
+  entry.points += amount;
+  store.points[guildId] = store.points[guildId] || {};
+  store.points[guildId][userId] = entry;
+  await save();
+}
+
+async function deductPoints(guildId, userId, amount) {
+  const store = await load();
+  const entry = await getPointsEntry(guildId, userId);
+  if (entry.points < amount) return false;
+  entry.points -= amount;
+  store.points[guildId] = store.points[guildId] || {};
+  store.points[guildId][userId] = entry;
+  await save();
+  return true;
+}
+
+async function setDailyState(guildId, userId, streak, totalPoints) {
+  const store = await load();
+  store.points[guildId] = store.points[guildId] || {};
+  store.points[guildId][userId] = {
+    points: totalPoints,
+    streak,
+    lastDaily: new Date().toISOString(),
+  };
+  await save();
+}
+
+async function getTopUsers(guildId, limit = 10) {
+  const store = await load();
+  const g = store.points[guildId] || {};
+  return Object.entries(g)
+    .map(([userId, entry]) => ({ userId: Number(userId), points: entry.points, streak: entry.streak || 0 }))
+    .sort((a, b) => b.points - a.points)
+    .slice(0, limit);
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} userId
+ * @param {Object} updates
+ */
+async function updatePointsEntry(guildId, userId, updates) {
+  const store = await load();
+  store.points[guildId] = store.points[guildId] || {};
+  const entry = store.points[guildId][userId] || { points: 0, streak: 0, lastDaily: null };
+  store.points[guildId][userId] = { ...entry, ...updates };
+  await save();
+}
+
+/**
+ * @param {string} guildId
+ * @param {number} limit
+ * @returns {Promise<Array<{userId: number, points: number, streak: number}>>}
+ */
+async function getLeaderboard(guildId, limit = 10) {
+  return getTopUsers(guildId, limit);
+}
+
+// ---------------- Gambles ----------------
+
+async function getGamble(id) {
+  const store = await load();
+  return store.gambles[id] || null;
+}
+
+async function createGamble(id, gamble) {
+  const store = await load();
+  store.gambles[id] = gamble;
+  await save();
+  return gamble;
+}
+
+async function saveGamble(id, gamble) {
+  const store = await load();
+  store.gambles[id] = gamble;
+  await save();
+  return gamble;
+}
+
+module.exports = {
+  getReminders,
+  getRemindersForUser,
+  getBirthdays,
+  getBirthdaysForGuild,
+  addReminder,
+  addReminderForUser,
+  removeReminder,
+  cancelReminder,
+  setBirthday,
+  addBirthday,
+  getBirthday,
+  removeBirthday,
+  getPointsEntry,
+  getUserPoints,
+  addPoints,
+  deductPoints,
+  setDailyState,
+  getTopUsers,
+  updatePointsEntry,
+  getLeaderboard,
+  getGamble,
+  createGamble,
+  saveGamble,
+  markBirthdayAnnounced,
+  wasBirthdayAnnounced,
+  getGuildConfig,
+  setGuildConfig,
+  getAnnouncementChannelId,
+  setAnnouncementChannelId,
+};

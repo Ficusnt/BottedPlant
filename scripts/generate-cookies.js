@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const { execFile } = require('child_process');
-const { promisify } = require('util');
-const path = require('path');
-const fs = require('fs');
-require('dotenv').config();
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import 'dotenv/config';
 
-const execFileAsync = promisify(execFile);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Filter cookies to only keep relevant domains
 function filterCookies(cookieFile) {
@@ -38,11 +38,20 @@ function filterCookies(cookieFile) {
 async function generateCookies() {
   console.log('🍪 Generating YouTube cookies for yt-dlp...');
 
-  // Check if yt-dlp is available
-  const ytDlpPath = path.join(__dirname, '..', 'node_modules', '@distube', 'yt-dlp', 'bin', 'yt-dlp.exe');
+  // Check if yt-dlp is available via @distube/yt-dlp
+  let ytDlpAvailable = false;
+  try {
+    const { json } = await import('@distube/yt-dlp');
+    // Test that the binary works by doing a simple version check
+    await json('https://www.youtube.com/watch?v=dQw4w9WgXcQ', { dumpSingleJson: true, noWarnings: true });
+    ytDlpAvailable = true;
+  } catch (err) {
+    console.error('❌ yt-dlp not available via @distube/yt-dlp. Please run `npm install` first.');
+    console.error('Error:', err.message);
+    process.exit(1);
+  }
 
-  if (!fs.existsSync(ytDlpPath)) {
-    console.error('❌ yt-dlp not found. Please run `npm install` first.');
+  if (!ytDlpAvailable) {
     process.exit(1);
   }
 
@@ -60,19 +69,17 @@ async function generateCookies() {
 
   try {
     // Try to get cookies from different browsers
+    const { json } = await import('@distube/yt-dlp');
     const browsers = ['edge', 'firefox', 'chrome', 'brave', 'vivaldi', 'opera', 'safari'];
 
     for (const browser of browsers) {
       try {
         console.log(`🔍 Trying to get cookies from ${browser}...`);
-        await execFileAsync(ytDlpPath, [
-          '--cookies-from-browser', browser,
-          '--cookies', cookieFile,
-          '--dump-single-json',
-          'https://www.youtube.com'
-        ], {
-          timeout: 30000,
-          maxBuffer: 10 * 1024 * 1024
+        await json('https://www.youtube.com', {
+          dumpSingleJson: true,
+          noWarnings: true,
+          cookiesFromBrowser: browser,
+          cookies: cookieFile,
         });
 
         if (fs.existsSync(cookieFile) && fs.statSync(cookieFile).size > 0) {

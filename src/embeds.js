@@ -1,6 +1,6 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js';
 
-function formatDuration(seconds) {
+export function formatDuration(seconds) {
   if (!seconds || isNaN(seconds)) return 'En vivo';
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
@@ -10,7 +10,7 @@ function formatDuration(seconds) {
   return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
 }
 
-function trackEmbed(song, title = '🎵 Canción') {
+export function trackEmbed(song, title = '🎵 Canción') {
   const emotions = [
     '¡Qué temazo! Se me tiemblan las hojas. c: 🍃',
     '¡Suena! Esto riega mi alma vegetal. 🎧',
@@ -31,7 +31,7 @@ function trackEmbed(song, title = '🎵 Canción') {
     .setColor(0x57f287);
 }
 
-function playlistEmbed(playlist) {
+export function playlistEmbed(playlist) {
   const reactions = [
     '¡Se viene la fiesta! Mi maceta tiembla de emoción. 🎉🪴',
     '¡Pila de música! Más canciones que hojas en primavera. 🎧🍃',
@@ -49,7 +49,7 @@ function playlistEmbed(playlist) {
     .setColor(0x5865f2);
 }
 
-function queueEmbed(queue) {
+export function queueEmbed(queue) {
   const tracks = queue.songs
     .slice(0, 10)
     .map((song, i) => {
@@ -73,10 +73,3 @@ function queueEmbed(queue) {
     )
     .setColor(0xfee75c);
 }
-
-module.exports = {
-  formatDuration,
-  trackEmbed,
-  playlistEmbed,
-  queueEmbed,
-};

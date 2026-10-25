@@ -1,28 +1,44 @@
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
-const { DisTube } = require('distube');
-const { SoundCloudPlugin } = require('@distube/soundcloud');
-const { YtDlpPlugin } = require('@distube/yt-dlp');
-const config = require('./config');
-const { registerSlashCommands, handleInteraction, handleMessage } = require('./bpCommand');
-const { scheduleReminders } = require('./handlers/reminders');
-const dataStore = require('./dataStore');
-const { loadShitposts, loadMedia } = require('./shitpost');
-const phraseManager = require('./phraseManager');
+// @ts-nocheck
+/**
+ * @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction
+ * @typedef {import('distube').Queue} Queue
+ * @typedef {import('distube').Song} Song
+ * @typedef {import('distube').Playlist} Playlist
+ * @typedef {import('discord.js').Guild} Guild
+ * @typedef {import('discord.js').VoiceChannel} VoiceChannel
+ * @typedef {import('discord.js').TextChannel} TextChannel
+ * @typedef {import('discord.js').Collection} Collection
+ * @typedef {import('distube').DisTubeEvents} DisTubeEvents
+ */
+
+import { Client, GatewayIntentBits, ActivityType } from 'discord.js';
+import { DisTube } from 'distube';
+import { SoundCloudPlugin } from '@distube/soundcloud';
+import { YtDlpPlugin } from '@distube/yt-dlp';
+import config from './config.js';
+import { logger } from './logger.js';
+import { registerSlashCommands, handleInteraction } from './bpCommand.js';
+import { handleMessage } from './economy.js';
+import { scheduleReminders } from './handlers/reminders.js';
+import * as dataStore from './dataStore.js';
+import { loadShitposts, loadMedia } from './shitpost.js';
+import * as phraseManager from './phraseManager.js';
+import { formatDuration, trackEmbed, playlistEmbed } from './embeds.js';
+import { getFfmpegPath } from './ffmpeg.js';
+
+/** @type {import('discord.js').Client & { distube: import('distube').DisTube }} */
+let client;
+
+/** @type {import('distube').DisTube} */
+let distube;
 
 if (!config.token) {
-  console.error('DISCORD_TOKEN is missing. Create a .env file from .env.example');
+  logger.error('DISCORD_TOKEN is missing. Create a .env file from .env.example');
   process.exit(1);
 }
 
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildPresences,
-  ],
-});
+// Detect best available FFmpeg (system preferred, bundled fallback)
+const ffmpegPath = await getFfmpegPath();
 
 const disTubeOptions = {
   plugins: [
@@ -34,50 +50,71 @@ const disTubeOptions = {
   ],
   emitNewSongOnly: true,
   savePreviousSongs: true,
+  ffmpeg: ffmpegPath
 };
 
-const distube = new DisTube(client, disTubeOptions);
+client = /** @type {import('discord.js').Client & { distube: import('distube').DisTube }} */ (new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildPresences,
+  ],
+}) /** @type {import('discord.js').Client & { distube: import('distube').DisTube }} */);
 
-// Store distube on client for handler access
-client.distube = distube;
+client.distube = new DisTube(client, disTubeOptions);
+distube = client.distube;
 
 // ---- DisTube event handlers ----
+// @ts-ignore
 distube
   .on('playSong', (queue, song) => {
     // Plain text only: title, duration, requester (no embed, no phrases)
-    const duration = require('./embeds').formatDuration(song.duration);
+    const duration = formatDuration(song.duration);
     const requester = song.member.displayName || 'Alguien';
-    queue.textChannel
+    /** @type {import('discord.js').TextChannel} */
+    const textChannel = queue.textChannel;
+    textChannel
       .send(`🎵 **${song.name}** — pedida por **${requester}**`)
-      .catch((e) => console.error('[distube] playSong send error:', e));
+      .catch((e) => logger.error({ err: e }, '[distube] playSong send error'));
   })
   .on('addSong', (queue, song) => {
-    const embed = require('./embeds').trackEmbed(song, ' Añadida a la cola');
-    queue.textChannel
+    const embed = trackEmbed(song, ' Añadida a la cola');
+    /** @type {import('discord.js').TextChannel} */
+    const textChannel = queue.textChannel;
+    textChannel
       .send({ content: song.url, embeds: [embed] })
-      .catch((e) => console.error('[distube] addSong send error:', e));
+      .catch((e) => logger.error({ err: e }, '[distube] addSong send error'));
   })
   .on('addList', (queue, playlist) => {
-    const embed = require('./embeds').playlistEmbed(playlist);
-    queue.textChannel
+    const embed = playlistEmbed(playlist);
+    /** @type {import('discord.js').TextChannel} */
+    const textChannel = queue.textChannel;
+    textChannel
       .send({ embeds: [embed] })
-      .catch((e) => console.error('[distube] addList send error:', e));
+      .catch((e) => logger.error({ err: e }, '[distube] addList send error'));
   })
   .on('finish', async (queue) => {
-    const msg = await phraseManager.getPhrase('distubeEvents', 'finish');
-    queue.textChannel.send(msg).catch(() => {});
+    const msg = await phraseManager.getPhrase('distube', 'finish');
+    /** @type {import('discord.js').TextChannel} */
+    const textChannel = queue.textChannel;
+    textChannel.send(msg).catch(() => {});
   })
   .on('empty', async (queue) => {
-    const msg = await phraseManager.getPhrase('distubeEvents', 'empty');
-    queue.textChannel.send(msg).catch(() => {});
+    const msg = await phraseManager.getPhrase('distube', 'empty');
+    /** @type {import('discord.js').TextChannel} */
+    const textChannel = queue.textChannel;
+    textChannel.send(msg).catch(() => {});
   })
   .on('error', async (error, queue, song) => {
-    console.error('DisTube error:', error);
+    logger.error({ err: error }, 'DisTube error');
+    /** @type {import('discord.js').TextChannel | undefined} */
     const textChannel = queue?.textChannel;
     if (!textChannel) return;
 
     const errorMsg = error?.message?.slice(0, 400) || 'Unknown error';
-    const msg = await phraseManager.getPhrase('distubeEvents', 'error', 'hits', {
+    const msg = await phraseManager.getPhrase('distube', 'error', 'hits', {
       errorMsg,
     });
     textChannel.send(msg).catch(() => {});
@@ -86,23 +123,37 @@ distube
 // ---- Client events ----
 // discord.js v14.27+ renames 'ready' → 'clientReady' (old name stops emitting in v15)
 client.once('clientReady', () => {
-  console.log('¡Me conecté a Discord! Soy una planta digital ^_^');
-  console.log('Soy \\ (°) /');
+  logger.info('Fotosintesis lista!');
+  logger.info('La planta digital a su servicio!');
   client.user.setActivity('🍃 el unico bot que no te deja plantado — /bp help', {
     type: ActivityType.Listening,
   });
 
   registerSlashCommands(client).catch((err) =>
-    console.error('Error registering slash commands:', err)
+    logger.error({ err }, 'Error registering slash commands')
   );
   scheduleReminders(client);
-  loadShitposts().catch((err) => console.error('[SHITPOST] Error loading shitposts:', err));
+  loadShitposts().catch((err) => logger.error({ err }, '[SHITPOST] Error loading shitposts'));
   loadMedia().catch((err) => console.error('[SHITPOST] Error loading media:', err));
+  // Initial birthday check
   checkBirthdays().catch((err) => console.error('[BIRTHDAY] Error in initial check:', err));
-  setInterval(() => {
+
+  // Schedule hourly checks aligned to :00 minute boundary
+  const now = new Date();
+  const msToNextHour = (60 - now.getMinutes()) * 60 * 1000 - now.getSeconds() * 1000 - now.getMilliseconds();
+  setTimeout(() => {
     checkBirthdays().catch((err) => console.error('[BIRTHDAY] Error in scheduled check:', err));
-  }, 60 * 60 * 1000);
+    setInterval(() => {
+      checkBirthdays().catch((err) => logger.error({ err }, '[BIRTHDAY] Error in scheduled check'));
+    }, 60 * 60 * 1000);
+  }, msToNextHour > 0 ? msToNextHour : 60 * 60 * 1000);
 });
+
+// Rate-limit helper: small delay between guild operations to avoid hitting global limits
+const RATE_LIMIT_DELAY_MS = 250;
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 // ---- GigaSlothy port: automatic birthday announcements ----
 async function checkBirthdays() {
@@ -123,13 +174,24 @@ async function checkBirthdays() {
   }
   if (!unannounced.length) return;
 
-  for (const guild of client.guilds.cache.values()) {
+  const guilds = [...client.guilds.cache.values()];
+  for (let i = 0; i < guilds.length; i++) {
+    const guild = guilds[i];
     try {
-      const channel =
-        guild.channels.cache.find((c) => c.name === 'general' || c.name.includes('general')) ||
-        guild.channels.cache.find(
-          (c) => c.type === 0 && c.permissionsFor(guild.members.me).has('SendMessages')
-        );
+      // Try configured announcement channel first
+      let channel = null;
+      const configuredChannelId = await dataStore.getAnnouncementChannelId(guild.id);
+      if (configuredChannelId) {
+        channel = guild.channels.cache.get(configuredChannelId);
+      }
+      // Fallback to auto-detect
+      if (!channel) {
+        channel =
+          guild.channels.cache.find((c) => c.name === 'general' || c.name.includes('general')) ||
+          guild.channels.cache.find(
+            (c) => c.type === 0 && c.permissionsFor(guild.members.me).has('SendMessages')
+          );
+      }
       if (!channel) continue;
 
       const mentions = unannounced.map(([uid]) => `<@${uid}>`).join(' ');
@@ -138,13 +200,13 @@ async function checkBirthdays() {
       });
       await channel.send(msg);
       for (const [uid] of unannounced) await dataStore.markBirthdayAnnounced(uid, year);
-      console.log(`[BIRTHDAY] Announced ${unannounced.length} birthday(s) in ${guild.name}`);
     } catch (err) {
-      console.error('Error announcing birthdays in', guild.name, err);
+      logger.error({ err }, `[BIRTHDAY] Error in guild ${guild.id}`);
     }
+    // Rate-limit delay between guilds (skip after last)
+    if (i < guilds.length - 1) await sleep(RATE_LIMIT_DELAY_MS);
   }
 }
-
 // ---- Voice inactivity timeout ----
 // Disconnect from voice channels after 10 minutes of inactivity
 setInterval(() => {
@@ -153,9 +215,9 @@ setInterval(() => {
     if (queue && queue.voiceChannel) {
       const members = queue.voiceChannel.members.filter((m) => !m.user.bot);
       if (members.size === 0) {
-        console.log(`[Voice] No users in ${guild.name}, disconnecting.`);
+        logger.info(`[Voice] No users in ${guild.name}, disconnecting.`);
         distube.stop(guild.id);
-        queue.voiceChannel.leave().catch((err) => console.error('[Voice] Error leaving channel:', err));
+        queue.voiceChannel.leave().catch((err) => logger.error({ err }, '[Voice] Error leaving channel'));
       }
     }
   }
@@ -164,11 +226,12 @@ setInterval(() => {
 client.on('guildCreate', async (guild) => {
   // Auto-register commands in newly joined servers
   try {
-    const data = require('./bpCommand').bpCommandData().toJSON();
+    const { bpCommandData } = await import('./bpCommand.js');
+    const data = bpCommandData().toJSON();
     await guild.commands.set([data]);
-    console.log(`Registered /bp in new guild: ${guild.name}`);
+    logger.info(`Registered /bp in new guild: ${guild.name}`);
   } catch (err) {
-    console.error('Error registering commands in new guild:', err);
+    logger.error({ err }, 'Error registering commands in new guild');
   }
 });
 
@@ -178,21 +241,23 @@ client.on('interactionCreate', (interaction) => {
 
 // Trigger words handler (GigaSlothy port)
 client.on('messageCreate', (message) => {
-  handleMessage(message).catch((err) => console.error('[messageCreate] Error:', err));
+  handleMessage(message).catch((err) => logger.error({ err }, '[messageCreate] Error'));
 });
 
 // ---- Process-level error guards (prevent crashes from unhandled async) ----
 process.on('unhandledRejection', (err) => {
-  console.error('Unhandled rejection:', err);
+  logger.error({ err }, 'Unhandled rejection');
 });
 process.on('uncaughtException', (err) => {
-  console.error('Uncaught exception:', err);
+  logger.error({ err }, 'Uncaught exception');
 });
 process.on('warning', (warning) => {
-  console.warn('[node warning]', warning.message);
+  logger.warn({ message: warning.message }, '[node warning]');
 });
 
 client.login(config.token).catch((err) => {
-  console.error('Failed to login:', err);
+  logger.error({ err }, 'Failed to login');
   process.exit(1);
 });
+
+export { client, distube };

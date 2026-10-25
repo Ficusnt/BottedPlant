@@ -1,0 +1,17 @@
+{
+  "source": {
+    "include": ["src", "scripts", "package.json", "README.md"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules|data|dist)"
+  },
+  "plugins": ["jsdoc-babel"],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true
+  },
+  "opts": {
+    "destination": "./docs",
+    "recurse": true,
+    "readme": "./README.md"
+  }
+}

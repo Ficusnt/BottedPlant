@@ -3,9 +3,10 @@
  * Extracted from bpCommand.js for modularity
  */
 
-const { MessageFlags } = require('discord.js');
-const phraseManager = require('../phraseManager');
-const { sendShitpost, hasShitpostTrigger, getShitpostResponse } = require('../shitpost');
+import { MessageFlags } from 'discord.js';
+import * as phraseManager from '../phraseManager.js';
+import { sendShitpost, hasShitpostTrigger, getShitpostResponse } from '../shitpost.js';
+import { isOnCooldown, getRemainingCooldown, setCooldown } from '../cooldowns.js';
 
 /**
  * Handle /bp fun uwu
@@ -39,6 +40,14 @@ async function handleFunUwu(interaction) {
 async function handleFunShitpost(interaction) {
   await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
+  const uid = interaction.user.id;
+  if (isOnCooldown(uid, 'shitpost')) {
+    const remaining = Math.ceil(getRemainingCooldown(uid, 'shitpost') / 1000);
+    return interaction.editReply({ 
+      content: `⏳ Espera ${remaining}s antes de usar shitpost de nuevo.`
+    });
+  }
+
   const trigger = interaction.options.getString('trigger');
   if (!trigger) {
     return interaction.editReply({ 
@@ -46,7 +55,10 @@ async function handleFunShitpost(interaction) {
     });
   }
 
-  const response = await getShitpostResponse(trigger);
+  const response = await getShitpostResponse(trigger, interaction.channelId);
+  
+  // Set cooldown on successful execution
+  setCooldown(uid, 'shitpost');
   if (!response) {
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('fun', 'shitpostNotFound')
@@ -165,7 +177,7 @@ async function handleFun8ball(interaction) {
   }));
 }
 
-module.exports = {
+export {
   handleFunUwu,
   handleFunShitpost,
   handleFunRoll,

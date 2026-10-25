@@ -1,94 +1,231 @@
-# BottedPlant 🌿
+# BottedPlant
 
-A Discord bot for music, reminders, and fun. 🎵⏰🎮
+Discord bot for YouTube, SoundCloud, and Bandcamp audio — with a native slash command menu, reminders, economy, and dynamic phrase responses.
 
-The bot plays audio from YouTube, SoundCloud, and Bandcamp. It sends reminders and birthday messages. It runs a leaf economy with bets. It replies with plant jokes.
+![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Discord.js](https://img.shields.io/badge/discord.js-14.27-blue)
 
-> The bot talks as if it is a plant. It uses Argentinian (Rioplatense) Spanish. It makes puns about plants.
+---
 
-## Requirements 📋
+## Features
 
-- Node.js 18 or a newer version.
-- A Discord bot token.
-- `ffmpeg` is supplied by `ffmpeg-static`.
+- **Multi-source audio**: YouTube, SoundCloud, Bandcamp via yt-dlp (no API keys needed)
+- **Slash command menu**: Native Discord UI — `/bp play`, `/bp queue`, `/bp remind`, `/bp economy`, etc.
+- **YouTube bot-detection bypass**: Automatic cookie detection + embed fallback
+- **Reminders**: One-time and recurring with natural-language parsing (`in 10m`, `every friday 18:00`)
+- **Economy system**: Balance, daily, leaderboard, transfers, gambling
+- **Dynamic phrases**: Template-based responses with slots, synonyms, and mannerisms
+- **Seasonal content**: Automatic holiday/event phrase rotations
+- **Shitpost mode**: Configurable random replies with cooldowns
 
-## Setup 🛠️
+---
 
-Do these steps in order:
+## Prerequisites
 
-1. Install the dependencies:
+- **Node.js** ≥ 18.0.0
+- **FFmpeg** (bundled via `ffmpeg-static` — no system install required)
+- A **Discord bot token** from the [Developer Portal](https://discord.com/developers/applications)
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Copy `.env.example` to `.env`.
-3. Open `.env`. Put your Discord token after `DISCORD_TOKEN=`.
-4. Start the bot:
+## Installation
 
-   ```bash
-   npm start
-   ```
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd BottedPlant
 
-5. Add the bot to your server. Use the OAuth2 URL from the Developer Portal.
+# Install dependencies (auto-runs yt-dlp config setup)
+npm install
+```
 
-## Commands 🤖
+The `postinstall` script runs `scripts/setup-ytdlp-conf.js` which configures `@distube/yt-dlp` to use the bundled binary.
 
-Use the slash menu. Type `/` and pick **bp**. All commands are native slash commands.
+---
 
-### 🎵 Music — `/bp music`
+## Configuration
 
-- `/bp music play <url>` — Play audio (YouTube, SoundCloud, Bandcamp, radio).
-- `/bp music query <place> <title>` — Search and pick from a list. `<place>` = `youtube`, `soundcloud`, or `bandcamp`.
-- `/bp music playlist <url>` — Add a full playlist to the queue.
-- `/bp music skip` — Skip the current song.
-- `/bp music rewind` — Play the current song again from the start.
-- `/bp music queue` — Show the queue.
-- `/bp music clear` — Empty the queue.
-- `/bp music stop` — Stop and leave the voice channel.
+Create a `.env` file in the project root (copy from `.env.example`):
 
-### ⏰ Reminders and 🎂 birthdays — `/bp remember`
+```env
+# Required
+DISCORD_TOKEN=your_bot_token_here
 
-- `/bp remember remind <YYYY-MM-DD HH:MM> <message>` — Set a reminder.
-- `/bp remember reminders` — List your pending reminders.
-- `/bp remember cancelremind <id>` — Cancel a reminder by its ID.
-- `/bp remember birthday <month> <day>` — Save your birthday.
-- `/bp remember birthdays` — List all birthdays.
+# Optional
+BOT_PREFIX=/bp              # Default: /bp
+BOT_NAME=BottedPlant        # Default: BottedPlant
 
-### 🎮 Fun — `/bp fun`
+# YouTube bot-detection bypass (see COOKIES-SETUP.md for details)
+# Option A: Custom cookie file (recommended)
+YTDLP_COOKIES_FILE=data/cookies-yt.txt
 
-- `/bp fun status` — Change the bot status.
-- `/bp fun hola` · `japish` · `goodgirl` · `avatar` — Short fun replies.
-- `/bp fun rola [@user]` — Rate the Spotify song a user plays.
-- `/bp fun latex <equation>` — Render a LaTeX equation as an image.
-- `/bp fun safebooru <tags>` — Search images on Safebooru. 🖼️
-- `/bp fun 8ball <question>` — Ask the magic 8-ball.
-- `/bp fun roll <dice>` — Roll dice. Use `d20`, `2d6`, etc.
-- `/bp fun coinflip` — Flip a coin. 🪙
-- `/bp fun uwu <text>` — Uwuify text.
+# Option B: Browser extraction (browser MUST be closed)
+# COOKIE_BROWSER=chrome      # or firefox, edge, opera, brave, vivaldi, safari
+# Note: Brave/Chrome DPAPI encryption is NOT supported by yt-dlp
+```
 
-### 🍃 Leaves (economy) — `/bp leaves`
+### Cookie Priority
 
-Leaves are the bot's currency. You earn them each day. You bet them on wagers.
+1. `YTDLP_COOKIES_FILE` — explicit file path (highest priority)
+2. `COOKIE_BROWSER` — extract from browser profile
+3. **Embed fallback** — no cookies, less reliable (used automatically if neither above works)
 
-- `/bp leaves daily` — "Water" the plant and earn leaves. A streak gives more. 💧
-- `/bp leaves points [@user]` — Show the leaf balance and the streak.
-- `/bp leaves leaderboard` — Top 10 users with the most leaves. 🏆
-- `/bp leaves gamble <text>` — Make a wager. Format: `<statement> | <option 1> | <option 2>`.
-- `/bp leaves bet <id> <choice> <amount>` — Bet leaves on a wager.
-- `/bp leaves redeem <id> <choice>` — Close a wager and pay the winners.
+---
 
-## Data storage 💾
+## Usage
 
-The bot stores data in `data/store.json`. This file holds reminders, birthdays, leaves, and bets. Back up this file to keep your data.
+### Slash Commands (Primary)
 
-## Slash command registration 📝
+| Command | Description |
+|---------|-------------|
+| `/bp play <query>` | Play from YouTube, SoundCloud, Bandcamp, or direct URL |
+| `/bp queue` | Show current queue |
+| `/bp skip` | Skip current track |
+| `/bp pause` / `/bp resume` | Pause/resume playback |
+| `/bp stop` | Stop and clear queue |
+| `/bp leave` | Disconnect from voice |
+| `/bp volume <0-200>` | Set volume |
+| `/bp remind <time> <message>` | Set a reminder (e.g., `in 10m`, `every friday 18:00`) |
+| `/bp remind list` | List your reminders |
+| `/bp remind cancel <id>` | Cancel a reminder |
+| `/bp balance` | Check your economy balance |
+| `/bp daily` | Claim daily reward |
+| `/bp leaderboard` | Show top balances |
+| `/bp pay @user <amount>` | Transfer credits |
+| `/bp gamble <amount>` | Gamble your credits |
+| `/bp phrase <trigger>` | Test a phrase response |
+| `/bp shitpost` | Toggle shitpost mode |
 
-The bot registers `/bp` when it starts. It registers per guild for instant updates. It also registers in a new guild on `guildCreate`. Restart the bot after you change the command definition.
+### Prefix Fallback
 
-## YouTube and yt-dlp 🔧
+All slash commands also work with the prefix (default `/bp`):
 
-- YouTube blocks bots. The bot uses an embed hack. A config sets `player_client=web_embedded`.
-- A setup script writes this config. It runs after `npm install`.
-- Cookies are not required. Brave and Chrome encrypt their cookie store on Windows.
+```
+/bp play never gonna give you up
+/bp remind in 1h take a break
+/bp balance
+```
 
+---
+
+## Project Structure
+
+```
+BottedPlant/
+├── src/
+│   ├── index.js              # Entry point, Discord client, event handlers
+│   ├── config.js             # Configuration loader (dotenv + defaults)
+│   ├── logger.js             # Pino logger setup
+│   ├── phraseManager.js      # Phrase templates, slots, synonyms, seasonal rotation
+│   ├── dataStore.js          # JSON persistence (reminders, economy, phrases)
+│   ├── economy.js            # Economy logic (balance, daily, gamble, leaderboard)
+│   ├── embeds.js             # Discord embed builders
+│   ├── cooldowns.js          # Command/user cooldown tracking
+│   ├── contextSelector.js    # Smart context detection for phrases
+│   ├── synonymEngine.js      # Synonym/mannerism expansion
+│   ├── seasonalRotator.js    # Holiday/event phrase activation
+│   ├── shitpost.js           # Random reply logic
+│   ├── cmdLeave.js           # Voice disconnect handler
+│   ├── bpCommand.js          # Legacy prefix command router
+│   └── commands/
+│       ├── commandFactory.js # Slash command definitions + registration
+│       ├── musicCommands.js  # Audio playback handlers
+│       ├── economyCommands.js
+│       ├── funCommands.js
+│       └── rememberCommands.js
+├── data/
+│   ├── phrases.json          # Phrase templates (source of truth)
+│   ├── reminders.json        # Persisted reminders
+│   ├── economy.json          # Economy balances
+│   ├── cookies.txt           # Generic cookies (yt-dlp fallback)
+│   └── cookies-yt.txt        # YouTube-specific cookies (recommended)
+├── scripts/
+│   ├── generate-cookies.js   # Extract/filter cookies from browser via yt-dlp
+│   └── setup-ytdlp-conf.js   # Configure @distube/yt-dlp binary path
+├── .env.example              # Template for .env
+├── package.json
+├── tsconfig.json             # TypeScript type-checking (jsdoc annotations)
+├── jest.config.js            # Unit tests
+└── babel.config.json         # Babel for Jest
+```
+
+---
+
+## Development
+
+```bash
+# Start the bot
+npm start
+
+# Run tests with coverage
+npm test
+
+# Type-check (JSDoc annotations via TypeScript)
+npm run typecheck
+
+# Generate API documentation
+npm run doc
+
+# Regenerate yt-dlp config (run after yt-dlp updates)
+npm run setup
+
+# Extract/filter cookies from browser for YouTube bypass
+npm run generate-cookies
+```
+
+### Adding Phrases
+
+Edit `data/phrases.json` — the bot hot-reloads on change. Structure:
+
+```json
+{
+  "_global": {
+    "synonyms": { "hello": ["hi", "hey", "hola"] },
+    "mannerisms": { "greeting": ["*waves*", "*nods*"] }
+  },
+  "greeting": {
+    "template": "Hello {user}! {mannerism:greeting}",
+    "slots": { "user": ["there", "friend", "stranger"] },
+    "contexts": ["dm", "mention", "join"]
+  }
+}
+```
+
+See `src/phraseManager.js` for full schema (templates, slots, synonyms, contexts, weights, cooldowns).
+
+---
+
+## Troubleshooting
+
+### "Sign in to confirm you're not a bot" / YouTube errors
+- Ensure cookies are configured (see **COOKIES-SETUP.md**)
+- Run `npm run generate-cookies` with browser **closed**
+- Verify `data/cookies-yt.txt` has recent YouTube cookies (check expiration timestamps)
+
+### Voice connection fails
+- Bot needs `CONNECT` and `SPEAK` permissions in the voice channel
+- Check firewall/NAT if self-hosted (Discord voice uses UDP)
+
+### yt-dlp extraction fails
+- Run `npm run setup` to refresh the bundled binary
+- Check `@distube/yt-dlp` version in `package.json`
+
+### Slash commands not appearing
+- Run `npm start` — commands auto-register on startup
+- Ensure `DISCORD_TOKEN` is valid and bot has `applications.commands` scope
+
+---
+
+## License
+
+MIT — see `LICENSE` for details.
+
+---
+
+## Credits
+
+- [discord.js](https://discord.js.org/)
+- [DisTube](https://distube.js.org/) + [@distube/yt-dlp](https://github.com/distube/yt-dlp)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) — the real MVP
+- [pino](https://getpino.io/) for logging
