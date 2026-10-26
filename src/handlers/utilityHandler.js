@@ -21,24 +21,7 @@ async function cmdHelp(interaction) {
 async function cmdStatus(interaction) {
   const states = ['☀️ regándome', '🌱 fotosintetizando', '🍃 dejando caer hojas', '💧 esperando que me rieguen', '🌿 creciendo derechita'];
   const chosen = states[Math.floor(Math.random() * states.length)];
-  await interaction.reply(await phraseManager.getPhrase('fun', 'statusChanged', 'hits', { chosen }));
-}
-
-async function cmdRola(interaction) {
-  const target = interaction.options.getUser('user') || interaction.user;
-  const presence = target.presence;
-  if (!presence || !presence.activities) {
-    return interaction.reply(await phraseManager.getPhrase('fun', 'noSpotify'));
-  }
-  const spotify = presence.activities.find((a) => a.type === 2 && a.name === 'Spotify');
-  if (!spotify) {
-    return interaction.reply(await phraseManager.getPhrase('fun', 'userNotFound'));
-  }
-  const title = spotify.details || 'Unknown track';
-  const artist = spotify.state || 'Unknown artist';
-  const album = spotify.assets?.large_text || 'Unknown album';
-  const url = `https://open.spotify.com/track/${spotify.sync_id || ''}`;
-  await interaction.reply(await phraseManager.getPhrase('fun', 'spotifyPlaying', 'hits', { user: target.username, title, artist, album, url }));
+  await interaction.reply(await phraseManager.getPhrase('fun', 'statusChanged', { chosen }));
 }
 
 async function cmdLatex(interaction) {
@@ -101,7 +84,6 @@ async function handleUtilityInteraction(sub, interaction) {
     case 'japish': await interaction.reply(await phraseManager.getPhrase('fun', 'japish')); break;
     case 'goodgirl': await interaction.reply(await phraseManager.getPhrase('fun', 'goodgirl')); break;
     case 'avatar': await interaction.reply(interaction.client.user.displayAvatarURL({ size: 1024 })); break;
-    case 'rola': await cmdRola(interaction); break;
     case 'latex': await cmdLatex(interaction); break;
     case 'safebooru': await cmdSafebooru(interaction); break;
     case 'coinflip': await interaction.reply(await phraseManager.getPhrase('fun', 'coinflip')); break;

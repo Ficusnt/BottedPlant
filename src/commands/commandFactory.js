@@ -262,9 +262,6 @@ export function buildBpCommand() {
       { type: 'string', ...commonOptions.filterName() },
     ]),
     buildSubcommand('lyrics', 'Obtener letra de la canción actual', []),
-    buildSubcommand('radio', 'Reproducir radio', [
-      { type: 'string', ...commonOptions.musicUrl() },
-    ]),
   ]));
 
   cmd.addSubcommandGroup(buildSubcommandGroup('remember', 'Recordatorios', [

@@ -16,6 +16,7 @@ const SEASONS_FILE = path.join(__dirname, '..', 'data', 'seasons.json');
 
 // New module imports
 import { buildContext, selectWithContext, getCurrentSeason, updateRecentPhrases } from './contextSelector.js';
+import { rollD20, weightedPick as rollerWeightedPick, pickTemplate } from './phraseRoller.js';
 import { applySynonyms as applySynonymsEngine, loadSynonyms } from './synonymEngine.js';
 import { loadSeasons, getSeasonalPhrases, getSeasonalBoosts } from './seasonalRotator.js';
 
@@ -66,9 +67,11 @@ function interpolate(text, vars) {
 function renderTemplate(template, vars, slots) {
   if (!template) return '';
   
-  let result = template.replace(/\{(\w+)\}/g, (match, key) => {
+  // Pick template if array, then fill slots
+  const pickedTemplate = pickTemplate(template);
+  let result = pickedTemplate.replace(/\{(\w+)\}/g, (match, key) => {
     if (slots && slots[key]) {
-      return weightedRandom(slots[key]);
+      return rollerWeightedPick(slots[key]);
     }
     return vars[key] !== undefined ? vars[key] : match;
   });
@@ -114,19 +117,28 @@ function postProcessPhrase(text, data) {
 
 function buildKeywordIndex() {
   keywordIndex = new Map();
-  if (!phrasesData?.categories?.triggers) return;
+  
+  // Include both regular triggers and shitpost triggers
+  const triggerSources = [
+    phrasesData?.categories?.triggers,
+    phrasesData?.categories?.shitpost
+  ].filter(Boolean);
+  
+  if (triggerSources.length === 0) return;
 
-  for (const [triggerKey, triggerData] of Object.entries(phrasesData.categories.triggers)) {
-    // Use keywords field or fall back to triggerKey
-    const patterns = triggerData.keywords || triggerData.patterns || [triggerKey];
-    for (const pattern of patterns) {
-      // Extract meaningful keywords (words longer than 2 chars)
-      const words = pattern.toLowerCase().split(/\s+/).filter(w => w.length > 2);
-      for (const word of words) {
-        if (!keywordIndex.has(word)) {
-          keywordIndex.set(word, new Set());
+  for (const source of triggerSources) {
+    for (const [triggerKey, triggerData] of Object.entries(source)) {
+      // Use keywords field or fall back to triggerKey
+      const patterns = triggerData.keywords || triggerData.patterns || [triggerKey];
+      for (const pattern of patterns) {
+        // Extract meaningful keywords (words longer than 2 chars)
+        const words = pattern.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+        for (const word of words) {
+          if (!keywordIndex.has(word)) {
+            keywordIndex.set(word, new Set());
+          }
+          keywordIndex.get(word).add(triggerKey);
         }
-        keywordIndex.get(word).add(triggerKey);
       }
     }
   }
@@ -293,11 +305,13 @@ async function getPhraseWithContext(category, key, vars = {}, contextOptions = {
   const entry = cat[key];
   if (!entry) return MISSING_PHRASE;
 
+  const rollType = contextOptions.rollType || 'none';
+
   // Build context from interaction + overrides
   const interaction = contextOptions.interaction || null;
-  const recentPhrases = contextOptions.recentPhrases || 
+  const recentPhrases = contextOptions.recentPhrases ||
     (interaction?.guild ? recentPhrasesByGuild.get(interaction.guild.id) || [] : []);
-  
+
   const context = buildContext(interaction, {
     recentPhrases,
     ...contextOptions
@@ -307,14 +321,28 @@ async function getPhraseWithContext(category, key, vars = {}, contextOptions = {
   const seasons = await loadSeasons();
   const season = getCurrentSeason(new Date(), seasons);
 
+  // d20 roll for triggers/shitposts - pick template bucket
+  let template = entry.template;
+  const entrySlots = entry.slots || {};
+  
+  if (rollType === 'd20' && entry.template) {
+    const roll = rollD20();
+    if (roll === 1 && entry.fails && entry.fails.length) {
+      template = pickTemplate(entry.fails);
+    } else if (roll === 20 && entry.crits && entry.crits.length) {
+      template = pickTemplate(entry.crits);
+    }
+    // else use main template (hit)
+  }
+
   // Get templates (with seasonal boost)
   let templates = [];
-  if (entry.template) {
+  if (template) {
     // Single template entry
     templates = [{
-      text: entry.template,
+      text: template,
       weight: entry.weight || 1,
-      slots: entry.slots || {},
+      slots: entrySlots,
       contexts: entry.contexts || {}
     }];
   } else if (entry.templates) {
@@ -344,11 +372,11 @@ async function getPhraseWithContext(category, key, vars = {}, contextOptions = {
 
   // Find the full template object to get slots
   const fullTemplate = templates.find(t => t.text === selectedTemplate);
-  const slots = fullTemplate?.slots || {};
+  const templateSlots = fullTemplate?.slots || {};
 
   // Render with slots and variables
-  let text = renderTemplate(selectedTemplate, vars, slots);
-  
+  let text = renderTemplate(selectedTemplate, vars, templateSlots);
+
   // Post-process (mannerisms + synonyms)
   text = postProcessPhrase(text, data);
 
@@ -367,14 +395,20 @@ async function getPhraseWithContext(category, key, vars = {}, contextOptions = {
 
 async function getTriggerResponse(message, vars = {}) {
   const data = await getPhrases();
-  const triggers = data.categories?.triggers;
-  if (!triggers) return null;
+  
+  // Check both regular triggers and shitpost triggers
+  const triggerSources = [
+    data.categories?.triggers,
+    data.categories?.shitpost
+  ].filter(Boolean);
+  
+  if (triggerSources.length === 0) return null;
 
   const lowerMsg = message.toLowerCase();
   // Use same word splitting as buildKeywordIndex for consistency
   const words = lowerMsg.split(/\s+/).filter(w => w.length > 2);
 
-  // Use keyword index to find candidate triggers
+  // Use keyword index to find candidate triggers (only from main triggers for now)
   const candidateKeys = new Set();
   for (const word of words) {
     const keys = keywordIndex?.get(word);
@@ -386,10 +420,21 @@ async function getTriggerResponse(message, vars = {}) {
   }
 
   // If no candidates found via index, fall back to checking all triggers
-  const keysToCheck = candidateKeys.size > 0 ? candidateKeys : new Set(Object.keys(triggers));
+  const keysToCheck = candidateKeys.size > 0 
+    ? candidateKeys 
+    : new Set(triggerSources.flatMap(t => Object.keys(t)));
 
   for (const triggerKey of keysToCheck) {
-    const triggerData = triggers[triggerKey];
+    // Find the trigger in either source
+    let triggerData = null;
+    for (const source of triggerSources) {
+      if (source[triggerKey]) {
+        triggerData = source[triggerKey];
+        break;
+      }
+    }
+    if (!triggerData) continue;
+    
     // Use triggerKey as pattern (since new format doesn't have patterns/keywords fields)
     const patterns = triggerData.patterns || triggerData.keywords || [triggerKey];
 
@@ -399,7 +444,8 @@ async function getTriggerResponse(message, vars = {}) {
         // Use context-aware selection for triggers too
         const interaction = vars._interaction || null;
         // Return the trigger data so caller can handle hit/crit/fail logic
-        return { triggerKey, triggerData, interaction };
+        // Also return roll metadata if d20 is used
+        return { triggerKey, triggerData, interaction, rollType: 'd20' };
       }
     }
   }
@@ -517,4 +563,4 @@ async function setPhrase(category, key, value) {
 }
 
 
-export { loadPhrases, reloadPhrases, getPhrases, getPhrase, getPhraseWithContext, getTriggerResponse, getCategory, getUwuEnding, listPhrases, addPhrase, editPhrase, deletePhrase, savePhrases, setPhrase, getMediaFolder, listMedia, rand, interpolate, weightedRandom, renderTemplate };
+export { loadPhrases, reloadPhrases, getPhrases, getPhrase, getPhraseWithContext, getTriggerResponse, getCategory, getUwuEnding, listPhrases, addPhrase, editPhrase, deletePhrase, savePhrases, setPhrase, getMediaFolder, listMedia, rand, interpolate, weightedRandom, renderTemplate, postProcessPhrase };

@@ -82,7 +82,8 @@ function markShitpostSent(channelId) {
 }
 
 // Get random shitpost response with cooldown + deduplication
-function getShitpostResponse(content, channelId) {
+// Uses phraseManager's d20 roll system for hit/crit/fail
+async function getShitpostResponse(content, channelId) {
   if (!content) return null;
 
   // Cooldown check (per channel)
@@ -94,25 +95,29 @@ function getShitpostResponse(content, channelId) {
   if (triggers.length === 0) return null;
 
   const trigger = triggers[Math.floor(Math.random() * triggers.length)];
-  const roll = Math.floor(Math.random() * 20) + 1;
-  let response;
-  if (roll === 1) response = phraseManager.rand(trigger.fails);
-  else if (roll === 20) response = phraseManager.rand(trigger.crits);
-  else response = phraseManager.rand(trigger.hits);
+  
+  // Use phraseManager's getPhraseWithContext with rollType: 'd20' for hit/crit/fail
+  const response = await phraseManager.getPhraseWithContext(
+    'shitpost',
+    trigger.text,
+    {},
+    { rollType: 'd20' }
+  );
 
   // Deduplication: avoid repeating recent responses in this channel
-  if (channelId && response) {
+  if (channelId && response && response !== phraseManager.MISSING_PHRASE) {
     const history = channelHistory.get(channelId) || [];
     if (history.includes(response)) {
       // Try to pick a different response from the same trigger (max 3 attempts)
       let attempts = 3;
       while (attempts-- > 0) {
-        let altResponse;
-        const altRoll = Math.floor(Math.random() * 20) + 1;
-        if (altRoll === 1) altResponse = phraseManager.rand(trigger.fails);
-        else if (altRoll === 20) altResponse = phraseManager.rand(trigger.crits);
-        else altResponse = phraseManager.rand(trigger.hits);
-        if (!history.includes(altResponse)) {
+        const altResponse = await phraseManager.getPhraseWithContext(
+          'shitpost',
+          trigger.text,
+          {},
+          { rollType: 'd20' }
+        );
+        if (altResponse !== phraseManager.MISSING_PHRASE && !history.includes(altResponse)) {
           response = altResponse;
           break;
         }

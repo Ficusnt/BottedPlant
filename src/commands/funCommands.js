@@ -100,7 +100,7 @@ async function handleFunRoll(interaction) {
     ? '**' + results[0] + '**'
     : results.join(', ') + ' (Total: **' + total + '**)';
 
-  return interaction.editReply(await phraseManager.getPhrase('fun', 'rollResult', 'hits', {
+  return interaction.editReply(await phraseManager.getPhrase('fun', 'rollResult', {
     sides,
     rolls,
     result: resultText
@@ -128,7 +128,7 @@ async function handleFunChoose(interaction) {
   }
 
   const chosen = choices[Math.floor(Math.random() * choices.length)];
-  return interaction.editReply(await phraseManager.getPhrase('fun', 'chooseResult', 'hits', {
+  return interaction.editReply(await phraseManager.getPhrase('fun', 'chooseResult', {
     chosen,
     options: choices.join(', ')
   }));
@@ -171,7 +171,7 @@ async function handleFun8ball(interaction) {
   ];
 
   const answer = responses[Math.floor(Math.random() * responses.length)];
-  return interaction.editReply(await phraseManager.getPhrase('fun', '8ballResult', 'hits', {
+  return interaction.editReply(await phraseManager.getPhrase('fun', '8ballResult', {
     question,
     answer
   }));

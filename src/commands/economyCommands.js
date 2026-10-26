@@ -47,7 +47,7 @@ async function handleLeavesDaily(interaction) {
     streak 
   });
 
-  return interaction.editReply(await phraseManager.getPhrase('economy', 'dailySuccess', 'hits', {
+  return interaction.editReply(await phraseManager.getPhrase('economy', 'dailySuccess', {
     gained,
     bonusPct: bonusPct > 0 ? bonusPct : null,
     streak,
@@ -71,7 +71,7 @@ async function handleLeavesPoints(interaction) {
     });
   }
 
-  return interaction.editReply(await phraseManager.getPhrase('economy', 'pointsSuccess', 'hits', {
+  return interaction.editReply(await phraseManager.getPhrase('economy', 'pointsSuccess', {
     user: target.toString(),
     points: entry.points.toLocaleString('es-AR'),
     streak: entry.streak || 0
@@ -97,7 +97,7 @@ async function handleLeavesLeaderboard(interaction) {
     '**' + (i + 1) + '.** <@' + entry.userId + '> -- **' + entry.points.toLocaleString('es-AR') + '** hojas' + (entry.streak ? ' (🔥 ' + entry.streak + ')' : '')
   ).join('\n');
 
-  return interaction.editReply(await phraseManager.getPhrase('economy', 'leaderboardSuccess', 'hits', { list: lines }));
+  return interaction.editReply(await phraseManager.getPhrase('economy', 'leaderboardSuccess',  { list: lines }));
 }
 
 /**
@@ -143,7 +143,7 @@ async function handleLeavesGamble(interaction) {
   await dataStore.saveGamble(id, gamble);
   
   const lines = choices.map((c, i) => '**' + (i + 1) + '.** ' + c).join('\n');
-  return interaction.editReply(await phraseManager.getPhrase('economy', 'gambleCreated', 'hits', {
+  return interaction.editReply(await phraseManager.getPhrase('economy', 'gambleCreated',  {
     id,
     statement,
     lines
@@ -179,7 +179,7 @@ async function handleLeavesBet(interaction) {
 
   if (points < amount) {
     return interaction.editReply({ 
-      content: await phraseManager.getPhrase('economy', 'gambleBetNoPoints', 'hits', { amount, points })
+      content: await phraseManager.getPhrase('economy', 'gambleBetNoPoints',  { amount, points })
     });
   }
 
@@ -209,7 +209,7 @@ async function handleLeavesBet(interaction) {
   await dataStore.saveGamble(id, gamble);
 
   const totalOnChoice = Object.values(gamble.bets[key]).reduce((a, b) => a + b, 0);
-  return interaction.editReply(await phraseManager.getPhrase('economy', 'gambleBetPlaced', 'hits', {
+  return interaction.editReply(await phraseManager.getPhrase('economy', 'gambleBetPlaced',  {
     amount,
     choice,
     choiceText: gamble.choices[choice - 1],
@@ -269,7 +269,7 @@ async function handleLeavesRedeem(interaction) {
   if (creatorCut > 0) await dataStore.addPoints(interaction.guildId, gamble.creator, creatorCut);
 
   if (winTotal === 0) {
-    msg = await phraseManager.getPhrase('economy', 'gambleRedeemNoWinners', 'hits', {
+    msg = await phraseManager.getPhrase('economy', 'gambleRedeemNoWinners',  {
       statement: gamble.statement,
       winning,
       choiceText: gamble.choices[winning - 1],
@@ -281,7 +281,7 @@ async function handleLeavesRedeem(interaction) {
       const share = Math.floor((betAmount / winTotal) * pool);
       if (share > 0) await dataStore.addPoints(interaction.guildId, betUserId, betAmount + share);
     }
-    msg = await phraseManager.getPhrase('economy', 'gambleRedeemWinners', 'hits', {
+    msg = await phraseManager.getPhrase('economy', 'gambleRedeemWinners',  {
       statement: gamble.statement,
       winning,
       choiceText: gamble.choices[winning - 1],

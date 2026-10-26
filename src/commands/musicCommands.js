@@ -263,18 +263,29 @@ async function handleMusicSkip(interaction, client) {
   }
 
   try {
+    // Check if only one song - skip will stop playback
+    if (queue.songs.length <= 1) {
+      const song = queue.songs[0];
+      queue.stop(); // Stop clears queue and disconnects
+      return interaction.editReply(await phraseManager.getPhrase('music', 'skipLastSong', {
+        songName: song?.name || 'desconocida'
+      }));
+    }
+    
     const song = queue.songs[0];
     queue.skip();
-    return interaction.editReply(await phraseManager.getPhrase('music', 'skip', 'hits', { 
-      songName: song.name 
+    return interaction.editReply(await phraseManager.getPhrase('music', 'skip', {
+      songName: song.name
     }));
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] skip error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'skipError'),
     });
   }
 }
+
+/**
 
 /**
  * Handle /bp music stop
@@ -435,7 +446,7 @@ async function handleMusicVolume(interaction, client) {
   try {
     queue.setVolume(volume);
     return interaction.editReply({ 
-      content: await phraseManager.getPhrase('music', 'volSet', 'hits', { volume })
+      content: await phraseManager.getPhrase('music', 'volSet',  { volume })
     });
   } catch (error) {
     logger.error({ err: error }, '[Music]  error');
@@ -470,7 +481,7 @@ async function handleMusicLoop(interaction, client) {
     
     queue.setRepeatMode(modeNum);
     const modeText = { 0: 'apagado', 1: 'canción', 2: 'cola' }[modeNum];
-    return interaction.editReply(await phraseManager.getPhrase('music', 'loopSet', 'hits', { mode: modeText }));
+    return interaction.editReply(await phraseManager.getPhrase('music', 'loopSet',  { mode: modeText }));
   } catch (error) {
     logger.error({ err: error }, '[Music]  error');
     return interaction.editReply({ 
@@ -522,7 +533,7 @@ async function handleMusicRewind(interaction, client) {
     const song = queue.previousSongs[queue.previousSongs.length - 1];
     queue.previousSongs.pop();
     queue.songs.unshift(song);
-    return interaction.editReply(await phraseManager.getPhrase('music', 'rewind', 'hits', { 
+    return interaction.editReply(await phraseManager.getPhrase('music', 'rewind',  { 
       songName: song.name 
     }));
   } catch (error) {

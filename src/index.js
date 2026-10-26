@@ -18,7 +18,7 @@ import { YtDlpPlugin } from '@distube/yt-dlp';
 import config from './config.js';
 import { logger } from './logger.js';
 import { registerSlashCommands, handleInteraction } from './bpCommand.js';
-import { handleMessage } from './economy.js';
+import { handleMessage } from './handlers/messageHandler.js';
 import { scheduleReminders } from './handlers/reminders.js';
 import * as dataStore from './dataStore.js';
 import { loadShitposts, loadMedia } from './shitpost.js';
@@ -114,7 +114,7 @@ distube
     if (!textChannel) return;
 
     const errorMsg = error?.message?.slice(0, 400) || 'Unknown error';
-    const msg = await phraseManager.getPhrase('distube', 'error', 'hits', {
+    const msg = await phraseManager.getPhrase('distube', 'error', {
       errorMsg,
     });
     textChannel.send(msg).catch(() => {});
@@ -195,7 +195,7 @@ async function checkBirthdays() {
       if (!channel) continue;
 
       const mentions = unannounced.map(([uid]) => `<@${uid}>`).join(' ');
-      const msg = await phraseManager.getPhrase('reminders', 'birthdayAnnouncement', 'hits', {
+      const msg = await phraseManager.getPhrase('reminders', 'birthdayAnnouncement', {
         mentions,
       });
       await channel.send(msg);

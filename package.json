@@ -1,6 +1,6 @@
 {
   "name": "bottedplant",
-  "version": "1.0.0",
+  "version": "1.8.0",
   "description": "Discord bot for YouTube audio and reminders — with a native slash command menu.",
   "type": "module",
   "main": "src/index.js",

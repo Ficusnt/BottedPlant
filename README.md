@@ -33,7 +33,7 @@ Discord bot for YouTube, SoundCloud, and Bandcamp audio — with a native slash 
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/Ficusnt/BottedPlant
 cd BottedPlant
 
 # Install dependencies (auto-runs yt-dlp config setup)
@@ -157,15 +157,6 @@ BottedPlant/
 ```bash
 # Start the bot
 npm start
-
-# Run tests with coverage
-npm test
-
-# Type-check (JSDoc annotations via TypeScript)
-npm run typecheck
-
-# Generate API documentation
-npm run doc
 
 # Regenerate yt-dlp config (run after yt-dlp updates)
 npm run setup

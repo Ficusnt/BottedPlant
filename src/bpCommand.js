@@ -17,7 +17,7 @@ import { handleReminderInteraction } from './handlers/reminderHandler.js';
 import { handleUtilityInteraction } from './handlers/utilityHandler.js';
 import { handleQuerySelect } from './commands/musicCommands.js';
 
-import { handleMessage } from './economy.js';
+import { handleMessage } from './handlers/messageHandler.js';
 import { logger } from './logger.js';
 import { buildBpCommand } from './commands/commandFactory.js';
 
