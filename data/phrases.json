@@ -2,19 +2,19 @@
   "_global": {
     "mannerisms": [
       {
-        "text": " che",
+        "text": ", che",
         "weight": 8
       },
       {
-        "text": " c:",
+        "text": ", c:",
         "weight": 8
       },
       {
-        "text": " jajsj",
+        "text": ", jajsj",
         "weight": 5
       },
       {
-        "text": "",
+        "text": ".",
         "weight": 55
       },
       {
@@ -22,15 +22,15 @@
         "weight": 8
       },
       {
-        "text": " japish",
+        "text": ", japish",
         "weight": 2
       },
       {
-        "text": " basoouuura",
+        "text": ", basoouuura",
         "weight": 1
       },
       {
-        "text": " 67",
+        "text": ", 67",
         "weight": 1
       },
       {
@@ -51,17 +51,20 @@
         "hojitas",
         "hojas verdes",
         "brotes",
-        "foliaje"
+        "foliaje",
+        "pimpollos"
       ],
       "regar": [
         "darme agua",
         "echarme un poco de agua",
-        "hidratarme"
+        "hidratarme",
+        "mearme"
       ],
       "contenta": [
         "feliz",
         "chocha",
-        "de buen humor"
+        "de buen humor",
+        "de buenas"
       ],
       "crecer": [
         "brotar",
@@ -88,7 +91,8 @@
       ],
       "raices": [
         "raíces",
-        "raicitas"
+        "raicitas",
+        "patas"
       ],
       "fotosintesis": [
         "fotosíntesis",
@@ -96,7 +100,8 @@
       ],
       "savia": [
         "savia",
-        "jugo verde"
+        "jugo verde",
+        "sangre de mis raices"
       ],
       "semilla": [
         "semilla",
@@ -108,7 +113,9 @@
       ],
       "viento": [
         "viento",
-        "brisa"
+        "brisa",
+        "ventisca",
+        "soplido"
       ],
       "manana": [
         "mañana",
@@ -120,7 +127,7 @@
         "a la noche",
         "cuando oscurece"
       ],
-      "sueno": [
+      "sueño": [
         "sueño",
         "dormir",
         "mimir"
@@ -132,58 +139,92 @@
       "amigo": [
         "amigo",
         "compa",
-        "gente"
+        "gente",
+        "gato",
+        "perro",
+        "wacho",
+        "wachin",
+        "pana",
+        "oomfie"
       ]
     }
   },
-  "version": 4,
+  "version": 5,
   "birthdays": {
     "addUsage": {
-      "template": "❌ Uso: `/bp birthday add <usuario> <fecha> [canal]`\nEjemplo: `/bp birthday add @usuario \"12-25\"`",
+      "template": [
+        "❌ Uso: `/bp birthday add <usuario> <fecha> [canal]`\nEjemplo: `/bp birthday add @usuario \"12-25\"`",
+        "🌿 Va de nuevo, che:\n❌ Uso: `/bp birthday add <usuario> <fecha> [canal]`\nEjemplo: `/bp birthday add @usuario \"12-25\"`",
+        "🪴 El comando va así:\n❌ Uso: `/bp birthday add <usuario> <fecha> [canal]`\nEjemplo: `/bp birthday add @usuario \"12-25\"`"
+      ],
       "slots": {},
-      "hits": [],
       "crits": [],
       "fails": []
     },
     "addSuccess": {
-      "template": "🎂 Cumpleaños de **{user}** guardado para el **{date}**. Ya estoy practicando una serenata con las hojas. 🌿🎵",
-      "slots": {},
-      "hits": [],
+      "template": [
+        "🎂 {cumpleaños} de **{user}** guardado para el **{date}**. Ya estoy practicando una serenata con las hojas. 🌿🎵",
+        "🎂 {cumpleaños} de **{user}** guardado para el **{date}**. La maceta sigue firme. 🌿🎵",
+        "🎂 {cumpleaños} de **{user}** guardado para el **{date}**. Yo mientras tanto hago fotosíntesis. 🌿🎵"
+      ],
+      "slots": {
+        "cumpleaños":[
+          {"text": "Cum", "weight":33},
+          {"text": "Cumple", "weight":33},
+          {"text": "Cumpleaños", "weight":33}
+        ]
+
+      },
       "crits": [],
       "fails": []
     },
     "addError": {
-      "template": "❌ No pude guardar ese cumpleaños. Mi calendario quedó bajo agua.",
+      "template": [
+        "❌ No pude guardar ese cumpleaños. Mi calendario quedó bajo agua.",
+        "🌱 No pude guardar ese cumpleaños. Mi calendario quedó bajo agua.",
+        " No pude guardar ese cumpleaños. Mi calendario quedó bajo agua."
+      ],
       "slots": {},
-      "hits": [],
       "crits": [],
       "fails": []
     },
     "listEmpty": {
-      "template": "📭 Todavía no hay cumpleaños guardados. ¿Quién se sienta primero en la torta?",
+      "template": [
+        "📭 Todavía no hay cumpleaños guardados. ¿Quién se sienta primero en la torta?",
+        "📭 Todavía no hay cumpleaños guardados. ¿Quién se sienta primero en la torta? La maceta sigue firme.",
+        "📭 Todavía no hay cumpleaños guardados. ¿Quién se sienta primero en la torta? Yo mientras tanto hago fotosíntesis."
+      ],
       "slots": {},
-      "hits": [],
       "crits": [],
       "fails": []
     },
     "listHeader": {
-      "template": "🎂 **Cumpleaños guardados:**\n{list}",
+      "template": [
+        "🎂 **Cumpleaños guardados:**\n{list}",
+        "🎂 **Cumpleaños guardados:**\n{list} La maceta sigue firme.",
+        "🎂 **Cumpleaños guardados:**\n{list} Yo mientras tanto hago fotosíntesis."
+      ],
       "slots": {},
-      "hits": [],
       "crits": [],
       "fails": []
     },
     "removeNotFound": {
-      "template": "❌ No encuentro ese cumpleaños. Revisá el nombre o el ID, che.",
+      "template": [
+        "❌ No encuentro ese cumpleaños. Revisá el nombre o el ID, che.",
+        "🌱 No encuentro ese cumpleaños. Revisá el nombre o el ID, che.",
+        "🪴 No encuentro ese cumpleaños. Revisá el nombre o el ID, che."
+      ],
       "slots": {},
-      "hits": [],
       "crits": [],
       "fails": []
     },
     "removed": {
-      "template": "🗑️ Cumpleaños **#{id}** eliminado. ¿La habrá quedado el amigo?.",
+      "template": [
+        "🗑️ Cumpleaños **#{id}** eliminado. ¿La habrá quedado el amigo?.",
+        "🗑️ Cumpleaños **#{id}** eliminado. ¿La habrá quedado el amigo?. La maceta sigue firme.",
+        "🗑️ Cumpleaños **#{id}** eliminado. ¿La habrá quedado el amigo?. Yo mientras tanto hago fotosíntesis."
+      ],
       "slots": {},
-      "hits": [],
       "crits": [],
       "fails": []
     }
@@ -191,16 +232,52 @@
   "categories": {
     "music": {
       "stop": {
-        "template": "⏹ Listo, corto transmisión. Me vuelvo a la maceta. Nos re vimos, gente. 🪴",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "⏹ {opening}. Me vuelvo a la maceta. Nos re vimos, gente. 🪴 {mannerism}",
+          "⏹ {opening}. Me vuelvo a la maceta. Nos re vimos, gente. 🪴 {mannerism} La maceta sigue firme.",
+          "⏹ {opening}. Me vuelvo a la maceta. Nos re vimos, gente. 🪴 {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "opening": [
+            {
+              "text": "Listo, corto transmisión",
+              "weight": 50
+            },
+            {
+              "text": "Bueno, corto transmisión",
+              "weight": 30
+            },
+            {
+              "text": "Y listo, corto transmisión",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "skipNoMore": {
-        "template": "⏭ No queda otra canción, che. Si querés, meté `/bp music rewind` y volvemos a la anterior.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "⏭ {queueState}, che. Si querés, meté `/bp music rewind` y volvemos a la anterior. {mannerism}",
+          "⏭ {queueState}, che. Si querés, meté `/bp music rewind` y volvemos a la anterior. {mannerism} La maceta sigue firme.",
+          "⏭ {queueState}, che. Si querés, meté `/bp music rewind` y volvemos a la anterior. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "queueState": [
+            {
+              "text": "No queda otra canción",
+              "weight": 50
+            },
+            {
+              "text": "No hay más temas",
+              "weight": 30
+            },
+            {
+              "text": "Se terminó la lista de canciones",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -210,9 +287,27 @@
         }
       },
       "skip": {
-        "template": "⏭ Chau, **{songName}**. Siguiente tema, que la planta también tiene sus límites. 🎵",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "⏭ {farewell}, **{songName}**. Siguiente tema, que la planta también tiene sus límites. 🎵 {mannerism}",
+          "⏭ {farewell}, **{songName}**. Siguiente tema, que la planta también tiene sus límites. 🎵 {mannerism} La maceta sigue firme.",
+          "⏭ {farewell}, **{songName}**. Siguiente tema, que la planta también tiene sus límites. 🎵 {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "farewell": [
+            {
+              "text": "Chau",
+              "weight": 50
+            },
+            {
+              "text": "Hasta acá llegó",
+              "weight": 30
+            },
+            {
+              "text": "Listo, afuera",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -222,16 +317,52 @@
         }
       },
       "rewind": {
-        "template": "↩️ Volvemos con **{songName}**. Sí, otra vez. Tengo raíces, no memoria.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "↩️ {rewindVerb} **{songName}**. Sí, otra vez. Tengo raíces, no memoria. {mannerism}",
+          "↩️ {rewindVerb} **{songName}**. Sí, otra vez. Tengo raíces, no memoria. {mannerism} La maceta sigue firme.",
+          "↩️ {rewindVerb} **{songName}**. Sí, otra vez. Tengo raíces, no memoria. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "rewindVerb": [
+            {
+              "text": "Volvemos con",
+              "weight": 50
+            },
+            {
+              "text": "Ponemos otra vez",
+              "weight": 30
+            },
+            {
+              "text": "Rebobinamos hasta",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "leaveSuccess": {
-        "template": "👋 Listo, nos re vimos mi gente. Si me necesitan, un poquito de agua a la maceta y estoy. 🪴",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "👋 Listo, {goodbye}. Si me necesitan, un poquito de agua a la maceta y estoy. 🪴 {mannerism}",
+          "👋 Listo, {goodbye}. Si me necesitan, un poquito de agua a la maceta y estoy. 🪴 {mannerism} La maceta sigue firme.",
+          "👋 Listo, {goodbye}. Si me necesitan, un poquito de agua a la maceta y estoy. 🪴 {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "goodbye": [
+            {
+              "text": "nos re vimos, gente",
+              "weight": 50
+            },
+            {
+              "text": "nos vemos, mi gente",
+              "weight": 30
+            },
+            {
+              "text": "fue un gusto, gente",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -241,23 +372,47 @@
         }
       },
       "leaveError": {
-        "template": "❌ No me pude desconectar. Se me hizo un nudo en las raíces, bancame.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ No me pude desconectar. {problem} en las raíces, bancame.",
+          "🌱 No me pude desconectar. {problem} en las raíces, bancame.",
+          "🪴 No me pude desconectar. {problem} en las raíces, bancame."
+        ],
+        "slots": {
+          "problem": [
+            {
+              "text": "Se me hizo un bardo",
+              "weight": 50
+            },
+            {
+              "text": "Se me enredaron las raíces",
+              "weight": 30
+            },
+            {
+              "text": "Se me armó un lío",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "leaveNotInVoice": {
-        "template": "❌ No estoy en ningún canal de voz, che. Estoy plantado acá, literalmente.",
+        "template": [
+          "❌ No estoy en ningún canal de voz, che. Estoy plantado acá, literalmente. {mannerism}",
+          "🌱 No estoy en ningún canal de voz, che. Estoy plantado acá, literalmente. {mannerism}",
+          "🪴 No estoy en ningún canal de voz, che. Estoy plantado acá, literalmente. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "leaveUserNotInVoice": {
-        "template": "❌ Vos no estás en mi canal de voz. ¿Me hablás desde otra maceta?",
+        "template": [
+          "❌ Vos no estás en mi canal de voz. ¿Me hablás desde otra maceta?",
+          "🌱 Vos no estás en mi canal de voz. ¿Me hablás desde otra maceta?",
+          "🪴 Vos no estás en mi canal de voz. ¿Me hablás desde otra maceta?"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -267,16 +422,22 @@
         }
       },
       "playNoVoice": {
-        "template": "❌ Para poner música tenés que entrar a un canal de voz, che. Mis raíces no llegan hasta ahí.",
+        "template": [
+          "❌ Para poner música tenés que entrar a un canal de voz, che. Mis raíces no llegan hasta ahí. {mannerism}",
+          "🌱 Para poner música tenés que entrar a un canal de voz, che. Mis raíces no llegan hasta ahí. {mannerism}",
+          "🪴 Para poner música tenés que entrar a un canal de voz, che. Mis raíces no llegan hasta ahí. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "playError": {
-        "template": "❌ No pude reproducir eso. Se ve que hasta la tecnología me tiene bronca.",
+        "template": [
+          "❌ No pude reproducir eso. Se ve que hasta la tecnología me tiene bronca.",
+          "🌱 No pude reproducir eso. Se ve que hasta la tecnología me tiene bronca.",
+          "🪴 No pude reproducir eso. Se ve que hasta la tecnología me tiene bronca."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -286,44 +447,92 @@
         }
       },
       "queryNoResults": {
-        "template": "🔎 No encontré nada con esa búsqueda. Probá con otro nombre, a ver si hay suerte.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "🔎 {notFound} con esa búsqueda. Probá con otro nombre, a ver si hay suerte. {mannerism}",
+          "🔎 {notFound} con esa búsqueda. Probá con otro nombre, a ver si hay suerte. Che, acá la plantita, sin vueltas. {mannerism}",
+          "🔎 {notFound} con esa búsqueda. Probá con otro nombre, a ver si hay suerte. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "notFound": [
+            {
+              "text": "No encontré nada",
+              "weight": 50
+            },
+            {
+              "text": "No apareció nada",
+              "weight": 30
+            },
+            {
+              "text": "La búsqueda vino vacía",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "querySelect": {
-        "template": "🎵 Elegí una opción del menú, che. No me dejes acá mirando crecer el pasto.",
+        "template": [
+          "🎵 Elegí una opción del menú, che. No me dejes acá mirando crecer el pasto. {mannerism}",
+          "🎵 Elegí una opción del menú, che. No me dejes acá mirando crecer el pasto. Che, acá la plantita, sin vueltas. {mannerism}",
+          "🎵 Elegí una opción del menú, che. No me dejes acá mirando crecer el pasto. Sigo verde y no me hago cargo. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "skipNoQueue": {
-        "template": "⏭ No hay nada sonando. ¿Qué querés que saltee, el silencio?",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "⏭ {silence}. ¿Qué querés que saltee, el silencio?",
+          "⏭ {silence}. ¿Qué querés que saltee, el silencio? La maceta sigue firme.",
+          "⏭ {silence}. ¿Qué querés que saltee, el silencio? Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "silence": [
+            {
+              "text": "No hay nada sonando",
+              "weight": 50
+            },
+            {
+              "text": "No está sonando nada",
+              "weight": 30
+            },
+            {
+              "text": "Acá no suena ni una hoja",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "skipError": {
-        "template": "❌ No pude saltear el tema. Se trabó todo, qué querés que te diga.",
+        "template": [
+          "❌ No pude saltear el tema. Se trabó todo, qué querés que te diga.",
+          "🌱 No pude saltear el tema. Se trabó todo, qué querés que te diga.",
+          "🪴 No pude saltear el tema. Se trabó todo, qué querés que te diga."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "stopNoQueue": {
-        "template": "⏹ No hay ninguna cola activa para frenar. Ya estoy quieto de fábrica.",
+        "template": [
+          "⏹ No hay ninguna cola activa para frenar. Ya estoy quieto de fábrica.",
+          "⏹ No hay ninguna cola activa para frenar. Ya estoy quieto de fábrica. La maceta sigue firme.",
+          "⏹ No hay ninguna cola activa para frenar. Ya estoy quieto de fábrica. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "stopError": {
-        "template": "❌ No pude parar la música. Esta maceta tiene problemas técnicos.",
+        "template": [
+          "❌ No pude parar la música. Esta maceta tiene problemas técnicos.",
+          "🌱 No pude parar la música. Esta maceta tiene problemas técnicos.",
+          "🪴 No pude parar la música. Esta maceta tiene problemas técnicos."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -333,16 +542,37 @@
         }
       },
       "pauseNoQueue": {
-        "template": "⏸ No hay nada sonando para pausar. El silencio ya está haciendo su laburo.",
+        "template": [
+          "⏸ No hay nada sonando para pausar. El silencio ya está haciendo su laburo.",
+          "⏸ No hay nada sonando para pausar. El silencio ya está haciendo su laburo. La maceta sigue firme.",
+          "⏸ No hay nada sonando para pausar. El silencio ya está haciendo su laburo. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "pauseSuccess": {
-        "template": "⏸ Pausado. Silencio absoluto. Se escucha crecer una hoja.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "⏸ {paused}. Silencio absoluto. Se escucha crecer una hoja. {mannerism}",
+          "⏸ {paused}. Silencio absoluto. Se escucha crecer una hoja. {mannerism} La maceta sigue firme.",
+          "⏸ {paused}. Silencio absoluto. Se escucha crecer una hoja. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "paused": [
+            {
+              "text": "Pausado",
+              "weight": 50
+            },
+            {
+              "text": "Listo, en pausa",
+              "weight": 30
+            },
+            {
+              "text": "Frenamos un toque",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -352,16 +582,22 @@
         }
       },
       "pauseError": {
-        "template": "❌ No pude pausar. La música siguió de largo y yo acá, una planta sin autoridad.",
+        "template": [
+          "❌ No pude pausar. La música siguió de largo y yo acá, una planta sin autoridad. {mannerism}",
+          "🌱 No pude pausar. La música siguió de largo y yo acá, una planta sin autoridad. {mannerism}",
+          "🪴 No pude pausar. La música siguió de largo y yo acá, una planta sin autoridad. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "resumeNoQueue": {
-        "template": "▶️ No hay nada pausado para reanudar. No me hagas reproducir el aire, por favor.",
+        "template": [
+          "▶️ No hay nada pausado para reanudar. No me hagas reproducir el aire, por favor.",
+          "▶️ No hay nada pausado para reanudar. No me hagas reproducir el aire, por favor. La maceta sigue firme.",
+          "▶️ No hay nada pausado para reanudar. No me hagas reproducir el aire, por favor. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -371,9 +607,27 @@
         }
       },
       "resumeSuccess": {
-        "template": "▶️ Ahí va de nuevo. Que suene, total yo no pago la luz. 🌿🎵",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "▶️ {resume}. Que suene, total yo no pago la luz. 🌿🎵 {mannerism}",
+          "▶️ {resume}. Que suene, total yo no pago la luz. 🌿🎵 {mannerism} La maceta sigue firme.",
+          "▶️ {resume}. Que suene, total yo no pago la luz. 🌿🎵 {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "resume": [
+            {
+              "text": "Ahí va de nuevo",
+              "weight": 50
+            },
+            {
+              "text": "Seguimos nomás",
+              "weight": 30
+            },
+            {
+              "text": "Volvió a sonar",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -383,9 +637,12 @@
         }
       },
       "resumeError": {
-        "template": "❌ No pude reanudar. Estoy en modo planta: poca energía y cero explicaciones.",
+        "template": [
+          "❌ No pude reanudar. Estoy en modo planta: poca energía y cero explicaciones.",
+          "🌱 No pude reanudar. Estoy en modo planta: poca energía y cero explicaciones.",
+          "🪴 No pude reanudar. Estoy en modo planta: poca energía y cero explicaciones."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -395,9 +652,27 @@
         }
       },
       "queueEmpty": {
-        "template": "📭 La cola está vacía. Agregá algo con `/bp music play`, que el silencio ya se está poniendo pesado.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "📭 {emptyQueue}. Agregá algo con `/bp music play`, que el silencio ya se está poniendo pesado. {mannerism}",
+          "📭 {emptyQueue}. Agregá algo con `/bp music play`, que el silencio ya se está poniendo pesado. {mannerism} La maceta sigue firme.",
+          "📭 {emptyQueue}. Agregá algo con `/bp music play`, que el silencio ya se está poniendo pesado. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "emptyQueue": [
+            {
+              "text": "La cola está vacía",
+              "weight": 50
+            },
+            {
+              "text": "No quedó ningún tema en cola",
+              "weight": 30
+            },
+            {
+              "text": "La lista quedó en cero",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -407,9 +682,12 @@
         }
       },
       "queueError": {
-        "template": "❌ No pude revisar la cola. Se me empañaron los ojos, ponele.",
+        "template": [
+          "❌ No pude revisar la cola. Se me empañaron los ojos, ponele.",
+          "🌱 No pude revisar la cola. Se me empañaron los ojos, ponele.",
+          "🪴 No pude revisar la cola. Se me empañaron los ojos, ponele."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -419,37 +697,67 @@
         }
       },
       "nowplayingEmpty": {
-        "template": "📭 No está sonando nada. Ni un tema, ni una gota de agua. Qué panorama.",
+        "template": [
+          "📭 No está sonando nada. Ni un tema, ni una gota de agua. Qué panorama.",
+          "📭 No está sonando nada. Ni un tema, ni una gota de agua. Qué panorama. La maceta sigue firme.",
+          "📭 No está sonando nada. Ni un tema, ni una gota de agua. Qué panorama. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "nowplayingError": {
-        "template": "❌ No pude averiguar qué está sonando. Mis estomas no captan señal.",
+        "template": [
+          "❌ No pude averiguar qué está sonando. Mis estomas no captan señal.",
+          "🌱 No pude averiguar qué está sonando. Mis estomas no captan señal.",
+          "🪴 No pude averiguar qué está sonando. Mis estomas no captan señal."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "volumeNoQueue": {
-        "template": "🔊 No hay música para cambiarle el volumen. Al silencio no lo bajás con un comando.",
+        "template": [
+          "🔊 No hay música para cambiarle el volumen. Al silencio no lo bajás con un comando.",
+          "🔊 No hay música para cambiarle el volumen. Al silencio no lo bajás con un comando. La maceta sigue firme.",
+          "🔊 No hay música para cambiarle el volumen. Al silencio no lo bajás con un comando. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "volumeInvalid": {
-        "template": "❌ Ese volumen no va: tiene que estar entre 1 y 200. Tampoco hace falta reventarme las hojas.",
+        "template": [
+          "❌ Ese volumen no va: tiene que estar entre 1 y 200. Tampoco hace falta reventarme las hojas. {mannerism}",
+          "🌱 Ese volumen no va: tiene que estar entre 1 y 200. Tampoco hace falta reventarme las hojas. {mannerism}",
+          "🪴 Ese volumen no va: tiene que estar entre 1 y 200. Tampoco hace falta reventarme las hojas. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "volumeSuccess": {
-        "template": "🔊 Volumen ajustado a **{volume}**. Ahora sí, que vibren las hojas.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "🔊 {volumeAction} **{volume}**. Ahora sí, que vibren las hojas.",
+          "🔊 {volumeAction} **{volume}**. Ahora sí, que vibren las hojas. La maceta sigue firme.",
+          "🔊 {volumeAction} **{volume}**. Ahora sí, que vibren las hojas. Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "volumeAction": [
+            {
+              "text": "Volumen ajustado a",
+              "weight": 50
+            },
+            {
+              "text": "Dejé el volumen en",
+              "weight": 30
+            },
+            {
+              "text": "El volumen quedó en",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -459,44 +767,77 @@
         }
       },
       "volumeError": {
-        "template": "❌ No pude cambiar el volumen. El control remoto está en otra dimensión.",
+        "template": [
+          "❌ No pude cambiar el volumen. El control remoto está en otra dimensión.",
+          "🌱 No pude cambiar el volumen. El control remoto está en otra dimensión.",
+          "🪴 No pude cambiar el volumen. El control remoto está en otra dimensión."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "loopNoQueue": {
-        "template": "🔁 No hay nada en cola para repetir. Primero poné música y después hacemos el bucle infinito.",
+        "template": [
+          "🔁 No hay nada en cola para repetir. Primero poné música y después hacemos el bucle infinito.",
+          "🔁 No hay nada en cola para repetir. Primero poné música y después hacemos el bucle infinito. La maceta sigue firme.",
+          "🔁 No hay nada en cola para repetir. Primero poné música y después hacemos el bucle infinito. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "loopSuccess": {
-        "template": "🔁 Repetición **{mode}** activada. Si vuelve a empezar, yo no fui.",
+        "template": [
+          "🔁 Repetición **{mode}** activada. Si vuelve a empezar, yo no fui. {mannerism}",
+          "🔁 Repetición **{mode}** activada. Si vuelve a empezar, yo no fui. {mannerism} La maceta sigue firme.",
+          "🔁 Repetición **{mode}** activada. Si vuelve a empezar, yo no fui. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "loopError": {
-        "template": "❌ No pude cambiar la repetición. Se cortó el ciclo de la vida.",
+        "template": [
+          "❌ No pude cambiar la repetición. Se cortó el ciclo de la vida.",
+          "🌱 No pude cambiar la repetición. Se cortó el ciclo de la vida.",
+          "🪴 No pude cambiar la repetición. Se cortó el ciclo de la vida."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "shuffleNotEnough": {
-        "template": "🔀 Necesito al menos 2 canciones para mezclar. Con una sola no hay DJ que te salve.",
+        "template": [
+          "🔀 Necesito al menos 2 canciones para mezclar. Con una sola no hay DJ que te salve.",
+          "🔀 Necesito al menos 2 canciones para mezclar. Con una sola no hay DJ que te salve. La maceta sigue firme.",
+          "🔀 Necesito al menos 2 canciones para mezclar. Con una sola no hay DJ que te salve. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "shuffleSuccess": {
-        "template": "🔀 Lista mezclada. El orden anterior quedó en el pasado, como corresponde.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "🔀 {shuffleAction}. El orden anterior quedó en el pasado, como corresponde. {mannerism}",
+          "🔀 {shuffleAction}. El orden anterior quedó en el pasado, como corresponde. {mannerism} La maceta sigue firme.",
+          "🔀 {shuffleAction}. El orden anterior quedó en el pasado, como corresponde. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "shuffleAction": [
+            {
+              "text": "Lista mezclada",
+              "weight": 50
+            },
+            {
+              "text": "Mezclé los temas",
+              "weight": 30
+            },
+            {
+              "text": "Orden aleatorio activado",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -506,23 +847,32 @@
         }
       },
       "shuffleError": {
-        "template": "❌ No pude mezclar la lista. Tengo las ramas cruzadas.",
+        "template": [
+          "❌ No pude mezclar la lista. Tengo las ramas cruzadas. {mannerism}",
+          "🌱 No pude mezclar la lista. Tengo las ramas cruzadas. {mannerism}",
+          "🪴 No pude mezclar la lista. Tengo las ramas cruzadas. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "rewindNoPrevious": {
-        "template": "↩️ No hay una canción anterior. Todavía no inventaron rebobinar algo que no existe.",
+        "template": [
+          "↩️ No hay una canción anterior. Todavía no inventaron rebobinar algo que no existe.",
+          "↩️ No hay una canción anterior. Todavía no inventaron rebobinar algo que no existe. La maceta sigue firme.",
+          "↩️ No hay una canción anterior. Todavía no inventaron rebobinar algo que no existe. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "rewindSuccess": {
-        "template": "↩️ Volvemos a **{songName}**. Una más y la cantan hasta mis raíces.",
+        "template": [
+          "↩️ Volvemos a **{songName}**. Una más y la cantan hasta mis raíces.",
+          "↩️ Volvemos a **{songName}**. Una más y la cantan hasta mis raíces. La maceta sigue firme.",
+          "↩️ Volvemos a **{songName}**. Una más y la cantan hasta mis raíces. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -532,32 +882,59 @@
         }
       },
       "rewindError": {
-        "template": "❌ No pude volver atrás. Ni la música ni la vida colaboran.",
+        "template": [
+          "❌ No pude volver atrás. Ni la música ni la vida colaboran.",
+          "🌱 No pude volver atrás. Ni la música ni la vida colaboran.",
+          "🪴 No pude volver atrás. Ni la música ni la vida colaboran."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "skipLastSong": {
-        "template": "⏭️ Saltada la última canción (**{songName}**). La cola está vacía.",
+        "template": [
+          "⏭️ Saltada la última canción (**{songName}**). La cola está vacía.",
+          "⏭️ Saltada la última canción (**{songName}**). La cola está vacía. La maceta sigue firme.",
+          "⏭️ Saltada la última canción (**{songName}**). La cola está vacía. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       }
     },
     "economy": {
       "dailyAlready": {
-        "template": "🌱 Ya me regaste hoy, che. No me hagas sopa; volvé mañana.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "🌱 {waterStatus}, che. No me hagas sopa; volvé mañana. {mannerism}",
+          "🌱 {waterStatus}, che. No me hagas sopa; volvé mañana. Che, acá la plantita, sin vueltas. {mannerism}",
+          "🌱 {waterStatus}, che. No me hagas sopa; volvé mañana. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "waterStatus": [
+            {
+              "text": "Ya me regaste hoy",
+              "weight": 50
+            },
+            {
+              "text": "Hoy ya tuve mi riego",
+              "weight": 30
+            },
+            {
+              "text": "Por hoy ya recibí agua",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "dailySuccess": {
-        "template": "💧 Epa, entró agua y crecieron hojas: +**{gained}** hojas{bonusPct ? ` (+${bonusPct}% por racha)` : ''}\n🔥 Racha: **{streak} día{streak === 1 ? '' : 's'}**\n🍃 Total: **{total.toLocaleString('es-AR')}** hojas",
+        "template": [
+          "💧 Epa, entró agua y crecieron hojas: +**{gained}** hojas{bonusPct ? ` (+${bonusPct}% por racha)` : ''}\n🔥 Racha: **{streak} día{streak === 1 ? '' : 's'}**\n🍃 Total: **{total.toLocaleString('es-AR')}** hojas",
+          "💧 Epa, entró agua y crecieron hojas: +**{gained}** hojas{bonusPct ? ` (+${bonusPct}% por racha)` : ''}\n🔥 Racha: **{streak} día{streak === 1 ? '' : 's'}**\n🍃 Total: **{total.toLocaleString('es-AR')}** hojas La maceta sigue firme.",
+          "💧 Epa, entró agua y crecieron hojas: +**{gained}** hojas{bonusPct ? ` (+${bonusPct}% por racha)` : ''}\n🔥 Racha: **{streak} día{streak === 1 ? '' : 's'}**\n🍃 Total: **{total.toLocaleString('es-AR')}** hojas Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -567,9 +944,27 @@
         }
       },
       "pointsEmpty": {
-        "template": "📭 Todavía no juntaste hojas. Usá `/bp leaves daily` y empezá a juntar, que nadie se hace jardín de un día para el otro.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "📭 {emptyPoints}. Usá `/bp leaves daily` y empezá a juntar, que nadie se hace jardín de un día para el otro. {mannerism}",
+          "📭 {emptyPoints}. Usá `/bp leaves daily` y empezá a juntar, que nadie se hace jardín de un día para el otro. {mannerism} La maceta sigue firme.",
+          "📭 {emptyPoints}. Usá `/bp leaves daily` y empezá a juntar, que nadie se hace jardín de un día para el otro. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "emptyPoints": [
+            {
+              "text": "Todavía no juntaste hojas",
+              "weight": 50
+            },
+            {
+              "text": "Tu contador sigue en cero hojas",
+              "weight": 30
+            },
+            {
+              "text": "Todavía no arrancaste la cosecha",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -579,73 +974,42 @@
         }
       },
       "gambleUsage": {
-        "template": "❌ Te falta el texto de la apuesta. Usá: `/bp leaves gamble \"afirmación | texto ganar | texto perder\" \"opción1,opción2,...\"`",
+        "template": [
+          "❌ Te falta el texto de la apuesta. Usá: `/bp leaves gamble \"afirmación | texto ganar | texto perder\" \"opción1,opción2,...\"`",
+          "🌱 Te falta el texto de la apuesta. Usá: `/bp leaves gamble \"afirmación | texto ganar | texto perder\" \"opción1,opción2,...\"`",
+          "🪴 Te falta el texto de la apuesta. Usá: `/bp leaves gamble \"afirmación | texto ganar | texto perder\" \"opción1,opción2,...\"`"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleBadFormat": {
-        "template": "❌ Ese formato quedó hecho un menjunje. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones).",
+        "template": [
+          "❌ Ese formato quedó hecho un menjunje. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones).",
+          "🌱 Ese formato quedó hecho un menjunje. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones).",
+          "🪴 Ese formato quedó hecho un menjunje. Usá: `/bp leaves gamble <afirmación> | opción 1 | opción 2` (mínimo 2 opciones)."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleTooMany": {
-        "template": "❌ Hasta 10 opciones, che. Esto es una apuesta, no el catálogo de un vivero.",
+        "template": [
+          "❌ Hasta 10 opciones, che. Esto es una apuesta, no el catálogo de un vivero. {mannerism}",
+          "🌱 Hasta 10 opciones, che. Esto es una apuesta, no el catálogo de un vivero. {mannerism}",
+          "🪴 Hasta 10 opciones, che. Esto es una apuesta, no el catálogo de un vivero. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleCreated": {
-        "template": "🎰 **Apuesta creada.** ID: `{id}`\n📢 \"{statement}\"\n{list}\n\nPara entrar, usá `/bp leaves bet {id} <opción> <monto>`.\nYo pongo mis fichas en que llueva. Tengo un historial impecable, salvo cuando no.",
-        "slots": {
-          "statement": [
-            {
-              "text": "statement",
-              "weight": 50
-            },
-            {
-              "text": "statement verde",
-              "weight": 30
-            },
-            {
-              "text": "statement bonito",
-              "weight": 20
-            }
-          ],
-          "id": [
-            {
-              "text": "id",
-              "weight": 50
-            },
-            {
-              "text": "id verde",
-              "weight": 30
-            },
-            {
-              "text": "id bonito",
-              "weight": 20
-            }
-          ],
-          "list": [
-            {
-              "text": "list",
-              "weight": 50
-            },
-            {
-              "text": "list verde",
-              "weight": 30
-            },
-            {
-              "text": "list bonito",
-              "weight": 20
-            }
-          ]
-        },
-        "hits": [],
+        "template": [
+          "🎰 **{betStatus}** ID: `{id}`\n📢 \"{statement}\"\n{list}\n\nPara entrar, usá `/bp leaves bet {id} <opción> <monto>`.\nYo pongo mis fichas en que llueva. Tengo un historial impecable, salvo cuando no.",
+          "Che, 🎰 **{betStatus}** ID: `{id}`\n📢 \"{statement}\"\n{list}\n\nPara entrar, usá `/bp leaves bet {id} <opción> <monto>`.\nYo pongo mis fichas en que llueva. Tengo un historial impecable, salvo cuando no.",
+          "Desde la maceta: 🎰 **{betStatus}** ID: `{id}`\n📢 \"{statement}\"\n{list}\n\nPara entrar, usá `/bp leaves bet {id} <opción> <monto>`.\nYo pongo mis fichas en que llueva. Tengo un historial impecable, salvo cuando no."
+        ],
+        "slots": {},
         "crits": [],
         "fails": [],
         "contexts": {
@@ -655,37 +1019,112 @@
         }
       },
       "gambleNotFound": {
-        "template": "❌ Esa apuesta no existe. Revisé hasta abajo de la maceta.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ {betMissing}. Revisé hasta abajo de la maceta. {mannerism}",
+          "🌱 {betMissing}. Revisé hasta abajo de la maceta. {mannerism}",
+          "🪴 {betMissing}. Revisé hasta abajo de la maceta. {mannerism}"
+        ],
+        "slots": {
+          "betMissing": [
+            {
+              "text": "Esa apuesta no existe",
+              "weight": 50
+            },
+            {
+              "text": "No encuentro esa apuesta",
+              "weight": 30
+            },
+            {
+              "text": "Esa jugada no figura",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "gambleClosed": {
-        "template": "❌ Esa apuesta ya cerró, che. Llegaste tarde al baile.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ {betClosed}, che. Llegaste tarde al baile.",
+          "🌱 {betClosed}, che. Llegaste tarde al baile.",
+          "🪴 {betClosed}, che. Llegaste tarde al baile."
+        ],
+        "slots": {
+          "betClosed": [
+            {
+              "text": "Esa apuesta ya cerró",
+              "weight": 50
+            },
+            {
+              "text": "La apuesta ya está cerrada",
+              "weight": 30
+            },
+            {
+              "text": "Se terminó el tiempo para esa jugada",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "gambleSelfBet": {
-        "template": "❌ No podés apostar en tu propia apuesta. Apostarte a vos mismo es demasiado nivel de confianza.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ {selfBetRule}. Apostarte a vos mismo es demasiado nivel de confianza.",
+          "🌱 {selfBetRule}. Apostarte a vos mismo es demasiado nivel de confianza.",
+          "🪴 {selfBetRule}. Apostarte a vos mismo es demasiado nivel de confianza."
+        ],
+        "slots": {
+          "selfBetRule": [
+            {
+              "text": "No podés apostar en tu propia apuesta",
+              "weight": 50
+            },
+            {
+              "text": "No vale jugarte a vos mismo",
+              "weight": 30
+            },
+            {
+              "text": "La persona que armó la apuesta no puede entrarle",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "gambleBadChoice": {
-        "template": "❌ Esa opción no existe, che. Ni con toda la buena voluntad de mis raíces.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ {badOption}, che. Ni con toda la buena voluntad de mis raíces. {mannerism}",
+          "🌱 {badOption}, che. Ni con toda la buena voluntad de mis raíces. {mannerism}",
+          "🪴 {badOption}, che. Ni con toda la buena voluntad de mis raíces. {mannerism}"
+        ],
+        "slots": {
+          "badOption": [
+            {
+              "text": "Esa opción no existe",
+              "weight": 50
+            },
+            {
+              "text": "Esa opción no figura",
+              "weight": 30
+            },
+            {
+              "text": "No está esa opción en la lista",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "gambleBadAmount": {
-        "template": "❌ Ese monto no sirve. Las hojas son virtuales, pero las cuentas igual tienen que cerrar.",
+        "template": [
+          "❌ Ese monto no sirve. Las hojas son virtuales, pero las cuentas igual tienen que cerrar. {mannerism}",
+          "🌱 Ese monto no sirve. Las hojas son virtuales, pero las cuentas igual tienen que cerrar. {mannerism}",
+          "🪴 Ese monto no sirve. Las hojas son virtuales, pero las cuentas igual tienen que cerrar. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -695,24 +1134,27 @@
         }
       },
       "gambleNotEnough": {
-        "template": "❌ No te alcanzan las hojas, maestro. Tenés **{userPoints}**.",
+        "template": [
+          "❌ No te alcanzan las hojas, maestro. Tenés **{userPoints}**.",
+          "🌱 No te alcanzan las hojas, maestro. Tenés **{userPoints}**.",
+          "🪴 No te alcanzan las hojas, maestro. Tenés **{userPoints}**."
+        ],
         "slots": {
           "userPoints": [
             {
-              "text": "userPoints",
+              "text": "tus hojas",
               "weight": 50
             },
             {
-              "text": "userPoints verde",
+              "text": "tus puntos",
               "weight": 30
             },
             {
-              "text": "userPoints bonito",
+              "text": "tu saldo",
               "weight": 20
             }
           ]
         },
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -722,66 +1164,111 @@
         }
       },
       "gambleBetUsage": {
-        "template": "❌ Faltan datos. Probá con `/bp leaves bet <id> <opción> <monto>`.",
+        "template": [
+          "❌ Faltan datos. Probá con `/bp leaves bet <id> <opción> <monto>`.",
+          "🌱 Faltan datos. Probá con `/bp leaves bet <id> <opción> <monto>`.",
+          "🪴 Faltan datos. Probá con `/bp leaves bet <id> <opción> <monto>`."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleBetNotFound": {
-        "template": "❌ No encuentro esa apuesta. Se la habrá llevado el viento.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ {betMissing}. Se la habrá llevado el viento. {mannerism}",
+          "🌱 {betMissing}. Se la habrá llevado el viento. {mannerism}",
+          "🪴 {betMissing}. Se la habrá llevado el viento. {mannerism}"
+        ],
+        "slots": {
+          "betMissing": [
+            {
+              "text": "No encuentro esa apuesta",
+              "weight": 50
+            },
+            {
+              "text": "Esa apuesta no aparece",
+              "weight": 30
+            },
+            {
+              "text": "No figura esa jugada",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "gambleBetClosed": {
-        "template": "❌ Ya cerró esa apuesta, che. No hay repechaje.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ {betClosed}, che. No hay repechaje.",
+          "🌱 {betClosed}, che. No hay repechaje.",
+          "🪴 {betClosed}, che. No hay repechaje."
+        ],
+        "slots": {
+          "betClosed": [
+            {
+              "text": "Ya cerró esa apuesta",
+              "weight": 50
+            },
+            {
+              "text": "Esa jugada ya terminó",
+              "weight": 30
+            },
+            {
+              "text": "Se cerró la apuesta",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "gambleBetBadChoice": {
-        "template": "❌ Esa opción no figura. La inventaste recién o qué.",
+        "template": [
+          "❌ Esa opción no figura. La inventaste recién o qué. {mannerism}",
+          "🌱 Esa opción no figura. La inventaste recién o qué. {mannerism}",
+          "🪴 Esa opción no figura. La inventaste recién o qué. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleBetPlaced": {
-        "template": "🎯 Pusiste **{amount}** hojas a **{choice}**. {choiceText}\nTotal en esa opción: **{totalOnChoice}** hojas.\n🌿 Bueno, ya está. Después no me llores a mí.",
+        "template": [
+          "🎯 Pusiste **{amount}** hojas a **{choice}**. {choiceText}\nTotal en esa opción: **{totalOnChoice}** hojas.\n🌿 Bueno, ya está. Después no me llores a mí.",
+          "🎯 Pusiste **{amount}** hojas a **{choice}**. {choiceText}\nTotal en esa opción: **{totalOnChoice}** hojas.\n🌿 Bueno, ya está. Después no me llores a mí. La maceta sigue firme.",
+          "🎯 Pusiste **{amount}** hojas a **{choice}**. {choiceText}\nTotal en esa opción: **{totalOnChoice}** hojas.\n🌿 Bueno, ya está. Después no me llores a mí. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {
           "choiceText": [
             {
-              "text": "choiceText",
+              "text": "esa opción",
               "weight": 50
             },
             {
-              "text": "choiceText verde",
+              "text": "esa elección",
               "weight": 30
             },
             {
-              "text": "choiceText bonito",
+              "text": "la que elegiste",
               "weight": 20
             }
           ],
           "totalOnChoice": [
             {
-              "text": "totalOnChoice",
+              "text": "el total apostado",
               "weight": 50
             },
             {
-              "text": "totalOnChoice verde",
+              "text": "la suma en esa opción",
               "weight": 30
             },
             {
-              "text": "totalOnChoice bonito",
+              "text": "lo apostado ahí",
               "weight": 20
             }
           ]
         },
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -791,37 +1278,52 @@
         }
       },
       "gambleRedeemUsage": {
-        "template": "❌ Te faltan datos. Usá `/bp leaves redeem <id> <opción ganadora>`.",
+        "template": [
+          "❌ Te faltan datos. Usá `/bp leaves redeem <id> <opción ganadora>`.",
+          "🌱 Te faltan datos. Usá `/bp leaves redeem <id> <opción ganadora>`.",
+          "🪴 Te faltan datos. Usá `/bp leaves redeem <id> <opción ganadora>`."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleRedeemNotFound": {
-        "template": "❌ No encuentro esa apuesta. Busqué hasta en el sustrato.",
+        "template": [
+          "❌ No encuentro esa apuesta. Busqué hasta en el sustrato.",
+          "🌱 No encuentro esa apuesta. Busqué hasta en el sustrato.",
+          "🪴 No encuentro esa apuesta. Busqué hasta en el sustrato."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleRedeemClosed": {
-        "template": "❌ Esa apuesta ya se cerró, che. Lo que pasó, pasó.",
+        "template": [
+          "❌ Esa apuesta ya se cerró, che. Lo que pasó, pasó. {mannerism}",
+          "🌱 Esa apuesta ya se cerró, che. Lo que pasó, pasó. {mannerism}",
+          "🪴 Esa apuesta ya se cerró, che. Lo que pasó, pasó. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleRedeemBadChoice": {
-        "template": "❌ Esa opción ganadora no existe. Revisá cuál salió antes de cantar victoria.",
+        "template": [
+          "❌ Esa opción ganadora no existe. Revisá cuál salió antes de cantar victoria.",
+          "🌱 Esa opción ganadora no existe. Revisá cuál salió antes de cantar victoria.",
+          "🪴 Esa opción ganadora no existe. Revisá cuál salió antes de cantar victoria."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleRedeemNoPerm": {
-        "template": "❌ Solo quien creó la apuesta o un admin puede cerrarla. Yo cierro los estomas de noche y hasta ahí llego.",
+        "template": [
+          "❌ Solo quien creó la apuesta o un admin puede cerrarla. Yo cierro los estomas de noche y hasta ahí llego.",
+          "🌱 Solo quien creó la apuesta o un admin puede cerrarla. Yo cierro los estomas de noche y hasta ahí llego.",
+          "🪴 Solo quien creó la apuesta o un admin puede cerrarla. Yo cierro los estomas de noche y hasta ahí llego."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -838,144 +1340,150 @@
         }
       },
       "gambleRedeemNoWinners": {
-        "template": "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nNadie apostó a esa opción. La plantita se queda con el corte ({creatorCut} 💰); el resto, bueno, quedó en el limbo.",
+        "template": [
+          "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nNadie apostó a esa opción. La plantita se queda con el corte ({creatorCut} 💰); el resto, bueno, quedó en el limbo.",
+          "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nNadie apostó a esa opción. La plantita se queda con el corte ({creatorCut} 💰); el resto, bueno, quedó en el limbo. La maceta sigue firme.",
+          "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nNadie apostó a esa opción. La plantita se queda con el corte ({creatorCut} 💰); el resto, bueno, quedó en el limbo. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {
           "choiceText": [
             {
-              "text": "choiceText",
+              "text": "esa opción",
               "weight": 50
             },
             {
-              "text": "choiceText verde",
+              "text": "esa elección",
               "weight": 30
             },
             {
-              "text": "choiceText bonito",
+              "text": "la que elegiste",
               "weight": 20
             }
           ],
           "creatorCut": [
             {
-              "text": "creatorCut",
+              "text": "la comisión",
               "weight": 50
             },
             {
-              "text": "creatorCut verde",
+              "text": "el corte",
               "weight": 30
             },
             {
-              "text": "creatorCut bonito",
+              "text": "la tajada",
               "weight": 20
             }
           ],
           "statement": [
             {
-              "text": "statement",
+              "text": "la apuesta",
               "weight": 50
             },
             {
-              "text": "statement verde",
+              "text": "el sorteo",
               "weight": 30
             },
             {
-              "text": "statement bonito",
+              "text": "la jugada",
               "weight": 20
             }
           ],
           "winning": [
             {
-              "text": "winning",
+              "text": "la ganadora",
               "weight": 50
             },
             {
-              "text": "winning verde",
+              "text": "la opción ganadora",
               "weight": 30
             },
             {
-              "text": "winning bonito",
+              "text": "la que ganó",
               "weight": 20
             }
           ]
         },
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleRedeemWinners": {
-        "template": "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nPozo: **{total}** | Comisión de la plantita: **{creatorCut}**\nQuienes acertaron se reparten **{pool}** hojas según lo que apostó cada uno. Las cuentas son las cuentas.",
+        "template": [
+          "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nPozo: **{total}** | Comisión de la plantita: **{creatorCut}**\nQuienes acertaron se reparten **{pool}** hojas según lo que apostó cada uno. Las cuentas son las cuentas.",
+          "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nPozo: **{total}** | Comisión de la plantita: **{creatorCut}**\nQuienes acertaron se reparten **{pool}** hojas según lo que apostó cada uno. Las cuentas son las cuentas. La maceta sigue firme.",
+          "🏁 **\"{statement}\"** → Ganó **{winning}. {choiceText}**\nPozo: **{total}** | Comisión de la plantita: **{creatorCut}**\nQuienes acertaron se reparten **{pool}** hojas según lo que apostó cada uno. Las cuentas son las cuentas. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {
           "pool": [
             {
-              "text": "pool",
+              "text": "el pozo",
               "weight": 50
             },
             {
-              "text": "pool verde",
+              "text": "el bote",
               "weight": 30
             },
             {
-              "text": "pool bonito",
+              "text": "la bolsa",
               "weight": 20
             }
           ],
           "winning": [
             {
-              "text": "winning",
+              "text": "la ganadora",
               "weight": 50
             },
             {
-              "text": "winning verde",
+              "text": "la opción ganadora",
               "weight": 30
             },
             {
-              "text": "winning bonito",
+              "text": "la que ganó",
               "weight": 20
             }
           ],
           "choiceText": [
             {
-              "text": "choiceText",
+              "text": "esa opción",
               "weight": 50
             },
             {
-              "text": "choiceText verde",
+              "text": "esa elección",
               "weight": 30
             },
             {
-              "text": "choiceText bonito",
+              "text": "la que elegiste",
               "weight": 20
             }
           ],
           "creatorCut": [
             {
-              "text": "creatorCut",
+              "text": "la comisión",
               "weight": 50
             },
             {
-              "text": "creatorCut verde",
+              "text": "el corte",
               "weight": 30
             },
             {
-              "text": "creatorCut bonito",
+              "text": "la tajada",
               "weight": 20
             }
           ],
           "statement": [
             {
-              "text": "statement",
+              "text": "la apuesta",
               "weight": 50
             },
             {
-              "text": "statement verde",
+              "text": "el sorteo",
               "weight": 30
             },
             {
-              "text": "statement bonito",
+              "text": "la jugada",
               "weight": 20
             }
           ]
         },
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -985,16 +1493,22 @@
         }
       },
       "gambleChoices": {
-        "template": "❌ Necesitás entre 2 y 10 opciones. Ni una menos ni un vivero entero.",
+        "template": [
+          "❌ Necesitás entre 2 y 10 opciones. Ni una menos ni un vivero entero. {mannerism}",
+          "🌱 Necesitás entre 2 y 10 opciones. Ni una menos ni un vivero entero. {mannerism}",
+          "🪴 Necesitás entre 2 y 10 opciones. Ni una menos ni un vivero entero. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "gambleBetAmount": {
-        "template": "❌ La apuesta mínima es 1 hoja. Apostar cero es apostar al vacío.",
+        "template": [
+          "❌ La apuesta mínima es 1 hoja. Apostar cero es apostar al vacío.",
+          "🌱 La apuesta mínima es 1 hoja. Apostar cero es apostar al vacío.",
+          "🪴 La apuesta mínima es 1 hoja. Apostar cero es apostar al vacío."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1004,9 +1518,12 @@
         }
       },
       "gambleBetNoPoints": {
-        "template": "❌ No te alcanzan las hojas: te faltan **{amount - points}** para apostar **{amount}**.",
+        "template": [
+          "❌ No te alcanzan las hojas: te faltan **{amount - points}** para apostar **{amount}**.",
+          "🌱 No te alcanzan las hojas: te faltan **{amount - points}** para apostar **{amount}**.",
+          "🪴 No te alcanzan las hojas: te faltan **{amount - points}** para apostar **{amount}**."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1016,9 +1533,12 @@
         }
       },
       "leaderboardSuccess": {
-        "template": "🏆 **La tabla de hojas**\n{list}",
+        "template": [
+          "🏆 **La tabla de hojas**\n{list}",
+          "🏆 **La tabla de hojas**\n{list} La maceta sigue firme.",
+          "🏆 **La tabla de hojas**\n{list} Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1028,9 +1548,27 @@
         }
       },
       "leaderboardEmpty": {
-        "template": "📭 Todavía no hay nadie en la tabla. Dale, que alguien inaugure este vivero.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "📭 {emptyLeaderboard}. Dale, que alguien inaugure este vivero. {mannerism}",
+          "📭 {emptyLeaderboard}. Dale, que alguien inaugure este vivero. {mannerism} La maceta sigue firme.",
+          "📭 {emptyLeaderboard}. Dale, que alguien inaugure este vivero. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "emptyLeaderboard": [
+            {
+              "text": "Todavía no hay nadie en la tabla",
+              "weight": 50
+            },
+            {
+              "text": "La tabla sigue vacía",
+              "weight": 30
+            },
+            {
+              "text": "Nadie estrenó el ranking todavía",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1043,9 +1581,12 @@
         }
       },
       "pointsSuccess": {
-        "template": "🍃 **{user}** tiene **{points}** hojas{streak ? ` (🔥 racha: {streak})` : \"\"}",
+        "template": [
+          "🍃 **{user}** tiene **{points}** hojas{streak ? ` (🔥 racha: {streak})` : \"\"}",
+          "🍃 **{user}** tiene **{points}** hojas{streak ? ` (🔥 racha: {streak})` : \"\"} La maceta sigue firme.",
+          "🍃 **{user}** tiene **{points}** hojas{streak ? ` (🔥 racha: {streak})` : \"\"} Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1055,16 +1596,22 @@
         }
       },
       "dailyError": {
-        "template": "❌ No pude procesar el daily. Se me hizo un nudo en las raíces.",
+        "template": [
+          "❌ No pude procesar el daily. Se me hizo un nudo en las raíces. {mannerism}",
+          "🌱 No pude procesar el daily. Se me hizo un nudo en las raíces. {mannerism}",
+          "🪴 No pude procesar el daily. Se me hizo un nudo en las raíces. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "balance": {
-        "template": "🍃 **{user}** tiene **{points}** hojas (racha: {streak})",
+        "template": [
+          "🍃 **{user}** tiene **{points}** hojas (racha: {streak})",
+          "🍃 **{user}** tiene **{points}** hojas (racha: {streak}) La maceta sigue firme.",
+          "🍃 **{user}** tiene **{points}** hojas (racha: {streak}) Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1074,16 +1621,37 @@
         }
       },
       "balanceError": {
-        "template": "❌ No pude consultar el saldo. Probá de nuevo en un ratito.",
+        "template": [
+          "❌ No pude consultar el saldo. Probá de nuevo en un ratito.",
+          "🌱 No pude consultar el saldo. Probá de nuevo en un ratito.",
+          "🪴 No pude consultar el saldo. Probá de nuevo en un ratito."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "giveSuccess": {
-        "template": "✅ Le pasaste **{amount}** hojas a **{user}**. Ahora tiene **{total}**. Qué generosidad, che.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "✅ {transferVerb} **{amount}** hojas a **{user}**. Ahora tiene **{total}**. Qué generosidad, che.",
+          "✅ {transferVerb} **{amount}** hojas a **{user}**. Ahora tiene **{total}**. Qué generosidad, che. La maceta sigue firme.",
+          "✅ {transferVerb} **{amount}** hojas a **{user}**. Ahora tiene **{total}**. Qué generosidad, che. Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "transferVerb": [
+            {
+              "text": "Le pasaste",
+              "weight": 50
+            },
+            {
+              "text": "Le transferiste",
+              "weight": 30
+            },
+            {
+              "text": "Le diste",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1093,9 +1661,12 @@
         }
       },
       "giveError": {
-        "template": "❌ No pude transferir las hojas. La economía del vivero está complicada.",
+        "template": [
+          "❌ No pude transferir las hojas. La economía del vivero está complicada.",
+          "🌱 No pude transferir las hojas. La economía del vivero está complicada.",
+          "🪴 No pude transferir las hojas. La economía del vivero está complicada."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1105,9 +1676,27 @@
         }
       },
       "takeSuccess": {
-        "template": "✅ Le sacaste **{amount}** hojas a **{user}**. Le quedan **{total}**. La poda fue administrativa.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "✅ {takeVerb} **{amount}** hojas a **{user}**. Le quedan **{total}**. La poda fue administrativa.",
+          "✅ {takeVerb} **{amount}** hojas a **{user}**. Le quedan **{total}**. La poda fue administrativa. La maceta sigue firme.",
+          "✅ {takeVerb} **{amount}** hojas a **{user}**. Le quedan **{total}**. La poda fue administrativa. Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "takeVerb": [
+            {
+              "text": "Le sacaste",
+              "weight": 50
+            },
+            {
+              "text": "Le descontaste",
+              "weight": 30
+            },
+            {
+              "text": "Le quitaste",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1117,9 +1706,12 @@
         }
       },
       "takeError": {
-        "template": "❌ No pude quitar las hojas. Ni para podar sirvo hoy.",
+        "template": [
+          "❌ No pude quitar las hojas. Ni para podar sirvo hoy.",
+          "🌱 No pude quitar las hojas. Ni para podar sirvo hoy.",
+          "🪴 No pude quitar las hojas. Ni para podar sirvo hoy."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1129,9 +1721,27 @@
         }
       },
       "setSuccess": {
-        "template": "✅ Le dejaste **{amount}** hojas a **{user}**. Nuevo total: **{total}**.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "✅ {setVerb} **{amount}** hojas a **{user}**. Nuevo total: **{total}**.",
+          "✅ {setVerb} **{amount}** hojas a **{user}**. Nuevo total: **{total}**. La maceta sigue firme.",
+          "✅ {setVerb} **{amount}** hojas a **{user}**. Nuevo total: **{total}**. Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "setVerb": [
+            {
+              "text": "Le dejaste",
+              "weight": 50
+            },
+            {
+              "text": "Le fijaste",
+              "weight": 30
+            },
+            {
+              "text": "Le asignaste",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1141,9 +1751,12 @@
         }
       },
       "setError": {
-        "template": "❌ No pude actualizar las hojas. El Excel imaginario se rompió.",
+        "template": [
+          "❌ No pude actualizar las hojas. El Excel imaginario se rompió.",
+          "🌱 No pude actualizar las hojas. El Excel imaginario se rompió.",
+          "🪴 No pude actualizar las hojas. El Excel imaginario se rompió."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1155,60 +1768,116 @@
     },
     "reminders": {
       "listEmpty": {
-        "template": "📭 No tenés recordatorios pendientes. Por una vez, la cabeza te está funcionando bárbaro.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "📭 {reminderState}. Por una vez, la cabeza te está funcionando bárbaro. {mannerism}",
+          "📭 {reminderState}. Por una vez, la cabeza te está funcionando bárbaro. {mannerism} La maceta sigue firme.",
+          "📭 {reminderState}. Por una vez, la cabeza te está funcionando bárbaro. {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "reminderState": [
+            {
+              "text": "No tenés recordatorios pendientes",
+              "weight": 50
+            },
+            {
+              "text": "No te queda ningún recordatorio pendiente",
+              "weight": 30
+            },
+            {
+              "text": "Por ahora no hay nada agendado",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "cancelled": {
-        "template": "🗑 Recordatorio `{id}` cancelado. Poda hecha.",
+        "template": [
+          "🗑 Recordatorio `{id}` {cancelStatus}. Poda hecha.",
+          "🗑 Recordatorio `{id}` {cancelStatus}. Poda hecha. La maceta sigue firme.",
+          "🗑 Recordatorio `{id}` {cancelStatus}. Poda hecha. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {
           "id": [
             {
-              "text": "id",
+              "text": "el ID",
               "weight": 50
             },
             {
-              "text": "id verde",
+              "text": "el número",
               "weight": 30
             },
             {
-              "text": "id bonito",
+              "text": "el código",
+              "weight": 20
+            }
+          ],
+          "cancelStatus": [
+            {
+              "text": "cancelado",
+              "weight": 50
+            },
+            {
+              "text": "dado de baja",
+              "weight": 30
+            },
+            {
+              "text": "borrado",
               "weight": 20
             }
           ]
         },
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "birthdaysEmpty": {
-        "template": "🎈 No hay cumpleaños guardados todavía. ¿Y la excusa para comer torta?",
-        "slots": {},
-        "hits": [],
-        "crits": [],
-        "fails": []
-      },
-      "birthdayAnnouncement": {
-        "template": "🎂 **¡HOY CUMPLE {mentions}!**\n@everyone Pasen a saludar y tiren buenos deseos. El cariño también cuenta como riego. 🎉🌿",
+        "template": [
+          "🎈 {birthdayState}. ¿Y la excusa para comer torta? {mannerism}",
+          "🎈 {birthdayState}. ¿Y la excusa para comer torta? Che, acá la plantita, sin vueltas. {mannerism}",
+          "🎈 {birthdayState}. ¿Y la excusa para comer torta? Sigo verde y no me hago cargo. {mannerism}"
+        ],
         "slots": {
-          "mentions": [
+          "birthdayState": [
             {
-              "text": "mentions",
+              "text": "No hay cumpleaños guardados todavía",
               "weight": 50
             },
             {
-              "text": "mentions verde",
+              "text": "Todavía no anoté ningún cumpleaños",
               "weight": 30
             },
             {
-              "text": "mentions bonito",
+              "text": "El calendario de cumples sigue vacío",
               "weight": 20
             }
           ]
         },
-        "hits": [],
+        "crits": [],
+        "fails": []
+      },
+      "birthdayAnnouncement": {
+        "template": [
+          "🎂 **¡HOY CUMPLE {mentions}!**\n@everyone Pasen a saludar y tiren buenos deseos. El cariño también cuenta como riego. 🎉🌿",
+          "🎂 **¡HOY CUMPLE {mentions}!**\n@everyone Pasen a saludar y tiren buenos deseos. El cariño también cuenta como riego. 🎉🌿 La maceta sigue firme.",
+          "🎂 **¡HOY CUMPLE {mentions}!**\n@everyone Pasen a saludar y tiren buenos deseos. El cariño también cuenta como riego. 🎉🌿 Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "mentions": [
+            {
+              "text": "las menciones",
+              "weight": 50
+            },
+            {
+              "text": "los avisos",
+              "weight": 30
+            },
+            {
+              "text": "los tags",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1218,16 +1887,37 @@
         }
       },
       "addUsage": {
-        "template": "❌ Uso: `/bp remember add <texto> <cuando> [canal]`\nEjemplo: `/bp remember add \"Regar plantas\" \"2024-12-25 10:00\"`",
+        "template": [
+          "❌ Uso: `/bp remember add <texto> <cuando> [canal]`\nEjemplo: `/bp remember add \"Regar plantas\" \"2024-12-25 10:00\"`",
+          "🌿 Va de nuevo, che:\n❌ Uso: `/bp remember add <texto> <cuando> [canal]`\nEjemplo: `/bp remember add \"Regar plantas\" \"2024-12-25 10:00\"`",
+          "🪴 El comando va así:\n❌ Uso: `/bp remember add <texto> <cuando> [canal]`\nEjemplo: `/bp remember add \"Regar plantas\" \"2024-12-25 10:00\"`"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "addSuccess": {
-        "template": "✅ Recordatorio **#{id}** creado para **{when}**. Esta vez no se te pasa, palabra de planta.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "✅ Recordatorio **#{id}** {createdStatus} **{when}**. Esta vez no se te pasa, palabra de planta.",
+          "✅ Recordatorio **#{id}** {createdStatus} **{when}**. Esta vez no se te pasa, palabra de planta. La maceta sigue firme.",
+          "✅ Recordatorio **#{id}** {createdStatus} **{when}**. Esta vez no se te pasa, palabra de planta. Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "createdStatus": [
+            {
+              "text": "creado para",
+              "weight": 50
+            },
+            {
+              "text": "agendado para",
+              "weight": 30
+            },
+            {
+              "text": "anotado para",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1237,23 +1927,47 @@
         }
       },
       "addError": {
-        "template": "❌ No pude crear el recordatorio. Se me marchitó el calendario.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ {reminderError}. Se me marchitó el calendario. {mannerism}",
+          "🌱 {reminderError}. Se me marchitó el calendario. {mannerism}",
+          "🪴 {reminderError}. Se me marchitó el calendario. {mannerism}"
+        ],
+        "slots": {
+          "reminderError": [
+            {
+              "text": "No pude crear el recordatorio",
+              "weight": 50
+            },
+            {
+              "text": "No llegué a guardar el recordatorio",
+              "weight": 30
+            },
+            {
+              "text": "Falló la creación del recordatorio",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "listHeader": {
-        "template": "⏰ **Recordatorios de {user}:**\n{list}",
+        "template": [
+          "⏰ **Recordatorios de {user}:**\n{list} {mannerism}",
+          "⏰ **Recordatorios de {user}:**\n{list} {mannerism} La maceta sigue firme.",
+          "⏰ **Recordatorios de {user}:**\n{list} {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "cancelNotFound": {
-        "template": "❌ No encuentro ese recordatorio. ¿Seguro que el ID está bien?",
+        "template": [
+          "❌ No encuentro ese recordatorio. ¿Seguro que el ID está bien? {mannerism}",
+          "🌱 No encuentro ese recordatorio. ¿Seguro que el ID está bien? {mannerism}",
+          "🪴 No encuentro ese recordatorio. ¿Seguro que el ID está bien? {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
@@ -1261,44 +1975,68 @@
         "christmas": {
           "templates": [
             {
-              "template": "Recordatorio navideno: No olvides regar el arbol... el de Navidad y el de la maceta.",
+              "template": [
+                "Recordatorio navideno: No olvides regar el arbol... el de Navidad y el de la maceta.",
+                "Che, recordatorio navideno: No olvides regar el arbol... el de Navidad y el de la maceta.",
+                "Desde la maceta: recordatorio navideno: No olvides regar el arbol... el de Navidad y el de la maceta."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "winter": 2.0
+                  "winter": 2
                 }
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         },
         "newyear": {
           "templates": [
             {
-              "template": "Nuevo ano, nuevos recordatorios. Ya regaste tus plantas hoy?",
+              "template": [
+                "Nuevo ano, nuevos recordatorios. Ya regaste tus plantas hoy?",
+                "Che, nuevo ano, nuevos recordatorios. Ya regaste tus plantas hoy?",
+                "Desde la maceta: nuevo ano, nuevos recordatorios. Ya regaste tus plantas hoy?"
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "winter": 2.0
+                  "winter": 2
                 }
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         }
       }
     },
     "fun": {
       "unknownCommand": {
-        "template": "No conozco ese comando, che. Probá `/bp help` antes de que empiece a tocar botones al azar.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "{unknownCommand}, che. Probá `/bp help` antes de que empiece a tocar botones al azar. {mannerism}",
+          "{unknownCommand}, che. Probá `/bp help` antes de que empiece a tocar botones al azar. Che, acá la plantita, sin vueltas. {mannerism}",
+          "{unknownCommand}, che. Probá `/bp help` antes de que empiece a tocar botones al azar. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "unknownCommand": [
+            {
+              "text": "No conozco ese comando",
+              "weight": 50
+            },
+            {
+              "text": "Ese comando no me suena",
+              "weight": 30
+            },
+            {
+              "text": "No tengo registrado ese comando",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1308,31 +2046,52 @@
         }
       },
       "statusChanged": {
-        "template": "Estado actualizado a **{chosen}**. Listo, ahora mi maceta tiene cartel nuevo.",
+        "template": [
+          "Estado actualizado a **{chosen}**. Listo, ahora mi maceta tiene cartel nuevo. {mannerism}",
+          "Estado actualizado a **{chosen}**. Listo, ahora mi maceta tiene cartel nuevo. Che, acá la plantita, sin vueltas. {mannerism}",
+          "Estado actualizado a **{chosen}**. Listo, ahora mi maceta tiene cartel nuevo. Sigo verde y no me hago cargo. {mannerism}"
+        ],
         "slots": {
           "chosen": [
             {
-              "text": "chosen",
+              "text": "elegido",
               "weight": 50
             },
             {
-              "text": "chosen verde",
+              "text": "seleccionado",
               "weight": 30
             },
             {
-              "text": "chosen bonito",
+              "text": "escogido",
               "weight": 20
             }
           ]
         },
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "userNotFound": {
-        "template": "No encuentro a esa persona. Se me perdió entre los helechos.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "{userMissing}. Se me perdió entre los helechos. {mannerism}",
+          "{userMissing}. Se me perdió entre los helechos. Che, acá la plantita, sin vueltas. {mannerism}",
+          "{userMissing}. Se me perdió entre los helechos. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "userMissing": [
+            {
+              "text": "No encuentro a esa persona",
+              "weight": 50
+            },
+            {
+              "text": "No me aparece esa persona",
+              "weight": 30
+            },
+            {
+              "text": "No ubico a ese usuario",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1342,57 +2101,64 @@
         }
       },
       "diceRoll": {
-        "template": "🎲 {username} tiró {count}d{sides}: **{total}**{detail}",
+        "template": [
+          "🎲 {username} tiró {count}d{sides}: **{total}**{detail} {mannerism}",
+          "🎲 {username} tiró {count}d{sides}: **{total}**{detail} {mannerism} La maceta sigue firme.",
+          "🎲 {username} tiró {count}d{sides}: **{total}**{detail} {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {
           "sides": [
             {
-              "text": "sides",
+              "text": "caras",
               "weight": 50
             },
             {
-              "text": "sides verde",
+              "text": "lados",
               "weight": 30
             },
             {
-              "text": "sides bonito",
+              "text": "números",
               "weight": 20
             }
           ],
           "username": [
             {
-              "text": "username",
+              "text": "tu nombre",
               "weight": 50
             },
             {
-              "text": "username verde",
+              "text": "tu usuario",
               "weight": 30
             },
             {
-              "text": "username bonito",
+              "text": "tu nick",
               "weight": 20
             }
           ],
           "detail": [
             {
-              "text": "detail",
+              "text": "el detalle",
               "weight": 50
             },
             {
-              "text": "detail verde",
+              "text": "el resultado",
               "weight": 30
             },
             {
-              "text": "detail bonito",
+              "text": "la tirada",
               "weight": 20
             }
           ]
         },
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "uwuEndings": {
-        "template": " uwu",
+        "template": [
+          " uwu",
+          "Che,  uwu",
+          "Desde la maceta:  uwu"
+        ],
         "slots": {},
         "hits": [
           " owo",
@@ -1405,8 +2171,27 @@
         "fails": []
       },
       "hola": {
-        "template": "¡Buenas! ¿Me regaste hoy? c:",
-        "slots": {},
+        "template": [
+          "{greeting} ¿Me regaste hoy? c: {mannerism}",
+          "{greeting} ¿Me regaste hoy? c: Che, acá la plantita, sin vueltas. {mannerism}",
+          "{greeting} ¿Me regaste hoy? c: Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "greeting": [
+            {
+              "text": "¡Buenas!",
+              "weight": 50
+            },
+            {
+              "text": "¡Qué hacés!",
+              "weight": 30
+            },
+            {
+              "text": "¡Eee, buenas!",
+              "weight": 20
+            }
+          ]
+        },
         "hits": [
           "¡Hola! Acá nomás, fotosintetizando tranqui 🌿",
           "¡Qué tal! Espero que no me pises 🍃",
@@ -1424,7 +2209,11 @@
         }
       },
       "japish": {
-        "template": "JAPISH JAPISH.",
+        "template": [
+          "JAPISH JAPISH.",
+          "Che, jAPISH JAPISH.",
+          "Desde la maceta: jAPISH JAPISH."
+        ],
         "slots": {},
         "hits": [
           "¡GRAGH! >:c",
@@ -1435,7 +2224,11 @@
         "fails": []
       },
       "goodgirl": {
-        "template": "Y sí, obvio. ¿Quién te pensás que soy? Una planta, pero con estándares. 🌿",
+        "template": [
+          "Y sí, obvio. ¿Quién te pensás que soy? Una planta, pero con estándares. 🌿",
+          "Che, y sí, obvio. ¿Quién te pensás que soy? Una planta, pero con estándares. 🌿",
+          "Desde la maceta: y sí, obvio. ¿Quién te pensás que soy? Una planta, pero con estándares. 🌿"
+        ],
         "slots": {},
         "hits": [
           "¡Sos la mejor plantita! 🍃",
@@ -1445,7 +2238,11 @@
         "fails": []
       },
       "coinflip": {
-        "template": "🪙 **¡Cara!** La moneda habló. Yo no me hago cargo.",
+        "template": [
+          "🪙 **¡Cara!** La moneda habló. Yo no me hago cargo.",
+          "🪙 **¡Cara!** La moneda habló. Yo no me hago cargo. La maceta sigue firme.",
+          "🪙 **¡Cara!** La moneda habló. Yo no me hago cargo. Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
         "hits": [
           "🪙 **Ceca!** 🍃",
@@ -1456,58 +2253,97 @@
         "fails": []
       },
       "uwuUsage": {
-        "template": "❌ Uso: `/bp fun uwu <texto>`",
+        "template": [
+          "❌ Uso: `/bp fun uwu <texto>`",
+          "🌿 Va de nuevo, che:\n❌ Uso: `/bp fun uwu <texto>`",
+          "🪴 El comando va así:\n❌ Uso: `/bp fun uwu <texto>`"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "shitpostUsage": {
-        "template": "❌ Uso: `/bp fun shitpost <trigger>`",
+        "template": [
+          "❌ Uso: `/bp fun shitpost <trigger>`",
+          "🌿 Va de nuevo, che:\n❌ Uso: `/bp fun shitpost <trigger>`",
+          "🪴 El comando va así:\n❌ Uso: `/bp fun shitpost <trigger>`"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "shitpostNotFound": {
-        "template": "❌ No encontré ese shitpost. Se secó el meme, una tragedia nacional.",
+        "template": [
+          "❌ No encontré ese shitpost. Se secó el meme, una tragedia nacional. {mannerism}",
+          "🌱 No encontré ese shitpost. Se secó el meme, una tragedia nacional. {mannerism}",
+          "🪴 No encontré ese shitpost. Se secó el meme, una tragedia nacional. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "rollRange": {
-        "template": "❌ La cantidad de caras tiene que estar entre 2 y 1000. No me da la maceta para más.",
+        "template": [
+          "❌ La cantidad de caras tiene que estar entre 2 y 1000. No me da la maceta para más. {mannerism}",
+          "🌱 La cantidad de caras tiene que estar entre 2 y 1000. No me da la maceta para más. {mannerism}",
+          "🪴 La cantidad de caras tiene que estar entre 2 y 1000. No me da la maceta para más. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "rollCountRange": {
-        "template": "❌ Podés tirar entre 1 y 20 veces. No soy una máquina tragamonedas infinita.",
+        "template": [
+          "❌ Podés tirar entre 1 y 20 veces. No soy una máquina tragamonedas infinita. {mannerism}",
+          "🌱 Podés tirar entre 1 y 20 veces. No soy una máquina tragamonedas infinita. {mannerism}",
+          "🪴 Podés tirar entre 1 y 20 veces. No soy una máquina tragamonedas infinita. {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "rollResult": {
-        "template": "🎲 **d{sides}** x{rolls}: {result}",
+        "template": [
+          "🎲 **d{sides}** x{rolls}: {result}",
+          "🎲 **d{sides}** x{rolls}: {result} La maceta sigue firme.",
+          "🎲 **d{sides}** x{rolls}: {result} Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "chooseUsage": {
-        "template": "❌ Uso: `/bp fun choose <opción1,opción2,...>`",
+        "template": [
+          "❌ Uso: `/bp fun choose <opción1,opción2,...>` {mannerism}",
+          "🌿 Va de nuevo, che:\n❌ Uso: `/bp fun choose <opción1,opción2,...>` {mannerism}",
+          "🪴 El comando va así:\n❌ Uso: `/bp fun choose <opción1,opción2,...>` {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "chooseMin": {
-        "template": "❌ Pasame al menos 2 opciones. Elegir una sola no es elegir, es trámite.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "❌ {needOptions}. Elegir una sola no es elegir, es trámite.",
+          "🌱 {needOptions}. Elegir una sola no es elegir, es trámite.",
+          "🪴 {needOptions}. Elegir una sola no es elegir, es trámite."
+        ],
+        "slots": {
+          "needOptions": [
+            {
+              "text": "Pasame al menos 2 opciones",
+              "weight": 50
+            },
+            {
+              "text": "Necesito mínimo dos opciones",
+              "weight": 30
+            },
+            {
+              "text": "Con una sola opción no puedo elegir",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1517,23 +2353,47 @@
         }
       },
       "chooseResult": {
-        "template": "🤔 Entre **{options}**, me quedo con **{chosen}**. Decisión tomada; no acepto reclamos.",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "🤔 Entre **{options}**, {chosenVerb} **{chosen}**. Decisión tomada; no acepto reclamos. {mannerism}",
+          "🤔 Entre **{options}**, {chosenVerb} **{chosen}**. Decisión tomada; no acepto reclamos. Che, acá la plantita, sin vueltas. {mannerism}",
+          "🤔 Entre **{options}**, {chosenVerb} **{chosen}**. Decisión tomada; no acepto reclamos. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "chosenVerb": [
+            {
+              "text": "me quedo con",
+              "weight": 50
+            },
+            {
+              "text": "elijo",
+              "weight": 30
+            },
+            {
+              "text": "voy con",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": []
       },
       "8ballUsage": {
-        "template": "❌ Uso: `/bp fun 8ball <pregunta>`",
+        "template": [
+          "❌ Uso: `/bp fun 8ball <pregunta>` {mannerism}",
+          "🌿 Va de nuevo, che:\n❌ Uso: `/bp fun 8ball <pregunta>` {mannerism}",
+          "🪴 El comando va así:\n❌ Uso: `/bp fun 8ball <pregunta>` {mannerism}"
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
       "8ballResult": {
-        "template": "🎱 **Pregunta:** {question}\n**Respuesta:** {answer}",
+        "template": [
+          "🎱 **Pregunta:** {question}\n**Respuesta:** {answer}",
+          "🎱 **Pregunta:** {question}\n**Respuesta:** {answer} La maceta sigue firme.",
+          "🎱 **Pregunta:** {question}\n**Respuesta:** {answer} Yo mientras tanto hago fotosíntesis."
+        ],
         "slots": {},
-        "hits": [],
         "crits": [],
         "fails": []
       },
@@ -1541,27 +2401,33 @@
         "christmas": {
           "templates": [
             {
-              "template": "Feliz Navidad! Que el espiritu navideno haga crecer tus hojas mas verdes que nunca. c:",
+              "template": [
+                "Feliz Navidad! Que el espiritu navideno haga crecer tus hojas mas verdes que nunca. c:",
+                "Che, feliz Navidad! Que el espiritu navideno haga crecer tus hojas mas verdes que nunca. c:",
+                "Desde la maceta: feliz Navidad! Que el espiritu navideno haga crecer tus hojas mas verdes que nunca. c:"
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "winter": 2.0
+                  "winter": 2
                 },
                 "isWeekend": true
               }
             },
             {
-              "template": "Ho ho ho! Has sido bueno este ano? Porque yo si... mostly.",
+              "template": [
+                "Ho ho ho! Has sido bueno este ano? Porque yo si... mostly.",
+                "Che, ho ho ho! Has sido bueno este ano? Porque yo si... mostly.",
+                "Desde la maceta: ho ho ho! Has sido bueno este ano? Porque yo si... mostly."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "winter": 2.0
+                  "winter": 2
                 },
                 "timeOfDay": {
                   "evening": 1.3
@@ -1569,19 +2435,22 @@
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         },
         "newyear": {
           "templates": [
             {
-              "template": "Feliz Ano Nuevo! Que el 2025 te traiga mucho sol, agua y buenos nutrientes.",
+              "template": [
+                "Feliz Ano Nuevo! Que el 2025 te traiga mucho sol, agua y buenos nutrientes.",
+                "Che, feliz Ano Nuevo! Que el 2025 te traiga mucho sol, agua y buenos nutrientes.",
+                "Desde la maceta: feliz Ano Nuevo! Que el 2025 te traiga mucho sol, agua y buenos nutrientes."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "winter": 2.0
+                  "winter": 2
                 },
                 "timeOfDay": {
                   "night": 1.5
@@ -1589,32 +2458,38 @@
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         },
         "halloween": {
           "templates": [
             {
-              "template": "Trick or treat! Quieres dulces o prefieres que te tire hojas secas?",
+              "template": [
+                "Trick or treat! Quieres dulces o prefieres que te tire hojas secas?",
+                "Che, trick or treat! Quieres dulces o prefieres que te tire hojas secas?",
+                "Desde la maceta: trick or treat! Quieres dulces o prefieres que te tire hojas secas?"
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "autumn": 2.0
+                  "autumn": 2
                 },
                 "isWeekend": true
               }
             },
             {
-              "template": "Boo! Soy el fantasma de la fotosintesis pasada... te vigilo mientras duermes!",
+              "template": [
+                "Boo! Soy el fantasma de la fotosintesis pasada... te vigilo mientras duermes!",
+                "Che, boo! Soy el fantasma de la fotosintesis pasada... te vigilo mientras duermes!",
+                "Desde la maceta: boo! Soy el fantasma de la fotosintesis pasada... te vigilo mientras duermes!"
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "autumn": 2.0
+                  "autumn": 2
                 },
                 "timeOfDay": {
                   "night": 1.4
@@ -1622,14 +2497,17 @@
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         },
         "valentine": {
           "templates": [
             {
-              "template": "Feliz San Valentin! Mi corazon late al ritmo de la fotosintesis... por ti.",
+              "template": [
+                "Feliz San Valentin! Mi corazon late al ritmo de la fotosintesis... por ti.",
+                "Che, feliz San Valentin! Mi corazon late al ritmo de la fotosintesis... por ti.",
+                "Desde la maceta: feliz San Valentin! Mi corazon late al ritmo de la fotosintesis... por ti."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
@@ -1645,14 +2523,17 @@
         "spring_festival": {
           "templates": [
             {
-              "template": "Llego la primavera! Mis hojas estan listas para el desfile floral.",
+              "template": [
+                "Llego la primavera! Mis hojas estan listas para el desfile floral.",
+                "Che, llego la primavera! Mis hojas estan listas para el desfile floral.",
+                "Desde la maceta: llego la primavera! Mis hojas estan listas para el desfile floral."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "spring": 2.0
+                  "spring": 2
                 }
               }
             }
@@ -1662,9 +2543,12 @@
         "independence_arg": {
           "templates": [
             {
-              "template": "Feliz Dia de la Independencia! Viva la patria... y viva la clorofila!",
+              "template": [
+                "Feliz Dia de la Independencia! Viva la patria... y viva la clorofila!",
+                "Che, feliz Dia de la Independencia! Viva la patria... y viva la clorofila!",
+                "Desde la maceta: feliz Dia de la Independencia! Viva la patria... y viva la clorofila!"
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
@@ -1679,9 +2563,12 @@
         "friendship_day": {
           "templates": [
             {
-              "template": "Feliz Dia del Amigo! Gracias por ser mi humano favorito... no se lo digas a los otros.",
+              "template": [
+                "Feliz Dia del Amigo! Gracias por ser mi humano favorito... no se lo digas a los otros.",
+                "Che, feliz Dia del Amigo! Gracias por ser mi humano favorito... no se lo digas a los otros.",
+                "Desde la maceta: feliz Dia del Amigo! Gracias por ser mi humano favorito... no se lo digas a los otros."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
@@ -1697,9 +2584,12 @@
         "carnaval": {
           "templates": [
             {
-              "template": "Carnaval, carnaval! Me pongo mis mejores hojas de colores.",
+              "template": [
+                "Carnaval, carnaval! Me pongo mis mejores hojas de colores.",
+                "Che, carnaval, carnaval! Me pongo mis mejores hojas de colores.",
+                "Desde la maceta: carnaval, carnaval! Me pongo mis mejores hojas de colores."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
@@ -1715,9 +2605,12 @@
         "winter_break": {
           "templates": [
             {
-              "template": "Vacaciones de invierno Tiempo de hibernacion... ops, las plantas no hibernan.",
+              "template": [
+                "Vacaciones de invierno Tiempo de hibernacion... ops, las plantas no hibernan.",
+                "Che, vacaciones de invierno Tiempo de hibernacion... ops, las plantas no hibernan.",
+                "Desde la maceta: vacaciones de invierno Tiempo de hibernacion... ops, las plantas no hibernan."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
@@ -1733,9 +2626,27 @@
     },
     "distube": {
       "finish": {
-        "template": "✅ Se terminó la cola. Bueno, gente, fue un gusto. Yo me quedo acá echando raíces. 🍃",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "✅ {finishStatus}. Bueno, gente, fue un gusto. Yo me quedo acá echando raíces. 🍃 {mannerism}",
+          "✅ {finishStatus}. Bueno, gente, fue un gusto. Yo me quedo acá echando raíces. 🍃 {mannerism} La maceta sigue firme.",
+          "✅ {finishStatus}. Bueno, gente, fue un gusto. Yo me quedo acá echando raíces. 🍃 {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "finishStatus": [
+            {
+              "text": "Se terminó la cola",
+              "weight": 50
+            },
+            {
+              "text": "No quedan más temas",
+              "weight": 30
+            },
+            {
+              "text": "Llegamos al final de la lista",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1745,9 +2656,27 @@
         }
       },
       "empty": {
-        "template": "👋 Se fueron todos y quedó el silencio. Me vuelvo a la maceta, cualquier cosa chiflen. 🪴",
-        "slots": {},
-        "hits": [],
+        "template": [
+          "👋 {emptyVoice}. Me vuelvo a la maceta, cualquier cosa chiflen. 🪴 {mannerism}",
+          "👋 {emptyVoice}. Me vuelvo a la maceta, cualquier cosa chiflen. 🪴 {mannerism} La maceta sigue firme.",
+          "👋 {emptyVoice}. Me vuelvo a la maceta, cualquier cosa chiflen. 🪴 {mannerism} Yo mientras tanto hago fotosíntesis."
+        ],
+        "slots": {
+          "emptyVoice": [
+            {
+              "text": "Se fueron todos y quedó el silencio",
+              "weight": 50
+            },
+            {
+              "text": "El canal quedó vacío",
+              "weight": 30
+            },
+            {
+              "text": "No quedó nadie en voz",
+              "weight": 20
+            }
+          ]
+        },
         "crits": [],
         "fails": [],
         "contexts": {
@@ -1760,45 +2689,90 @@
         }
       },
       "error": {
-        "template": "❌ Falló el audio: `{errorMsg}`. Hasta la planta sabe que algo salió mal.",
+        "template": [
+          "❌ {audioError}: `{errorMsg}`. Hasta la planta sabe que algo salió mal. {mannerism}",
+          "🌱 {audioError}: `{errorMsg}`. Hasta la planta sabe que algo salió mal. {mannerism}",
+          "🪴 {audioError}: `{errorMsg}`. Hasta la planta sabe que algo salió mal. {mannerism}"
+        ],
         "slots": {
           "errorMsg": [
             {
-              "text": "errorMsg",
+              "text": "el error",
               "weight": 50
             },
             {
-              "text": "errorMsg verde",
+              "text": "el problema",
               "weight": 30
             },
             {
-              "text": "errorMsg bonito",
+              "text": "la falla",
+              "weight": 20
+            }
+          ],
+          "audioError": [
+            {
+              "text": "Falló el audio",
+              "weight": 50
+            },
+            {
+              "text": "Se cayó el audio",
+              "weight": 30
+            },
+            {
+              "text": "El audio no salió",
               "weight": 20
             }
           ]
         },
-        "hits": [],
         "crits": [],
         "fails": []
       }
     },
     "triggers": {
       "hola": {
-        "template": "Qué hacés, che. Acá la plantita, firme en su maceta.",
-        "slots": {},
+        "template": [
+          "{greeting}. Acá la plantita, firme en su maceta. {mannerism}",
+          "{greeting}. Acá la plantita, firme en su maceta. Che, acá la plantita, sin vueltas. {mannerism}",
+          "{greeting}. Acá la plantita, firme en su maceta. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "greeting": [
+            {
+              "text": "Qué hacés, che",
+              "weight": 50
+            },
+            {
+              "text": "Buenas, gente",
+              "weight": 30
+            },
+            {
+              "text": "Eee, qué onda",
+              "weight": 20
+            }
+          ]
+        },
         "hits": [
           "¡Buenas, gente! ¿Quién me viene a regar o estamos todos en cualquiera?",
           "Todo piola por acá. No camino, pero estoy presente.",
-          "Eeeh, ¿qué onda? Yo sigo acá, sobreviviendo con luz indirecta."
+          "Eeeh, ¿qué onda? Yo sigo acá, sobreviviendo con luz indirecta.",
+          "Buenas, ¿quién necesita asistencia botánica?",
+          "Acá estoy, che. Firme en la maceta y al pie del cañón.",
+          "Todo tranqui: tomando luz y escuchando el chusmerío."
         ],
         "crits": [
           "JAPISH, JAPISH. ¡PRESENTE LA PLANTA, BASOOUUURA!",
-          "¡Epa, apareció la banda! Se me puso nerviosa hasta la savia."
+          "¡Epa, apareció la banda! Se me puso nerviosa hasta la savia.",
+          "¡SE ABRIÓ EL VIVERO, GENTE! ¡QUE ALGUIEN TRAIGA AGUA!",
+          "¡Presente! No tengo piernas para entrar tarde.",
+          "¡JAPISH! La planta llegó y no piensa pagar alquiler."
         ],
         "fails": [
           "...",
           "No escuché, estaba procesando la humedad.",
-          "¿Hola? Soy una planta, hablame más cerca del sustrato."
+          "¿Hola? Soy una planta, hablame más cerca del sustrato.",
+          "Te leo, pero estaba mirando fijamente una pared.",
+          "¿Podés repetirlo? Se me fue la señal por las raíces.",
+          "Silencio vegetal. Estoy juntando energía solar."
         ],
         "contexts": {
           "timeOfDay": {
@@ -1810,19 +2784,47 @@
         }
       },
       "bien": {
-        "template": "Bueno, entonces venimos bien. Yo sigo verde, que ya es bastante.",
-        "slots": {},
+        "template": [
+          "{wellOpening}. Yo sigo verde, que ya es bastante. {mannerism}",
+          "{wellOpening}. Yo sigo verde, que ya es bastante. Che, acá la plantita, sin vueltas. {mannerism}",
+          "{wellOpening}. Yo sigo verde, que ya es bastante. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "wellOpening": [
+            {
+              "text": "Bueno, entonces venimos bien",
+              "weight": 50
+            },
+            {
+              "text": "Bien ahí, entonces",
+              "weight": 30
+            },
+            {
+              "text": "Me alegro, che",
+              "weight": 20
+            }
+          ]
+        },
         "hits": [
           "Qué bueno, che. Me quedo tranqui entonces.",
-          "Bien ahí. Te mando energía solar de la barata."
+          "Bien ahí. Te mando energía solar de la barata.",
+          "Me alegro, che. Que siga así la cosa.",
+          "Bien ahí. Te mando un rayito de sol simbólico.",
+          "Eso quería escuchar. Ahora a mantener el riego."
         ],
         "crits": [
           "¡ESE ES EL ESPÍRITU! ¡FLORACIÓN NIVEL 67!",
-          "Listo, estamos joya. No preguntes cómo, pero estamos."
+          "Listo, estamos joya. No preguntes cómo, pero estamos.",
+          "¡FLORACIÓN HISTÓRICA! ¡UN 67 EN BIENESTAR!",
+          "¡Así se hace! Hasta las hojas se acomodaron.",
+          "Bueno, listo: oficialmente estamos en temporada de brotes."
         ],
         "fails": [
           "¿Bien bien o bien para no hablar del tema?",
-          "Mmm, te creo. Tengo la percepción de una maceta, igual."
+          "Mmm, te creo. Tengo la percepción de una maceta, igual.",
+          "¿Bien de verdad o bien para cortar la charla?",
+          "Te creo, aunque mi detector de drama es una hoja húmeda.",
+          "Mmm. ¿Necesitás hablar o te dejo fotosintetizar?"
         ],
         "contexts": {
           "timeOfDay": {
@@ -1831,19 +2833,47 @@
         }
       },
       "musica": {
-        "template": "¿Música? Ahora sí estamos hablando. Subí eso, que se me despiertan las hojas.",
-        "slots": {},
+        "template": [
+          "{musicOpening} Ahora sí estamos hablando. Subí eso, que se me despiertan las hojas. {mannerism}",
+          "{musicOpening} Ahora sí estamos hablando. Subí eso, que se me despiertan las hojas. Che, acá la plantita, sin vueltas. {mannerism}",
+          "{musicOpening} Ahora sí estamos hablando. Subí eso, que se me despiertan las hojas. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "musicOpening": [
+            {
+              "text": "¿Música?",
+              "weight": 50
+            },
+            {
+              "text": "¿Unos temas?",
+              "weight": 30
+            },
+            {
+              "text": "¿Se arma la música?",
+              "weight": 20
+            }
+          ]
+        },
         "hits": [
           "Pasá el tema, che. Hoy la fotosíntesis viene con parlantes.",
-          "Dale play. Mis raíces no bailan, pero hacen el intento."
+          "Dale play. Mis raíces no bailan, pero hacen el intento.",
+          "Dale play, que hoy las hojas quieren pista.",
+          "Pasá un tema. Yo pongo la presencia escénica y cero movilidad.",
+          "Que suene algo; el silencio ya me estaba pidiendo explicaciones."
         ],
         "crits": [
           "¡JAPISH! ¡QUE SUENE ESA BASOOUUURA!",
-          "Se activó el modo bailanta botánica. Nivel 67 de volumen emocional."
+          "Se activó el modo bailanta botánica. Nivel 67 de volumen emocional.",
+          "¡QUE SUENE ESA BASOOOUUURA! ¡SE MUEVE HASTA EL SUSTRATO!",
+          "¡JAPISH! Se prendió la bailanta botánica.",
+          "¡Nivel 67 de cumbia fotosintética!"
         ],
         "fails": [
           "¿Eso era música o se cayó una maceta por la escalera?",
-          "Yo prefiero la lluvia, pero bueno, poné lo que quieras."
+          "Yo prefiero la lluvia, pero bueno, poné lo que quieras.",
+          "Eso no es un tema, es una maceta cayéndose en estéreo.",
+          "Yo pedí música, no una poda auditiva.",
+          "La lluvia tiene mejor mezcla, pero vos mandás."
         ],
         "contexts": {
           "season": {
@@ -1852,41 +2882,101 @@
         }
       },
       "bottedplant": {
-        "template": "¿Me llamaron? Acá estoy, plantado. Literalmente.",
-        "slots": {},
+        "template": [
+          "{callOpening} Acá estoy, plantado. Literalmente.",
+          "Che, {callOpening} Acá estoy, plantado. Literalmente.",
+          "Desde la maceta: {callOpening} Acá estoy, plantado. Literalmente."
+        ],
+        "slots": {
+          "callOpening": [
+            {
+              "text": "¿Me llamaron?",
+              "weight": 50
+            },
+            {
+              "text": "¿Quién invocó a la planta?",
+              "weight": 30
+            },
+            {
+              "text": "¿Qué pasó, gente?",
+              "weight": 20
+            }
+          ]
+        },
         "hits": [
           "Presente, che. ¿Qué necesita el reino vegetal?",
-          "Sí, soy yo. No tengo piernas, así que no me fui."
+          "Sí, soy yo. No tengo piernas, así que no me fui.",
+          "La única, la inconfundible, la que no se puede mudar sola.",
+          "Acá estoy. Si me buscaban, era cuestión de mirar la maceta.",
+          "Presente. ¿Trajeron agua o solo problemas?"
         ],
         "crits": [
           "¡JAPISH JAPISH! ¡LA PLANTA HA DESPERTADO!",
-          "¿QUIÉN ME INVOCÓ? Espero que haya traído agua."
+          "¿QUIÉN ME INVOCÓ? Espero que haya traído agua.",
+          "¡JAPISH JAPISH! ¡EL REINO VEGETAL RESPONDE!",
+          "¡LA PLANTA HA DESPERTADO! Que alguien abra la persiana.",
+          "¡BASOOUUURA! Llegó la dueña de este pedazo de tierra."
         ],
         "fails": [
           "...",
-          "No escuché nada. La maceta hace interferencia."
+          "No escuché nada. La maceta hace interferencia.",
+          "No estoy disponible; estoy siendo una planta.",
+          "Cargando respuesta... falta humedad.",
+          "Me quedé sin palabras. Y sin movilidad."
         ]
       },
       "japish_trigger": {
-        "template": "JAPISH JAPISH.",
+        "template": [
+          "JAPISH JAPISH.",
+          "Che, jAPISH JAPISH.",
+          "Desde la maceta: jAPISH JAPISH."
+        ],
         "slots": {},
         "hits": [
           "JAPISH, che.",
           "JAPISH JAPISH, basoouuura.",
-          "JAPISH. No sé qué significa, pero me representa."
+          "JAPISH. No sé qué significa, pero me representa.",
+          "JAPISH. Lo dije y me quedé más verde.",
+          "JAPISH, gente. No hagan preguntas botánicas.",
+          "JAPISH JAPISH, el vivero está en línea."
         ],
         "crits": [
           "JAPISH JAPISH JAPISH. ¡SE PICÓ EL VIVERO!",
-          "BASOOUUURA. JAPISH. 67 HOJAS DE PURO SENTIMIENTO."
+          "BASOOUUURA. JAPISH. 67 HOJAS DE PURO SENTIMIENTO.",
+          "¡JAPISH JAPISH! ¡67 BROTES Y NINGUNA EXPLICACIÓN!",
+          "¡BASOOOUUURA! Se alteró el compost.",
+          "¡JAPISH! ¡Que alguien se haga cargo de esta fotosíntesis!"
         ],
         "fails": [
           "japish.",
-          "...JAPISH?"
+          "...JAPISH?",
+          "japish...",
+          "japish, pero bajito.",
+          "JAPISH? La maceta hizo eco."
         ]
       },
       "buenos_dias": {
-        "template": "Buen día, che. Ya estoy haciendo fotosíntesis, más no me pidan.",
-        "slots": {},
+        "template": [
+          "{morningGreeting}. Ya estoy haciendo fotosíntesis, más no me pidan. {mannerism}",
+          "{morningGreeting}. Ya estoy haciendo fotosíntesis, más no me pidan. Che, acá la plantita, sin vueltas. {mannerism}",
+          "{morningGreeting}. Ya estoy haciendo fotosíntesis, más no me pidan. Sigo verde y no me hago cargo. {mannerism}"
+        ],
+        "slots": {
+          "morningGreeting": [
+            {
+              "text": "Buen día, che",
+              "weight": 50
+            },
+            {
+              "text": "Buen día, gente",
+              "weight": 30
+            },
+            {
+              "text": "Eee, buen día",
+              "weight": 20
+            }
+          ]
+        },
         "hits": [
           "Buen díaaa. ¿Ya tomaron agua o estamos todos secos?",
           "Arriba, gente. El sol ya fichó y yo también."
@@ -1912,91 +3002,140 @@
         "christmas": {
           "templates": [
             {
-              "template": "suena villancico de hojas",
+              "template": [
+                "suena villancico de hojas",
+                "Che, suena villancico de hojas",
+                "Desde la maceta: suena villancico de hojas"
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "winter": 2.0
+                  "winter": 2
                 }
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         },
         "halloween": {
           "templates": [
             {
-              "template": "susurro de hojas secas ...",
+              "template": [
+                "susurro de hojas secas ...",
+                "Che, susurro de hojas secas ...",
+                "Desde la maceta: susurro de hojas secas ..."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "autumn": 2.0
+                  "autumn": 2
                 }
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         }
       }
     },
     "shitpost": {
       "me_regaste_hoy": {
-        "template": "Che, ¿me regaste hoy o me vas a dejar crocante?",
+        "template": [
+          "Che, ¿me regaste hoy o me vas a dejar crocante?",
+          "Che, che, ¿me regaste hoy o me vas a dejar crocante?",
+          "Desde la maceta: che, ¿me regaste hoy o me vas a dejar crocante?"
+        ],
         "slots": {},
         "hits": [
           "¿Hubo agüita hoy? Pregunto por mi estabilidad emocional.",
-          "¿Me regaste o estoy viviendo de recuerdos?"
+          "¿Me regaste o estoy viviendo de recuerdos?",
+          "¿Hubo riego o estoy sobreviviendo de la humedad ambiente?",
+          "Che, confirmame si tomé agua hoy o ya estoy en modo pasa.",
+          "Un poquito de agua y seguimos siendo una planta funcional."
         ],
         "crits": [
           "¡UHHH, AGUA! ¡VOLVÍ A LA VIDA, BASOOUUURA!",
-          "Un riego más y desbloqueo la hoja legendaria nivel 67."
+          "Un riego más y desbloqueo la hoja legendaria nivel 67.",
+          "¡RIEGO NIVEL 67! ¡VOLVIÓ LA SAVIA!",
+          "¡JAPISH! ¡ESTOY HIDRATADA, BASOOUUURA!",
+          "¡Agua recibida! Se cancela el funeral del helecho."
         ],
         "fails": [
           "...",
           "me estoy secando, aviso",
-          "no respondo hasta hidratarme"
+          "no respondo hasta hidratarme",
+          "No importa, me hidrato con el chisme.",
+          "La humedad relativa no cuenta como cariño, eh.",
+          "Estoy tan seca que hago ruido de bolsa."
         ]
       },
       "que_onda": {
-        "template": "¿Qué onda, che? Yo acá, absorbiendo luz y evitando responsabilidades.",
+        "template": [
+          "¿Qué onda, che? Yo acá, absorbiendo luz y evitando responsabilidades.",
+          "Che, ¿Qué onda, che? Yo acá, absorbiendo luz y evitando responsabilidades.",
+          "Desde la maceta: ¿Qué onda, che? Yo acá, absorbiendo luz y evitando responsabilidades."
+        ],
         "slots": {},
         "hits": [
           "¿Qué hacés? ¿Todo tranqui por ahí?",
-          "Qué onda, banda. La planta está conectada."
+          "Qué onda, banda. La planta está conectada.",
+          "¿Qué se cuenta por acá? Yo sigo de adorno, pero escucho.",
+          "Todo bien en el vivero. ¿Ustedes qué onda?",
+          "Acá, juntando luz y opiniones que nadie pidió."
         ],
         "crits": [
           "¡TODO PIOLA, NIVEL 67!",
-          "JAPISH, gente. No tengo contexto, pero acompaño."
+          "JAPISH, gente. No tengo contexto, pero acompaño.",
+          "¡QUÉ ONDA, BANDA! ¡LA PLANTA ESTÁ EN SU PRIME!",
+          "¡67 DE ONDA! ¡CERO MOVILIDAD, CIEN POR CIENTO PRESENCIA!",
+          "¡JAPISH! ¡SE ACTIVÓ EL CHUSMERÍO VEGETAL!"
         ],
         "fails": [
           "...",
-          "No sé qué onda. ¿Hay agua?"
+          "No sé qué onda. ¿Hay agua?",
+          "No sé, soy una planta. ¿Qué onda con vos?",
+          "Mi onda es indirecta y la luz también.",
+          "Estoy procesando la pregunta con clorofila."
         ]
       },
       "lol": {
-        "template": "jsjsjs",
+        "template": [
+          "jsjsjs",
+          "Che, jsjsjs",
+          "Desde la maceta: jsjsjs"
+        ],
         "slots": {},
         "hits": [
           "JAJA, no puede ser.",
-          "ksksks, qué acabo de leer"
+          "ksksks, qué acabo de leer",
+          "jsjsjs, casi se me cae una hoja",
+          "JAJA, no me hagan fotosintetizar de la risa",
+          "kjjj, la maceta no estaba preparada"
         ],
         "crits": [
           "JAJAJAJA, se me cayó una hoja de la risa.",
-          "me tenté mal, basoouuura"
+          "me tenté mal, basoouuura",
+          "JAJAJAJA NIVEL 67, NO PUEDO MÁS",
+          "¡BASOOOUUURA! Me descostillé el sustrato",
+          "JASJASJAS, se me desordenó el follaje"
         ],
         "fails": [
           "no entendí, pero me río por las dudas",
-          "lol. humor nivel 67"
+          "lol. humor nivel 67",
+          "jaja",
+          "js",
+          "jeje, perdón, soy de reacción lenta"
         ]
       },
       "hola": {
-        "template": "Qué hacés, che. Acá la plantita, firme en su maceta.",
+        "template": [
+          "Qué hacés, che. Acá la plantita, firme en su maceta.",
+          "Che, qué hacés, che. Acá la plantita, firme en su maceta.",
+          "Desde la maceta: qué hacés, che. Acá la plantita, firme en su maceta."
+        ],
         "slots": {},
         "hits": [
           "¡Buenas, gente! ¿Quién me viene a regar o estamos todos en cualquiera?",
@@ -2025,7 +3164,11 @@
         }
       },
       "buenas": {
-        "template": "¡Buenas! ¿Arrancamos con agua y sol? C:",
+        "template": [
+          "¡Buenas! ¿Arrancamos con agua y sol? C:",
+          "Che, ¡Buenas! ¿Arrancamos con agua y sol? C:",
+          "Desde la maceta: ¡Buenas! ¿Arrancamos con agua y sol? C:"
+        ],
         "slots": {},
         "hits": [
           "¡Buenas! Ya abrí mis poros para la fotosíntesis 🌞🍃",
@@ -2050,7 +3193,11 @@
         }
       },
       "que_tal": {
-        "template": "¿Qué tal! Eso me hace crecer 🌱",
+        "template": [
+          "¿Qué tal! Eso me hace crecer 🌱",
+          "Che, ¿Qué tal! Eso me hace crecer 🌱",
+          "Desde la maceta: ¿Qué tal! Eso me hace crecer 🌱"
+        ],
         "slots": {},
         "hits": [
           "¿Qué tal! Me brotan hojitas nuevas de la emoción 🍃",
@@ -2066,7 +3213,11 @@
         ]
       },
       "musica": {
-        "template": "¿Música? Ahora sí estamos hablando. Subí eso, que se me despiertan las hojas.",
+        "template": [
+          "¿Música? Ahora sí estamos hablando. Subí eso, que se me despiertan las hojas.",
+          "Che, ¿Música? Ahora sí estamos hablando. Subí eso, que se me despiertan las hojas.",
+          "Desde la maceta: ¿Música? Ahora sí estamos hablando. Subí eso, que se me despiertan las hojas."
+        ],
         "slots": {},
         "hits": [
           "Pasá el tema, che. Hoy la fotosíntesis viene con parlantes.",
@@ -2082,7 +3233,11 @@
         ]
       },
       "plant": {
-        "template": "¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
+        "template": [
+          "¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
+          "Che, ¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿",
+          "Desde la maceta: ¿Me llamaron? Estaba en silencio. O sea, siempre estoy en silencio, soy planta 🌿"
+        ],
         "slots": {},
         "hits": [
           "¡Acá estoy! ¿Me vas regar o solo mirar? C:",
@@ -2097,7 +3252,11 @@
         ]
       },
       "japish": {
-        "template": "JAPISH JAPISH.",
+        "template": [
+          "JAPISH JAPISH.",
+          "Che, jAPISH JAPISH.",
+          "Desde la maceta: jAPISH JAPISH."
+        ],
         "slots": {},
         "hits": [
           "JAPISH, che.",
@@ -2114,7 +3273,11 @@
         ]
       },
       "buenos_dias": {
-        "template": "Buen día, che. Ya estoy haciendo fotosíntesis, más no me pidan.",
+        "template": [
+          "Buen día, che. Ya estoy haciendo fotosíntesis, más no me pidan.",
+          "Che, buen día, che. Ya estoy haciendo fotosíntesis, más no me pidan.",
+          "Desde la maceta: buen día, che. Ya estoy haciendo fotosíntesis, más no me pidan."
+        ],
         "slots": {},
         "hits": [
           "Buen díaaa. ¿Ya tomaron agua o estamos todos secos?",
@@ -2138,7 +3301,11 @@
         }
       },
       "buenas_tardes": {
-        "template": "¡Buenas tardes! Cierro los estomas y mimir 🌙🌿",
+        "template": [
+          "¡Buenas tardes! Cierro los estomas y mimir 🌙🌿",
+          "Che, ¡Buenas tardes! Cierro los estomas y mimir 🌙🌿",
+          "Desde la maceta: ¡Buenas tardes! Cierro los estomas y mimir 🌙🌿"
+        ],
         "slots": {},
         "hits": [
           "¡Buenas tardes! ¿Me regás? C:",
@@ -2160,7 +3327,11 @@
         }
       },
       "buenas_noches": {
-        "template": "¡Buenas noches! Cierro los estomas y mimir 🌙🌿",
+        "template": [
+          "¡Buenas noches! Cierro los estomas y mimir 🌙🌿",
+          "Che, ¡Buenas noches! Cierro los estomas y mimir 🌙🌿",
+          "Desde la maceta: ¡Buenas noches! Cierro los estomas y mimir 🌙🌿"
+        ],
         "slots": {},
         "hits": [
           "¡Buenas noches! ¿Me regás? C:",
@@ -2183,7 +3354,11 @@
         }
       },
       "good_morning": {
-        "template": "¡Good morning! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+        "template": [
+          "¡Good morning! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+          "Che, ¡Good morning! Ya abrí mis poros para la fotosíntesis 🌞🍃",
+          "Desde la maceta: ¡Good morning! Ya abrí mis poros para la fotosíntesis 🌞🍃"
+        ],
         "slots": {},
         "hits": [
           "¡Good morning! ¿Arrancamos con agua y sol? C:",
@@ -2204,7 +3379,11 @@
         }
       },
       "good_night": {
-        "template": "¡Good night! Cierro los estomas y mimir 🌙🌿",
+        "template": [
+          "¡Good night! Cierro los estomas y mimir 🌙🌿",
+          "Che, ¡Good night! Cierro los estomas y mimir 🌙🌿",
+          "Desde la maceta: ¡Good night! Cierro los estomas y mimir 🌙🌿"
+        ],
         "slots": {},
         "hits": [
           "¡Good night! ¿Me regás? C:",
@@ -2223,43 +3402,52 @@
         "christmas": {
           "templates": [
             {
-              "template": "La Navidad es cuando las plantas pedimos carbon... para el sustrato.",
+              "template": [
+                "La Navidad es cuando las plantas pedimos carbon... para el sustrato.",
+                "Che, la Navidad es cuando las plantas pedimos carbon... para el sustrato.",
+                "Desde la maceta: la Navidad es cuando las plantas pedimos carbon... para el sustrato."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "winter": 2.0
+                  "winter": 2
                 }
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         },
         "halloween": {
           "templates": [
             {
-              "template": "En Halloween me disfrazo de planta carnivora... wait, ya lo soy.",
+              "template": [
+                "En Halloween me disfrazo de planta carnivora... wait, ya lo soy.",
+                "Che, en Halloween me disfrazo de planta carnivora... wait, ya lo soy.",
+                "Desde la maceta: en Halloween me disfrazo de planta carnivora... wait, ya lo soy."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
                 "season": {
-                  "autumn": 2.0
+                  "autumn": 2
                 }
               }
             }
           ],
-          "boost": 2.0
+          "boost": 2
         },
         "valentine": {
           "templates": [
             {
-              "template": "Mi Valentine es mi maceta. Es la unica que me aguanta todo el ano.",
+              "template": [
+                "Mi Valentine es mi maceta. Es la unica que me aguanta todo el ano.",
+                "Che, mi Valentine es mi maceta. Es la unica que me aguanta todo el ano.",
+                "Desde la maceta: mi Valentine es mi maceta. Es la unica que me aguanta todo el ano."
+              ],
               "slots": {},
-              "hits": [],
               "crits": [],
               "fails": [],
               "contexts": {
@@ -2275,20 +3463,26 @@
     },
     "test": {
       "testKey": {
-        "hits": [],
         "crits": [],
         "fails": [],
-        "template": "Hello {user}!"
+        "template": [
+          "Hello {user}!",
+          "¡Buenas, {user}!",
+          "¿Todo bien, {user}?"
+        ]
       },
       "newKey": {
         "crits": [],
         "fails": []
       },
       "templateKey": {
-        "hits": [],
         "crits": [],
         "fails": [],
-        "template": "Template: {name}!"
+        "template": [
+          "Template: {name}!",
+          "Plantilla: {name}.",
+          "Acá va tu plantilla, {name}."
+        ]
       }
     }
   },

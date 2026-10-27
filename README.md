@@ -173,17 +173,31 @@ Edit `data/phrases.json` — the bot hot-reloads on change. Structure:
 {
   "_global": {
     "synonyms": { "hello": ["hi", "hey", "hola"] },
-    "mannerisms": { "greeting": ["*waves*", "*nods*"] }
+    "mannerisms": [
+      { "text": " che", "weight": 8 },
+      { "text": " 🌿", "weight": 8 }
+    ]
   },
   "greeting": {
-    "template": "Hello {user}! {mannerism:greeting}",
-    "slots": { "user": ["there", "friend", "stranger"] },
-    "contexts": ["dm", "mention", "join"]
+    "template": "Hello {user}! {mannerism}",
+    "slots": { "user": { "options": [{ "text": "there", "weight": 10 }, { "text": "friend", "weight": 5 }] } },
+    "contexts": { "dm": 1.5 }
   }
 }
 ```
 
-See `src/phraseManager.js` for full schema (templates, slots, synonyms, contexts, weights, cooldowns).
+#### Available Placeholders
+
+| Placeholder | Source | Description |
+|-------------|--------|-------------|
+| `{variable}` | Code-passed `vars` | Variables supplied by the command handler (e.g., `{user}`, `{songName}`, `{volume}`, `{amount}`, `{date}`, `{list}`, `{mentions}`, `{errorMsg}`, `{chosen}`, `{winning}`, `{statement}`, `{choiceText}`, `{total}`, `{pool}`, `{creatorCut}`, `{id}`, `{when}`, `{streak}`, `{total}`, `{points}`, `{gained}`, `{bonusPct}`, `{choice}`, `{totalOnChoice}`, `{userPoints}`, `{amount}`, `{sides}`, `{rolls}`, `{result}`, `{detail}`, `{username}`, `{count}`, `{question}`, `{answer}`, `{options}`, `{id}`) |
+| `{slotKey}` | Phrase `slots` | Weighted random pick from the slot's `options` array defined in the phrase |
+| `{mannerism}` | `_global.mannerisms` | **Inline** -- inserts a weighted random global mannerism at that position (7.5% chance, otherwise empty). Use anywhere in the template. **This is the only way mannerisms appear.** |
+| Synonyms | `_global.synonyms` | Automatic word-level replacement during post-processing (e.g., "hojas" -> "hojitas", "regar" -> "darme agua"). Configured globally, applied probabilistically. |
+
+See `src/phraseManager.js` for full schema (templates, slots, synonyms, contexts, weights, seasonal boosts).
+
+See `data/phrases.json` for real examples across categories: `music`, `economy`, `fun`, `reminders`, `triggers`, `shitpost`, `distube`.
 
 ---
 

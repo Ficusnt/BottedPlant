@@ -64,7 +64,7 @@ function interpolate(text, vars) {
   return text.replace(/\{(\w+)\}/g, (match, key) => vars[key] !== undefined ? vars[key] : match);
 }
 
-function renderTemplate(template, vars, slots) {
+function renderTemplate(template, vars, slots, data) {
   if (!template) return '';
   
   // Pick template if array, then fill slots
@@ -77,6 +77,17 @@ function renderTemplate(template, vars, slots) {
   });
   
   result = interpolate(result, vars);
+
+  // Handle {mannerism} placeholder - replace with weighted random global mannerism
+  // (7.5% chance to insert one, otherwise empty string)
+  if (result.includes('{mannerism}') && data?._global?.mannerisms?.length) {
+    const mannerisms = data._global.mannerisms;
+    const replacement = Math.random() < 0.075
+      ? weightedRandom(mannerisms)
+      : '';
+    result = result.replace(/\{mannerism\}/g, replacement);
+  }
+
   return result;
 }
 
@@ -84,19 +95,6 @@ function renderTemplate(template, vars, slots) {
 // Global Mannerisms & Synonyms
 // ============================================================================
 
-function applyGlobalMannerisms(text, data) {
-  const mannerisms = data._global?.mannerisms;
-  if (!mannerisms || !mannerisms.length) return text;
-  
-  if (Math.random() < 0.075) {
-    const mannerism = weightedRandom(mannerisms);
-    if (mannerism) {
-      const separator = /[.!?👋🌿🌱🌙💤✨🎵🔂🪴]$/.test(text.trim()) ? ' ' : ' ';
-      text = text.trim() + separator + mannerism;
-    }
-  }
-  return text;
-}
 
 function applySynonyms(text, data) {
   const synonyms = loadSynonyms(data);
@@ -105,11 +103,7 @@ function applySynonyms(text, data) {
   return applySynonymsEngine(text, synonyms, { probability: 0.3, wholeWordOnly: true, maxReplacements: 3 });
 }
 
-function postProcessPhrase(text, data) {
-  let result = applyGlobalMannerisms(text, data);
-  result = applySynonyms(result, data);
-  return result;
-}
+function postProcessPhrase(text, data) {return applySynonyms(text, data);}
 
 // ============================================================================
 // Keyword Index for O(1) Trigger Lookup
@@ -269,7 +263,7 @@ async function getPhrase(category, key, vars = {}) {
     const template = entry.template;
     const slots = entry.slots || {};
     const weight = entry.weight || 1;
-    let text = renderTemplate(template, vars, slots);
+    let text = renderTemplate(template, vars, slots, data);
     text = postProcessPhrase(text, data);
     return text;
   }
@@ -375,7 +369,7 @@ async function getPhraseWithContext(category, key, vars = {}, contextOptions = {
   const templateSlots = fullTemplate?.slots || {};
 
   // Render with slots and variables
-  let text = renderTemplate(selectedTemplate, vars, templateSlots);
+  let text = renderTemplate(selectedTemplate, vars, templateSlots, data);
 
   // Post-process (mannerisms + synonyms)
   text = postProcessPhrase(text, data);
