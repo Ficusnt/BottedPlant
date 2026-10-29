@@ -1,0 +1,56 @@
+# Low-memory optimized Dockerfile for BottedPlant
+# Based on Tom Spencer's Node.js memory optimization guide
+# Target: < 300MB RSS under load
+
+# Use Alpine-based Node for smaller footprint
+FROM node:20-alpine AS base
+
+# Install system dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    ffmpeg \
+    curl \
+    && rm -rf /var/cache/apk/*
+
+# Create app user for security
+RUN addgroup -g 1000 -S nodejs && \
+    adduser -S nodejs -u 1000
+
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+
+# Install pnpm
+RUN npm install -g pnpm@11.23.0
+
+# Install dependencies with production flag
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy source code
+COPY src/ ./src/
+COPY data/ ./data/
+COPY scripts/ ./scripts/
+COPY .env.example ./.env.example
+
+# Build the application
+RUN pnpm run build
+
+# Switch to non-root user
+USER nodejs
+
+# Memory optimization flags:
+# --max-old-space-size=256: Limit V8 heap to 256MB
+# --optimize-for-size: Optimize for memory over speed
+# --gc-interval=100: Run GC more frequently (every 100ms)
+# --no-warnings: Suppress warnings for cleaner logs
+ENV NODE_OPTIONS="--max-old-space-size=256 --optimize-for-size --gc-interval=100 --no-warnings"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD node -e "console.log('health check')" || exit 1
+
+# Start the bot
+CMD ["node", "dist/index.js"]

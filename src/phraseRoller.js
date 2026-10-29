@@ -17,11 +17,11 @@ export function rollD20() {
  * @returns {T}
  */
 export function weightedPick(arr, weightKey = 'weight') {
-  if (!arr || !arr.length) return null;
+  if (!arr || !arr.length) {return null;}
   
   // Filter valid items with positive weight
   const valid = arr.filter(item => item && (item[weightKey] ?? 1) > 0);
-  if (!valid.length) return null;
+  if (!valid.length) {return null;}
   
   // If all weights are equal or missing, simple random pick
   const allEqual = valid.every(item => (item[weightKey] ?? 1) === (valid[0][weightKey] ?? 1));
@@ -35,7 +35,7 @@ export function weightedPick(arr, weightKey = 'weight') {
   
   for (const item of valid) {
     random -= (item[weightKey] ?? 1);
-    if (random <= 0) return item;
+    if (random <= 0) {return item;}
   }
   
   return valid[valid.length - 1]; // fallback

@@ -94,7 +94,7 @@ async function handleLeavesLeaderboard(interaction) {
   }
 
   const lines = leaderboard.map((entry, i) => 
-    '**' + (i + 1) + '.** <@' + entry.userId + '> -- **' + entry.points.toLocaleString('es-AR') + '** hojas' + (entry.streak ? ' (🔥 ' + entry.streak + ')' : '')
+    `**${i + 1}.** <@${entry.userId}> -- **${entry.points.toLocaleString('es-AR')}** hojas${entry.streak ? ` (🔥 ${entry.streak})` : ''}`
   ).join('\n');
 
   return interaction.editReply(await phraseManager.getPhrase('economy', 'leaderboardSuccess',  { list: lines }));
@@ -142,7 +142,7 @@ async function handleLeavesGamble(interaction) {
 
   await dataStore.saveGamble(id, gamble);
   
-  const lines = choices.map((c, i) => '**' + (i + 1) + '.** ' + c).join('\n');
+  const lines = choices.map((c, i) => `**${i + 1}.** ${c}`).join('\n');
   return interaction.editReply(await phraseManager.getPhrase('economy', 'gambleCreated',  {
     id,
     statement,
@@ -234,12 +234,12 @@ async function handleLeavesRedeem(interaction) {
   }
 
   const gamble = await dataStore.getGamble(id);
-  if (!gamble) return interaction.editReply({ 
+  if (!gamble) {return interaction.editReply({ 
     content: await phraseManager.getPhrase('economy', 'gambleRedeemNotFound')
-  });
-  if (gamble.closed) return interaction.editReply({ 
+  });}
+  if (gamble.closed) {return interaction.editReply({ 
     content: await phraseManager.getPhrase('economy', 'gambleRedeemClosed')
-  });
+  });}
   if (winning < 1 || winning > gamble.choices.length) {
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('economy', 'gambleRedeemBadChoice')
@@ -266,7 +266,7 @@ async function handleLeavesRedeem(interaction) {
   const pool = Math.max(0, total - creatorCut - winTotal);
 
   let msg;
-  if (creatorCut > 0) await dataStore.addPoints(interaction.guildId, gamble.creator, creatorCut);
+  if (creatorCut > 0) {await dataStore.addPoints(interaction.guildId, gamble.creator, creatorCut);}
 
   if (winTotal === 0) {
     msg = await phraseManager.getPhrase('economy', 'gambleRedeemNoWinners',  {
@@ -279,7 +279,7 @@ async function handleLeavesRedeem(interaction) {
     // Distribute pool proportionally
     for (const [betUserId, betAmount] of Object.entries(winBets)) {
       const share = Math.floor((betAmount / winTotal) * pool);
-      if (share > 0) await dataStore.addPoints(interaction.guildId, betUserId, betAmount + share);
+      if (share > 0) {await dataStore.addPoints(interaction.guildId, betUserId, betAmount + share);}
     }
     msg = await phraseManager.getPhrase('economy', 'gambleRedeemWinners',  {
       statement: gamble.statement,

@@ -1,7 +1,7 @@
 import { EmbedBuilder } from 'discord.js';
 
 export function formatDuration(seconds) {
-  if (!seconds || isNaN(seconds)) return 'En vivo';
+  if (!seconds || isNaN(seconds)) {return 'En vivo';}
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
@@ -65,7 +65,7 @@ export function queueEmbed(queue) {
 
   return new EmbedBuilder()
     .setTitle('🎶 Cola de reproducción')
-    .setDescription(tracks + extra + `\n\n*${mood}*`)
+    .setDescription(`${tracks + extra}\n\n*${mood}*`)
     .addFields(
       { name: '⏱ Duración total', value: formatDuration(totalDuration), inline: true },
       { name: '📝 Canciones', value: `${queue.songs.length}`, inline: true },

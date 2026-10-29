@@ -4,7 +4,7 @@ import { logger } from '../logger.js';
 let scheduled = false;
 
 function scheduleReminders(client) {
-  if (scheduled) return;
+  if (scheduled) {return;}
   scheduled = true;
 
   const check = async () => {

@@ -55,7 +55,7 @@ async function processTriggerResponse(message, triggerKey, triggerData) {
     { interaction: message, rollType: 'd20' }
   );
 
-  if (!response || response === phraseManager.MISSING_PHRASE) return false;
+  if (!response || response === phraseManager.MISSING_PHRASE) {return false;}
 
   // Check for media (same logic as phraseManager fallback)
   let mediaFile = null;
@@ -77,9 +77,9 @@ async function processTriggerResponse(message, triggerKey, triggerData) {
  * @param {import('discord.js').Message} message
  */
 export async function handleMessage(message) {
-  if (message.author.bot || !message.guild) return;
+  if (message.author.bot || !message.guild) {return;}
   const content = message.content.trim();
-  if (!content || content.startsWith('/')) return;
+  if (!content || content.startsWith('/')) {return;}
   
   try {
     const lowerContent = content.toLowerCase();
@@ -122,7 +122,7 @@ export async function handleMessage(message) {
       if (triggerMatch && triggerMatch.triggerData) {
         const { triggerData, triggerKey } = triggerMatch;
         await processTriggerResponse(message, triggerKey, triggerData);
-        return;
+        
       }
     }
   } catch (err) {

@@ -1,7 +1,8 @@
 node_modules/
+dist/
+logs/
 data/media/
 data/cookies-yt.txt
-data/electro.srt
 REFS/
 .env
 *.log

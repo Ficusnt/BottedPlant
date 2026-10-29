@@ -40,18 +40,18 @@ let keywordIndex = null;
 // ============================================================================
 
 function weightedRandom(items) {
-  if (!items || !items.length) return '';
+  if (!items || !items.length) {return '';}
   const totalWeight = items.reduce((sum, item) => sum + (item.weight || 1), 0);
   let random = Math.random() * totalWeight;
   for (const item of items) {
     random -= item.weight || 1;
-    if (random <= 0) return item.text;
+    if (random <= 0) {return item.text;}
   }
   return items[items.length - 1].text;
 }
 
 function rand(arr) {
-  if (!arr || !arr.length) return '';
+  if (!arr || !arr.length) {return '';}
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
@@ -60,12 +60,12 @@ function rand(arr) {
 // ============================================================================
 
 function interpolate(text, vars) {
-  if (!text) return '';
+  if (!text) {return '';}
   return text.replace(/\{(\w+)\}/g, (match, key) => vars[key] !== undefined ? vars[key] : match);
 }
 
 function renderTemplate(template, vars, slots, data) {
-  if (!template) return '';
+  if (!template) {return '';}
   
   // Pick template if array, then fill slots
   const pickedTemplate = pickTemplate(template);
@@ -98,7 +98,7 @@ function renderTemplate(template, vars, slots, data) {
 
 function applySynonyms(text, data) {
   const synonyms = loadSynonyms(data);
-  if (!synonyms || Object.keys(synonyms).length === 0) return text;
+  if (!synonyms || Object.keys(synonyms).length === 0) {return text;}
   
   return applySynonymsEngine(text, synonyms, { probability: 0.3, wholeWordOnly: true, maxReplacements: 3 });
 }
@@ -118,7 +118,7 @@ function buildKeywordIndex() {
     phrasesData?.categories?.shitpost
   ].filter(Boolean);
   
-  if (triggerSources.length === 0) return;
+  if (triggerSources.length === 0) {return;}
 
   for (const source of triggerSources) {
     for (const [triggerKey, triggerData] of Object.entries(source)) {
@@ -145,7 +145,7 @@ function buildKeywordIndex() {
  * Uses the same keyword index logic as getTriggerResponse for consistency.
  */
 export function checkTriggers(message, triggers) {
-  if (!message || !triggers || triggers.length === 0) return [];
+  if (!message || !triggers || triggers.length === 0) {return [];}
   const lower = message.toLowerCase();
   
   // Build a temporary keyword index for the provided triggers
@@ -238,7 +238,7 @@ async function reloadPhrases() {
 }
 
 async function getPhrases() {
-  if (!phrasesData) await loadPhrases();
+  if (!phrasesData) {await loadPhrases();}
   return phrasesData;
 }
 
@@ -252,11 +252,11 @@ async function getPhrases() {
 async function getPhrase(category, key, vars = {}) {
   const data = await getPhrases();
   const cat = data.categories?.[category];
-  if (!cat) return MISSING_PHRASE;
+  if (!cat) {return MISSING_PHRASE;}
 
   // Handle legacy format (hits/crits/fails arrays)
   const entry = cat[key];
-  if (!entry) return MISSING_PHRASE;
+  if (!entry) {return MISSING_PHRASE;}
 
   // New template/slot format
   if (entry.template) {
@@ -270,11 +270,11 @@ async function getPhrase(category, key, vars = {}) {
 
   // Legacy array format fallback
   let pool = [];
-  if (entry.hits) pool = pool.concat(entry.hits);
-  if (entry.crits) pool = pool.concat(entry.crits);
-  if (entry.fails) pool = pool.concat(entry.fails);
+  if (entry.hits) {pool = pool.concat(entry.hits);}
+  if (entry.crits) {pool = pool.concat(entry.crits);}
+  if (entry.fails) {pool = pool.concat(entry.fails);}
   
-  if (!pool.length) return MISSING_PHRASE;
+  if (!pool.length) {return MISSING_PHRASE;}
   
   let text = rand(pool);
   text = postProcessPhrase(text, data);
@@ -294,10 +294,10 @@ async function getPhrase(category, key, vars = {}) {
 async function getPhraseWithContext(category, key, vars = {}, contextOptions = {}) {
   const data = await getPhrases();
   const cat = data.categories?.[category];
-  if (!cat) return MISSING_PHRASE;
+  if (!cat) {return MISSING_PHRASE;}
 
   const entry = cat[key];
-  if (!entry) return MISSING_PHRASE;
+  if (!entry) {return MISSING_PHRASE;}
 
   const rollType = contextOptions.rollType || 'none';
 
@@ -362,7 +362,7 @@ async function getPhraseWithContext(category, key, vars = {}, contextOptions = {
 
   // Select template with context weighting
   const selectedTemplate = selectWithContext(templates, context);
-  if (!selectedTemplate) return MISSING_PHRASE;
+  if (!selectedTemplate) {return MISSING_PHRASE;}
 
   // Find the full template object to get slots
   const fullTemplate = templates.find(t => t.text === selectedTemplate);
@@ -396,7 +396,7 @@ async function getTriggerResponse(message, vars = {}) {
     data.categories?.shitpost
   ].filter(Boolean);
   
-  if (triggerSources.length === 0) return null;
+  if (triggerSources.length === 0) {return null;}
 
   const lowerMsg = message.toLowerCase();
   // Use same word splitting as buildKeywordIndex for consistency
@@ -427,7 +427,7 @@ async function getTriggerResponse(message, vars = {}) {
         break;
       }
     }
-    if (!triggerData) continue;
+    if (!triggerData) {continue;}
     
     // Use triggerKey as pattern (since new format doesn't have patterns/keywords fields)
     const patterns = triggerData.patterns || triggerData.keywords || [triggerKey];
@@ -464,7 +464,7 @@ async function getUwuEnding() {
 
 async function listPhrases() {
   const data = await getPhrases();
-  if (!data?.categories) return {};
+  if (!data?.categories) {return {};}
   const result = {};
   for (const [catName, cat] of Object.entries(data.categories)) {
     result[catName] = Object.keys(cat).map(key => ({
@@ -481,9 +481,9 @@ async function listPhrases() {
 
 async function addPhrase(category, key, type, text) {
   const data = await getPhrases();
-  if (!data.categories[category]) data.categories[category] = {};
-  if (!data.categories[category][key]) data.categories[category][key] = { hits: [], crits: [], fails: [] };
-  if (!data.categories[category][key][type]) data.categories[category][key][type] = [];
+  if (!data.categories[category]) {data.categories[category] = {};}
+  if (!data.categories[category][key]) {data.categories[category][key] = { hits: [], crits: [], fails: [] };}
+  if (!data.categories[category][key][type]) {data.categories[category][key][type] = [];}
   data.categories[category][key][type].push(text);
   await savePhrases(data);
   return true;
@@ -491,7 +491,7 @@ async function addPhrase(category, key, type, text) {
 
 async function editPhrase(category, key, type, index, newText) {
   const data = await getPhrases();
-  if (!data.categories[category]?.[key]?.[type]?.[index]) return false;
+  if (!data.categories[category]?.[key]?.[type]?.[index]) {return false;}
   data.categories[category][key][type][index] = newText;
   await savePhrases(data);
   return true;
@@ -499,10 +499,10 @@ async function editPhrase(category, key, type, index, newText) {
 
 async function deletePhrase(category, key, type, index) {
   const data = await getPhrases();
-  if (!data.categories[category]?.[key]?.[type]?.[index]) return false;
+  if (!data.categories[category]?.[key]?.[type]?.[index]) {return false;}
   data.categories[category][key][type].splice(index, 1);
-  if (data.categories[category][key][type].length === 0) delete data.categories[category][key][type];
-  if (Object.keys(data.categories[category][key]).length === 0) delete data.categories[category][key];
+  if (data.categories[category][key][type].length === 0) {delete data.categories[category][key][type];}
+  if (Object.keys(data.categories[category][key]).length === 0) {delete data.categories[category][key];}
   await savePhrases(data);
   return true;
 }
@@ -549,8 +549,8 @@ loadPhrases().catch(err => console.error('[PhraseManager] Initial load failed:',
  */
 async function setPhrase(category, key, value) {
   const data = await getPhrases();
-  if (!data.categories[category]) data.categories[category] = {};
-  if (!data.categories[category][key]) data.categories[category][key] = { hits: [], crits: [], fails: [] };
+  if (!data.categories[category]) {data.categories[category] = {};}
+  if (!data.categories[category][key]) {data.categories[category][key] = { hits: [], crits: [], fails: [] };}
   data.categories[category][key].template = value;
   await savePhrases(data);
   return true;

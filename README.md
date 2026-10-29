@@ -151,6 +151,122 @@ BottedPlant/
 ```
 
 ---
+## Memory Profiling Guide for BottedPlant
+
+## Overview
+
+This guide documents the memory optimization approach for BottedPlant, based on Tom Spencer's Node.js memory optimization guide.
+
+## Memory Configuration
+
+### Production Flags
+
+```bash
+node --max-old-space-size=256 --optimize-for-size --gc-interval=100 dist/index.js
+```
+
+- `--max-old-space-size=256`: Limits V8's old generation heap to 256MB
+- `--optimize-for-size`: Instructs V8 to optimize for memory usage over execution speed
+- `--gc-interval=100`: Forces garbage collection every 100ms (prevents memory spikes)
+
+### Development Flags
+
+```bash
+node --max-old-space-size=256 --optimize-for-size scripts/dev.js
+```
+
+## Memory Monitoring
+
+### Built-in Monitoring
+
+Add to your code for runtime memory tracking:
+
+```javascript
+setInterval(() => {
+  const used = process.memoryUsage();
+  console.log({
+    rss: `${Math.round(used.rss / 1024 / 1024)} MB`,
+    heapUsed: `${Math.round(used.heapUsed / 1024 / 1024)} MB`,
+    heapTotal: `${Math.round(used.heapTotal / 1024 / 1024)} MB`,
+    external: `${Math.round(used.external / 1024 / 1024)} MB`,
+  });
+}, 60000);
+```
+
+### Using clinic.js for Deep Analysis
+
+```bash
+# Install clinic
+npm install -g clinic
+
+# Profile with doctor (recommended first)
+clinic doctor -- node dist/index.js
+
+# Profile with flamegraph for CPU
+clinic flame -- node dist/index.js
+
+# Profile with bubbleprof for async
+clinic bubbleprof -- node dist/index.js
+```
+
+### Using node --inspect with Chrome DevTools
+
+```bash
+node --inspect=0.0.0.0:9229 --max-old-space-size=256 dist/index.js
+```
+
+Then connect Chrome DevTools at `chrome://inspect`.
+
+## Memory Leak Detection Checklist
+
+### Common Leak Sources in Discord.js Bots
+
+1. **Event listeners not removed**
+   - `client.on()` without corresponding `client.off()` in cleanup
+   - Check: `messageHandler.js`, `reminders.js`
+
+2. **Interval/timeouts not cleared**
+   - `setInterval` in `scheduleReminders()` - ensure cleanup on shutdown
+   - `shitpost.js` cooldown timers
+
+3. **Large object retention**
+   - `phraseManager` caches - verify LRU eviction works
+   - `dataStore` in-memory cache - check TTL expiration
+
+4. **Voice connection leaks**
+   - DisTube voice connections not properly destroyed
+   - Check `musicHandler.js` for proper cleanup
+
+### Heap Snapshot Analysis
+
+```bash
+# Generate heap snapshot
+node --heapsnapshot-signal=SIGUSR2 dist/index.js
+# Then send signal: kill -SIGUSR2 <pid>
+
+# Or programmatically
+const v8 = require('v8');
+v8.writeHeapSnapshot();
+```
+
+Analyze in Chrome DevTools → Memory tab.
+
+## Target Metrics
+
+| Metric | Target | Alert Threshold |
+|--------|--------|-----------------|
+| RSS (Idle) | < 150 MB | > 200 MB |
+| RSS (Under Load) | < 300 MB | > 400 MB |
+| Heap Used | < 100 MB | > 150 MB |
+| GC Pause (99th percentile) | < 50ms | > 100ms |
+
+## Optimization Strategies Applied
+
+1. **ESBuild bundling** - Removes dead code, tree-shakes unused exports
+2. **External dependencies** - Keeps heavy deps (discord.js, distube) out of bundle
+3. **V8 flags** - `--optimize-for-size`, limited heap
+4. **Interval cleanup** - Proper disposal of timers on shutdown
+5. **Cache limits** - LRU eviction in phraseManager and dataStore
 
 ## Development
 
@@ -219,6 +335,19 @@ See `data/phrases.json` for real examples across categories: `music`, `economy`,
 ### Slash commands not appearing
 - Run `npm start` — commands auto-register on startup
 - Ensure `DISCORD_TOKEN` is valid and bot has `applications.commands` scope
+
+### High Memory on Startup
+- Check for large JSON imports (phrases.json, seasons.json)
+- Consider lazy-loading heavy modules
+
+### Memory Grows Over Time
+- Run `clinic doctor` to identify leak type
+- Check for unclosed database connections (if any)
+- Verify Discord.js client cleanup on disconnect/reconnect
+
+### Frequent GC Pauses
+- Increase `--gc-interval` if pauses are too frequent
+- Consider `--max-old-space-size=384` if OOM kills occur
 
 ---
 

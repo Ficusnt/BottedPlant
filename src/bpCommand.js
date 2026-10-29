@@ -94,8 +94,8 @@ async function handleInteraction(interaction) {
     return handleInteractionSafely(() => handleQuerySelect(interaction), interaction);
   }
 
-  if (!interaction.isChatInputCommand()) return;
-  if (interaction.commandName !== 'bp') return;
+  if (!interaction.isChatInputCommand()) {return;}
+  if (interaction.commandName !== 'bp') {return;}
 
   const group = interaction.options.getSubcommandGroup();
   const sub = interaction.options.getSubcommand();

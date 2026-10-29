@@ -16,12 +16,12 @@ export async function ensureDataDir() {
   try {
     await fs.mkdir(dataDir, { recursive: true });
   } catch (err) {
-    if (err.code !== 'EEXIST') throw err;
+    if (err.code !== 'EEXIST') {throw err;}
   }
 }
 
 export async function load() {
-  if (cache) return cache;
+  if (cache) {return cache;}
   try {
     await ensureDataDir();
     try {
@@ -292,7 +292,7 @@ export async function addPoints(guildId, userId, amount) {
 export async function deductPoints(guildId, userId, amount) {
   const store = await load();
   const entry = await getPointsEntry(guildId, userId);
-  if (entry.points < amount) return false;
+  if (entry.points < amount) {return false;}
   entry.points -= amount;
   store.points[guildId] = store.points[guildId] || {};
   store.points[guildId][userId] = entry;

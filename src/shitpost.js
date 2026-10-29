@@ -10,10 +10,10 @@ const __dirname = path.dirname(__filename);
 const mediaDir = path.join(__dirname, '..', 'data', 'media');
 
 // Load shitpost phrases from phraseManager
-let SHITPOSTS = [];
+const SHITPOSTS = [];
 
 async function loadShitposts() {
-  if (SHITPOSTS.length > 0) return;
+  if (SHITPOSTS.length > 0) {return;}
   const cat = await phraseManager.getCategory('shitpost');
   if (cat) {
     for (const key of Object.keys(cat)) {
@@ -34,7 +34,7 @@ let mediaFiles = [];
 let mediaLoaded = false;
 
 async function loadMedia() {
-  if (mediaLoaded) return;
+  if (mediaLoaded) {return;}
   try {
     await fs.mkdir(mediaDir, { recursive: true });
     const files = await fs.readdir(mediaDir);
@@ -43,7 +43,7 @@ async function loadMedia() {
       return ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.webm'].includes(ext);
     });
     mediaLoaded = true;
-    console.log('[Shitpost] Loaded ' + mediaFiles.length + ' media files from ' + mediaDir);
+    console.log(`[Shitpost] Loaded ${mediaFiles.length} media files from ${mediaDir}`);
   } catch (err) {
     console.error('[Shitpost] Error loading media:', err);
     mediaFiles = [];
@@ -60,7 +60,7 @@ const channelHistory = new Map();   // channelId -> array of recent responses
 // Find all matching shitpost entries for given content
 // Uses shared checkTriggers from phraseManager.js
 function findMatchingShitposts(content) {
-  if (!content) return [];
+  if (!content) {return [];}
   return checkTriggers(content, SHITPOSTS);
 }
 
@@ -72,7 +72,7 @@ function hasShitpostTrigger(content) {
 // Check if channel is on cooldown
 function isOnCooldown(channelId) {
   const lastTime = channelCooldowns.get(channelId);
-  if (!lastTime) return false;
+  if (!lastTime) {return false;}
   return Date.now() - lastTime < SHITPOST_COOLDOWN_MS;
 }
 
@@ -84,7 +84,7 @@ function markShitpostSent(channelId) {
 // Get random shitpost response with cooldown + deduplication
 // Uses phraseManager's d20 roll system for hit/crit/fail
 async function getShitpostResponse(content, channelId) {
-  if (!content) return null;
+  if (!content) {return null;}
 
   // Cooldown check (per channel)
   if (channelId && isOnCooldown(channelId)) {
@@ -92,12 +92,12 @@ async function getShitpostResponse(content, channelId) {
   }
 
   const triggers = findMatchingShitposts(content);
-  if (triggers.length === 0) return null;
+  if (triggers.length === 0) {return null;}
 
   const trigger = triggers[Math.floor(Math.random() * triggers.length)];
   
   // Use phraseManager's getPhraseWithContext with rollType: 'd20' for hit/crit/fail
-  const response = await phraseManager.getPhraseWithContext(
+  let response = await phraseManager.getPhraseWithContext(
     'shitpost',
     trigger.text,
     {},
@@ -125,12 +125,12 @@ async function getShitpostResponse(content, channelId) {
     }
     // Update history
     history.push(response);
-    if (history.length > SHITPOST_HISTORY_SIZE) history.shift();
+    if (history.length > SHITPOST_HISTORY_SIZE) {history.shift();}
     channelHistory.set(channelId, history);
   }
 
   // Mark cooldown
-  if (channelId) markShitpostSent(channelId);
+  if (channelId) {markShitpostSent(channelId);}
 
   return response;
 }
@@ -138,7 +138,7 @@ async function getShitpostResponse(content, channelId) {
 // Get random media file
 async function getRandomMedia() {
   await loadMedia();
-  if (mediaFiles.length === 0) return null;
+  if (mediaFiles.length === 0) {return null;}
   return mediaFiles[Math.floor(Math.random() * mediaFiles.length)];
 }
 

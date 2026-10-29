@@ -26,7 +26,7 @@ async function cmdStatus(interaction) {
 
 async function cmdLatex(interaction) {
   const expr = interaction.options.getString('expresion');
-  if (!expr) return interaction.reply({ content: '❌ Faltá la expresión LaTeX.', flags: MessageFlags.Ephemeral });
+  if (!expr) {return interaction.reply({ content: '❌ Faltá la expresión LaTeX.', flags: MessageFlags.Ephemeral });}
   const encoded = encodeURIComponent(expr);
   const url = `https://latex.codecogs.com/svg.latex?\\dpi{200}\\bg_white\\Large\\color{black}${encoded}`;
   await interaction.reply({ content: `${interaction.user.username} pidió:\n${expr}\n\n${url}` });
@@ -41,7 +41,7 @@ async function cmdSafebooru(interaction) {
     const rawData = await res.json();
     /** @type {any[]} */
     const data = Array.isArray(rawData) ? rawData : [];
-    if (!data.length) return interaction.reply('🌿 No encontré nada con ese tag.');
+    if (!data.length) {return interaction.reply('🌿 No encontré nada con ese tag.');}
     const post = data[0];
     const imgUrl = `https://safebooru.org/images/${post.directory}/${post.image}`;
     await interaction.reply({ content: `${interaction.user.username} buscó: *${tag || 'random'}*\n${imgUrl}` });
@@ -57,19 +57,19 @@ async function cmdPhrase(interaction) {
   const key = interaction.options.getString('clave');
   const value = interaction.options.getString('valor');
   if (action === 'get') {
-    if (!category || !key) return interaction.reply({ content: '❌ Faltan categoría y/o clave.', flags: MessageFlags.Ephemeral });
+    if (!category || !key) {return interaction.reply({ content: '❌ Faltan categoría y/o clave.', flags: MessageFlags.Ephemeral });}
     const phrase = await phraseManager.getPhrase(category, key);
-    if (!phrase) return interaction.reply({ content: `❌ No existe \`${category}.${key}\``, flags: MessageFlags.Ephemeral });
+    if (!phrase) {return interaction.reply({ content: `❌ No existe \`${category}.${key}\``, flags: MessageFlags.Ephemeral });}
     return interaction.reply({ content: `\`${category}.${key}\` = \`${phrase}\`` });
   }
   if (action === 'set') {
-    if (!category || !key || !value) return interaction.reply({ content: '❌ Faltan categoría, clave y/o valor.', flags: MessageFlags.Ephemeral });
+    if (!category || !key || !value) {return interaction.reply({ content: '❌ Faltan categoría, clave y/o valor.', flags: MessageFlags.Ephemeral });}
     await phraseManager.setPhrase(category, key, value);
     return interaction.reply({ content: `✅ \`${category}.${key}\` actualizado.` });
   }
   if (action === 'list') {
     const cat = await phraseManager.getCategory(category);
-    if (!cat) return interaction.reply({ content: `❌ Categoría \`${category}\` no existe.`, flags: MessageFlags.Ephemeral });
+    if (!cat) {return interaction.reply({ content: `❌ Categoría \`${category}\` no existe.`, flags: MessageFlags.Ephemeral });}
     const keys = Object.keys(cat).slice(0, 25).join(', ');
     return interaction.reply({ content: `Categoría \`${category}\` (${Object.keys(cat).length} claves): ${keys}${Object.keys(cat).length > 25 ? '...' : ''}` });
   }

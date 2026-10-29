@@ -19,7 +19,7 @@ export function isOnCooldown(userId, command) {
   const key = getCooldownKey(userId, command);
   const now = Date.now();
   const expires = cooldowns.get(key);
-  if (!expires) return false;
+  if (!expires) {return false;}
   if (now >= expires) {
     cooldowns.delete(key);
     return false;
@@ -30,7 +30,7 @@ export function isOnCooldown(userId, command) {
 export function getRemainingCooldown(userId, command) {
   const key = getCooldownKey(userId, command);
   const expires = cooldowns.get(key);
-  if (!expires) return 0;
+  if (!expires) {return 0;}
   const remaining = expires - Date.now();
   return remaining > 0 ? remaining : 0;
 }
@@ -50,6 +50,6 @@ export function clearCooldown(userId, command) {
 setInterval(() => {
   const now = Date.now();
   for (const [key, expires] of cooldowns.entries()) {
-    if (now >= expires) cooldowns.delete(key);
+    if (now >= expires) {cooldowns.delete(key);}
   }
 }, 5 * 60 * 1000);

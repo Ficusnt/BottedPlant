@@ -16,7 +16,7 @@ export function buildContext(interaction, overrides = {}) {
   const hour = now.getHours();
   const dayOfWeek = now.getDay(); // 0 = Sunday
 
-  let context = {
+  const context = {
     hour,
     timeOfDay: hour >= 5 && hour < 12 ? 'morning' : hour >= 12 && hour < 17 ? 'afternoon' : hour >= 17 && hour < 22 ? 'evening' : 'night',
     dayOfWeek,
@@ -57,10 +57,10 @@ export function buildContext(interaction, overrides = {}) {
  * @returns {string}
  */
 export function getUserRole(member) {
-  if (member.permissions.has('Administrator')) return 'admin';
-  if (member.permissions.has('ManageGuild')) return 'moderator';
-  if (member.roles.cache.some(r => r.name.toLowerCase().includes('mod'))) return 'moderator';
-  if (member.roles.cache.some(r => r.name.toLowerCase().includes('vip') || r.name.toLowerCase().includes('premium'))) return 'vip';
+  if (member.permissions.has('Administrator')) {return 'admin';}
+  if (member.permissions.has('ManageGuild')) {return 'moderator';}
+  if (member.roles.cache.some(r => r.name.toLowerCase().includes('mod'))) {return 'moderator';}
+  if (member.roles.cache.some(r => r.name.toLowerCase().includes('vip') || r.name.toLowerCase().includes('premium'))) {return 'vip';}
   const daysSinceJoin = (Date.now() - member.joinedTimestamp) / (1000 * 60 * 60 * 24);
   return daysSinceJoin < 7 ? 'new' : 'member';
 }
@@ -74,9 +74,9 @@ export function getCurrentSeason(date = new Date()) {
   const month = date.getMonth() + 1;
   const day = date.getDate();
 
-  if ((month === 12 && day >= 21) || month === 1 || month === 2 || (month === 3 && day < 21)) return 'summer';
-  if ((month === 3 && day >= 21) || month === 4 || month === 5 || (month === 6 && day < 21)) return 'autumn';
-  if ((month === 6 && day >= 21) || month === 7 || month === 8 || (month === 9 && day < 21)) return 'winter';
+  if ((month === 12 && day >= 21) || month === 1 || month === 2 || (month === 3 && day < 21)) {return 'summer';}
+  if ((month === 3 && day >= 21) || month === 4 || month === 5 || (month === 6 && day < 21)) {return 'autumn';}
+  if ((month === 6 && day >= 21) || month === 7 || month === 8 || (month === 9 && day < 21)) {return 'winter';}
   return 'spring';
 }
 
@@ -87,7 +87,7 @@ export function getCurrentSeason(date = new Date()) {
  * @returns {string|null}
  */
 export function selectWithContext(templates, context) {
-  if (!templates || !templates.length) return null;
+  if (!templates || !templates.length) {return null;}
   
   // Calculate effective weight for each template based on context
   const weighted = templates.map(t => {
@@ -95,28 +95,28 @@ export function selectWithContext(templates, context) {
     const ctx = t.contexts || {};
     
     // Time of day boost
-    if (ctx.timeOfDay && ctx.timeOfDay === context.timeOfDay) weight *= 1.5;
-    if (ctx.timeOfDay && Array.isArray(ctx.timeOfDay) && ctx.timeOfDay.includes(context.timeOfDay)) weight *= 1.3;
+    if (ctx.timeOfDay && ctx.timeOfDay === context.timeOfDay) {weight *= 1.5;}
+    if (ctx.timeOfDay && Array.isArray(ctx.timeOfDay) && ctx.timeOfDay.includes(context.timeOfDay)) {weight *= 1.3;}
     
     // Season boost
-    if (ctx.season && ctx.season === context.season) weight *= 1.5;
-    if (ctx.season && Array.isArray(ctx.season) && ctx.season.includes(context.season)) weight *= 1.3;
+    if (ctx.season && ctx.season === context.season) {weight *= 1.5;}
+    if (ctx.season && Array.isArray(ctx.season) && ctx.season.includes(context.season)) {weight *= 1.3;}
     
     // Weekend boost
-    if (ctx.isWeekend === true && context.isWeekend) weight *= 1.2;
-    if (ctx.isWeekend === false && !context.isWeekend) weight *= 1.1;
+    if (ctx.isWeekend === true && context.isWeekend) {weight *= 1.2;}
+    if (ctx.isWeekend === false && !context.isWeekend) {weight *= 1.1;}
     
     // User role boost
-    if (ctx.userRole && ctx.userRole === context.userRole) weight *= 1.3;
-    if (ctx.userRole && Array.isArray(ctx.userRole) && ctx.userRole.includes(context.userRole)) weight *= 1.2;
+    if (ctx.userRole && ctx.userRole === context.userRole) {weight *= 1.3;}
+    if (ctx.userRole && Array.isArray(ctx.userRole) && ctx.userRole.includes(context.userRole)) {weight *= 1.2;}
     
     // Command type boost
-    if (ctx.commandType && ctx.commandType === context.commandType) weight *= 1.4;
+    if (ctx.commandType && ctx.commandType === context.commandType) {weight *= 1.4;}
     
     // Guild size boost (larger servers get slightly higher weights for "social" templates)
     if (ctx.guildSize && context.guildSize) {
-      if (ctx.guildSize === 'large' && context.guildSize > 1000) weight *= 1.1;
-      if (ctx.guildSize === 'small' && context.guildSize < 100) weight *= 1.1;
+      if (ctx.guildSize === 'large' && context.guildSize > 1000) {weight *= 1.1;}
+      if (ctx.guildSize === 'small' && context.guildSize < 100) {weight *= 1.1;}
     }
     
     // Anti-repeat: if recentPhrases provided, reduce weight for recently used
@@ -133,7 +133,7 @@ export function selectWithContext(templates, context) {
   
   for (const t of weighted) {
     random -= t.weight;
-    if (random <= 0) return t.text;
+    if (random <= 0) {return t.text;}
   }
   
   return weighted[weighted.length - 1].text;

@@ -38,15 +38,15 @@ async function searchWithYtDlp(prefix, query) {
 // search via DuckDuckGo (site:bandcamp.com/track) and decode redirect URLs.
 async function searchBandcamp(query) {
   const searchUrl =
-    'https://html.duckduckgo.com/html/?q=' +
-    encodeURIComponent('site:bandcamp.com/track ' + query);
+    `https://html.duckduckgo.com/html/?q=${ 
+    encodeURIComponent(`site:bandcamp.com/track ${query}`)}`;
   const res = await fetch(searchUrl, {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
     },
   });
-  if (!res.ok) throw new Error(`DuckDuckGo responded ${res.status}`);
+  if (!res.ok) {throw new Error(`DuckDuckGo responded ${res.status}`);}
   const html = await res.text();
 
   const results = [];
@@ -55,8 +55,8 @@ async function searchBandcamp(query) {
   while ((m = anchorRe.exec(html)) && results.length < 5) {
     let link = m[1];
     const uddg = /uddg=([^&]+)/.exec(link);
-    if (uddg) link = decodeURIComponent(uddg[1]);
-    if (!/\/\/[^.]*\.bandcamp\.com\/track\//.test(link)) continue;
+    if (uddg) {link = decodeURIComponent(uddg[1]);}
+    if (!/\/\/[^.]*\.bandcamp\.com\/track\//.test(link)) {continue;}
 
     const name = m[2].replace(/<[^>]+>/g, '').trim();
     const uploader = (/\/\/([^.]+)\.bandcamp\.com\//.exec(link) || [])[1] || 'Desconocido';
@@ -66,7 +66,7 @@ async function searchBandcamp(query) {
 }
 
 async function searchTracks(place, query) {
-  if (place === 'bandcamp') return searchBandcamp(query);
+  if (place === 'bandcamp') {return searchBandcamp(query);}
   const prefix = place === 'soundcloud' ? 'scsearch5' : 'ytsearch5';
   return searchWithYtDlp(prefix, query);
 }
@@ -171,7 +171,7 @@ async function handleMusicQuery(interaction) {
     const row = new ActionRowBuilder().addComponents(selectMenu);
 
     // Store search results in memory for the selection handler
-    if (!global.queryResultsCache) global.queryResultsCache = new Map();
+    if (!global.queryResultsCache) {global.queryResultsCache = new Map();}
     global.queryResultsCache.set(interaction.user.id, {
       results,
       voiceChannelId: voiceChannel.id,
@@ -236,7 +236,7 @@ async function handleQuerySelect(interaction) {
     global.queryResultsCache.delete(interaction.user.id);
 
     return interaction.editReply({
-      content: '🎵 Agregando **' + selectedSong.name + '** a la cola...',
+      content: `🎵 Agregando **${selectedSong.name}** a la cola...`,
       components: [],
     });
   } catch (error) {

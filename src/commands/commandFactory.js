@@ -2,14 +2,14 @@ import { SlashCommandBuilder } from 'discord.js';
 
 export function stringOption(name, description, required = true, choices = null) {
   const opt = { name, description, required, type: 'string' };
-  if (choices) opt.choices = choices;
+  if (choices) {opt.choices = choices;}
   return opt;
 }
 
 export function integerOption(name, description, required = true, min = null, max = null) {
   const opt = { name, description, required, type: 'integer' };
-  if (min !== null) opt.min = min;
-  if (max !== null) opt.max = max;
+  if (min !== null) {opt.min = min;}
+  if (max !== null) {opt.max = max;}
   return opt;
 }
 
@@ -19,8 +19,8 @@ export function userOption(name, description, required = false) {
 
 export function numberOption(name, description, required = true, min = null, max = null) {
   const opt = { name, description, required, type: 'number' };
-  if (min !== null) opt.min = min;
-  if (max !== null) opt.max = max;
+  if (min !== null) {opt.min = min;}
+  if (max !== null) {opt.max = max;}
   return opt;
 }
 
@@ -30,7 +30,7 @@ export function booleanOption(name, description, required = false) {
 
 export function channelOption(name, description, required = false, types = null) {
   const opt = { name, description, required, type: 'channel' };
-  if (types) opt.channelTypes = types;
+  if (types) {opt.channelTypes = types;}
   return opt;
 }
 
@@ -45,14 +45,14 @@ export function buildSubcommand(name, description, options = []) {
       if (opt.type === 'string') {
         sub.addStringOption((o) => {
           o.setName(opt.name).setDescription(opt.description).setRequired(opt.required ?? true);
-          if (opt.choices) o.addChoices(...opt.choices);
+          if (opt.choices) {o.addChoices(...opt.choices);}
           return o;
         });
       } else if (opt.type === 'integer') {
         sub.addIntegerOption((o) => {
           o.setName(opt.name).setDescription(opt.description).setRequired(opt.required ?? true);
-          if (opt.min !== undefined) o.setMinValue(opt.min);
-          if (opt.max !== undefined) o.setMaxValue(opt.max);
+          if (opt.min !== undefined) {o.setMinValue(opt.min);}
+          if (opt.max !== undefined) {o.setMaxValue(opt.max);}
           return o;
         });
       } else if (opt.type === 'user') {
@@ -60,8 +60,8 @@ export function buildSubcommand(name, description, options = []) {
       } else if (opt.type === 'number') {
         sub.addNumberOption((o) => {
           o.setName(opt.name).setDescription(opt.description).setRequired(opt.required ?? true);
-          if (opt.min !== undefined) o.setMinValue(opt.min);
-          if (opt.max !== undefined) o.setMaxValue(opt.max);
+          if (opt.min !== undefined) {o.setMinValue(opt.min);}
+          if (opt.max !== undefined) {o.setMaxValue(opt.max);}
           return o;
         });
       } else if (opt.type === 'boolean') {
@@ -69,7 +69,7 @@ export function buildSubcommand(name, description, options = []) {
       } else if (opt.type === 'channel') {
         sub.addChannelOption((o) => {
           o.setName(opt.name).setDescription(opt.description).setRequired(opt.required ?? false);
-          if (opt.channelTypes) o.addChannelTypes(...opt.channelTypes);
+          if (opt.channelTypes) {o.addChannelTypes(...opt.channelTypes);}
           return o;
         });
       } else if (opt.type === 'role') {
@@ -178,34 +178,6 @@ export const commonOptions = {
     { name: 'Vibrato', value: 'vibrato' },
     { name: 'Reverse', value: 'reverse' },
   ]) }),
-userId: () => ({ type: 'string', ...stringOption('userid', 'ID de usuario', true) }),
-  userTag: () => ({ type: 'user', ...userOption('usuario', 'Usuario', false) }),
-  
-  volumeLevel: () => ({ type: 'integer', ...integerOption('volumen', 'Volumen (0-200)', true, 0, 200) }),
-  seekPosition: () => ({ type: 'string', ...stringOption('posicion', 'Posición (ej: 1:30, 90s, 10%)', true) }),
-  loopMode: () => stringOption('modo', 'Modo de repetición', true, [
-    { name: 'Desactivado', value: 'off' },
-    { name: 'Canción', value: 'track' },
-    { name: 'Cola', value: 'queue' },
-    { name: 'Autoplay', value: 'autoplay' },
-  ]),
-  skipAmount: () => integerOption('cantidad', 'Cuántas saltar (default 1)', false, 1, 100),
-  clearConfirm: () => booleanOption('confirmar', 'Confirmar limpieza', false),
-  shuffleConfirm: () => booleanOption('confirmar', 'Confirmar aleatorizado', false),
-  moveFrom: () => integerOption('desde', 'Posición origen (1-based)', true, 1),
-  moveTo: () => integerOption('hasta', 'Posición destino (1-based)', true, 1),
-  removePosition: () => integerOption('posicion', 'Posición a eliminar (1-based)', true, 1),
-  filterName: () => stringOption('filtro', 'Filtro de audio', true, [
-    { name: 'Ninguno', value: 'none' },
-    { name: 'Bass Boost', value: 'bassboost' },
-    { name: 'Nightcore', value: 'nightcore' },
-    { name: 'Vaporwave', value: 'vaporwave' },
-    { name: '8D Audio', value: '8d' },
-    { name: 'Karaoke', value: 'karaoke' },
-    { name: 'Tremolo', value: 'tremolo' },
-    { name: 'Vibrato', value: 'vibrato' },
-    { name: 'Reverse', value: 'reverse' },
-  ]),
 };
 
 export function buildBpCommand() {

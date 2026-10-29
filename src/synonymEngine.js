@@ -16,7 +16,7 @@ import { logger } from './logger.js';
  * @returns {string} Text with synonyms applied
  */
 export function applySynonyms(text, synonyms, options = {}) {
-  if (!text || !synonyms || Object.keys(synonyms).length === 0) return text;
+  if (!text || !synonyms || Object.keys(synonyms).length === 0) {return text;}
 
   const {
     probability = 0.3,
@@ -32,10 +32,10 @@ export function applySynonyms(text, synonyms, options = {}) {
   const shuffledWords = [...words].sort(() => Math.random() - 0.5);
 
   for (const word of shuffledWords) {
-    if (replacements >= maxReplacements) break;
+    if (replacements >= maxReplacements) {break;}
 
     const syns = synonyms[word];
-    if (!syns || !syns.length) continue;
+    if (!syns || !syns.length) {continue;}
 
     // Build regex for this word
     const pattern = wholeWordOnly
@@ -43,10 +43,10 @@ export function applySynonyms(text, synonyms, options = {}) {
       : new RegExp(escapeRegExp(word), 'gi');
 
     // Check if word exists in text
-    if (!pattern.test(result)) continue;
+    if (!pattern.test(result)) {continue;}
 
     // Decide whether to replace this occurrence
-    if (Math.random() > probability) continue;
+    if (Math.random() > probability) {continue;}
 
     // Pick random synonym
     const replacement = syns[Math.floor(Math.random() * syns.length)];

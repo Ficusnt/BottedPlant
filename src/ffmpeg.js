@@ -67,7 +67,7 @@ export async function getBundledFfmpegPath() {
     // eslint-disable-next-line import/no-extraneous-dependencies
     const ffmpegStatic = await import('ffmpeg-static');
     const path = ffmpegStatic.default || ffmpegStatic;
-    if (path && typeof path === 'string') return path;
+    if (path && typeof path === 'string') {return path;}
   } catch {
     // ignore
   }
@@ -79,7 +79,7 @@ export async function getBundledFfmpegPath() {
   ];
   
   for (const candidate of candidates) {
-    if (fs.existsSync(candidate)) return candidate;
+    if (fs.existsSync(candidate)) {return candidate;}
   }
   
   return 'ffmpeg'; // Last resort - rely on PATH
@@ -91,7 +91,7 @@ export async function getBundledFfmpegPath() {
  */
 export async function getFfmpegPath() {
   const systemPath = await detectFfmpegPath();
-  if (systemPath) return systemPath;
+  if (systemPath) {return systemPath;}
   
   const bundledPath = await getBundledFfmpegPath();
   logger.info(`[FFmpeg] Using bundled ffmpeg: ${bundledPath}`);

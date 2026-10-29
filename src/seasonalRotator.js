@@ -64,9 +64,9 @@ export function getCurrentSeason(date = new Date(), seasons = null) {
   }
 
   // Fallback to natural seasons (Southern hemisphere - Argentina)
-  if ((month === 12 && day >= 21) || month === 1 || month === 2 || (month === 3 && day < 21)) return 'summer';
-  if ((month === 3 && day >= 21) || month === 4 || month === 5 || (month === 6 && day < 21)) return 'autumn';
-  if ((month === 6 && day >= 21) || month === 7 || month === 8 || (month === 9 && day < 21)) return 'winter';
+  if ((month === 12 && day >= 21) || month === 1 || month === 2 || (month === 3 && day < 21)) {return 'summer';}
+  if ((month === 3 && day >= 21) || month === 4 || month === 5 || (month === 6 && day < 21)) {return 'autumn';}
+  if ((month === 6 && day >= 21) || month === 7 || month === 8 || (month === 9 && day < 21)) {return 'winter';}
   return 'spring';
 }
 
@@ -124,7 +124,7 @@ export function getDayOfYearFromMD(md) {
  * @returns {PhraseTemplate[]}
  */
 export function getSeasonalPhrases(category, season, phrasesData) {
-  if (!phrasesData || !phrasesData[category]) return [];
+  if (!phrasesData || !phrasesData[category]) {return [];}
 
   const templates = phrasesData[category].templates || [];
 
@@ -154,7 +154,7 @@ export function getSeasonalBoosts(category, season, phrasesData) {
   }
 
   const seasonal = phrasesData[category].seasonal[season];
-  if (!seasonal) return { templates: [], boost: 1 };
+  if (!seasonal) {return { templates: [], boost: 1 };}
 
   return {
     templates: seasonal.templates || [],

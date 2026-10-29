@@ -97,8 +97,8 @@ async function handleFunRoll(interaction) {
   }
 
   const resultText = rolls === 1
-    ? '**' + results[0] + '**'
-    : results.join(', ') + ' (Total: **' + total + '**)';
+    ? `**${results[0]}**`
+    : `${results.join(', ')} (Total: **${total}**)`;
 
   return interaction.editReply(await phraseManager.getPhrase('fun', 'rollResult', {
     sides,

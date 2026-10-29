@@ -20,7 +20,7 @@ async function cmdLeave(interaction) {
     return interaction.editReply({ content: await phraseManager.getPhrase('music', 'leaveUserNotInVoice'), flags: MessageFlags.Ephemeral });
   }
   const queue = getQueue(interaction);
-  if (queue) interaction.client.distube.stop(interaction.guildId);
+  if (queue) {interaction.client.distube.stop(interaction.guildId);}
   try {
     // Use voiceChannel.leave() instead of voiceState.disconnect() to avoid needing MoveMembers permission
     await voiceState.channel.leave();
