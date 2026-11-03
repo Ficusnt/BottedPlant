@@ -2,9 +2,11 @@
 
 Discord bot for YouTube, SoundCloud, and Bandcamp audio — with a native slash command menu, reminders, economy, and dynamic phrase responses.
 
-![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![Node](https://img.shields.io/badge/node->=18-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Discord.js](https://img.shields.io/badge/discord.js-14.27-blue)
+![pnpm](https://img.shields.io/badge/pnpm-9+-orange)
+![Build](https://img.shields.io/badge/build-esbuild-yellow)
 
 ---
 
@@ -18,12 +20,14 @@ Discord bot for YouTube, SoundCloud, and Bandcamp audio — with a native slash 
 - **Dynamic phrases**: Template-based responses with slots, synonyms, and mannerisms
 - **Seasonal content**: Automatic holiday/event phrase rotations
 - **Shitpost mode**: Configurable random replies with cooldowns
+- **Production builds**: esbuild bundling with low-memory V8 optimizations
 
 ---
 
 ## Prerequisites
 
 - **Node.js** ≥ 18.0.0
+- **pnpm** ≥ 9 (recommended) — `npm i -g pnpm` or `corepack enable`
 - **FFmpeg** (bundled via `ffmpeg-static` — no system install required)
 - A **Discord bot token** from the [Developer Portal](https://discord.com/developers/applications)
 
@@ -37,7 +41,7 @@ git clone https://github.com/Ficusnt/BottedPlant
 cd BottedPlant
 
 # Install dependencies (auto-runs yt-dlp config setup)
-npm install
+pnpm install
 ```
 
 The `postinstall` script runs `scripts/setup-ytdlp-conf.js` which configures `@distube/yt-dlp` to use the bundled binary.
@@ -99,12 +103,47 @@ YTDLP_COOKIES_FILE=data/cookies-yt.txt
 
 ### Prefix Fallback
 
-All slash commands also work with the prefix (default `/bp`):
+All slash commands also work with the prefix defined in `BOT_PREFIX` (default: `/bp`).
 
+### Low-Memory Environments
+
+For VPS/container deployments with limited RAM, set `WEB_MEMORY` (in MB) to automatically configure V8's heap limit:
+
+```bash
+# 512MB container
+WEB_MEMORY=512 pnpm build
+WEB_MEMORY=512 node dist/start.js
+
+# Or use the startup scripts
+WEB_MEMORY=512 ./startup.sh      # Linux/macOS
+set WEB_MEMORY=512 && startup.cmd  # Windows
 ```
-/bp play never gonna give you up
-/bp remind in 1h take a break
-/bp balance
+
+This applies the 80% rule (`max_old_space_size = WEB_MEMORY * 4/5`) and enables `--optimize_for_size` for memory-efficient operation. See [Tom Spencer's article](https://www.tomspencer.dev/blog/2016/10/01/running-a-node-dot-js-app-in-a-low-memory-environment/) for details.
+
+### Building for Production
+
+```bash
+# Production build (minified, no sourcemaps)
+pnpm build
+
+# Development build (with sourcemaps)
+pnpm run build:dev
+
+# Watch mode for development
+pnpm run build:watch
+```
+
+Outputs to `dist/`:
+- `index.js` — bundled application
+- `index.js.map` — source map (dev only)
+- `start.js` — launcher with V8 memory optimizations
+
+Run the production build:
+```bash
+node dist/start.js
+# Or with memory limit:
+WEB_MEMORY=512 node dist/start.js
 ```
 
 ---
@@ -114,35 +153,34 @@ All slash commands also work with the prefix (default `/bp`):
 ```
 BottedPlant/
 ├── src/
-│   ├── index.js              # Entry point, Discord client, event handlers
-│   ├── config.js             # Configuration loader (dotenv + defaults)
-│   ├── logger.js             # Pino logger setup
-│   ├── phraseManager.js      # Phrase templates, slots, synonyms, seasonal rotation
-│   ├── dataStore.js          # JSON persistence (reminders, economy, phrases)
-│   ├── economy.js            # Economy logic (balance, daily, gamble, leaderboard)
-│   ├── embeds.js             # Discord embed builders
-│   ├── cooldowns.js          # Command/user cooldown tracking
-│   ├── contextSelector.js    # Smart context detection for phrases
-│   ├── synonymEngine.js      # Synonym/mannerism expansion
-│   ├── seasonalRotator.js    # Holiday/event phrase activation
-│   ├── shitpost.js           # Random reply logic
-│   ├── cmdLeave.js           # Voice disconnect handler
-│   ├── bpCommand.js          # Legacy prefix command router
-│   └── commands/
-│       ├── commandFactory.js # Slash command definitions + registration
-│       ├── musicCommands.js  # Audio playback handlers
-│       ├── economyCommands.js
-│       ├── funCommands.js
-│       └── rememberCommands.js
+│   ├── index.js              # Entry point
+│   ├── config.js             # Configuration loader
+│   ├── logger.js             # Pino logger
+│   ├── player.js             # Discord Player setup + YouTube SABR extractor
+│   ├── extractors/           # Custom extractors
+│   ├── handlers/             # Event handlers
+│   ├── commands/             # Slash command definitions
+│   ├── bpCommand.js          # Command router
+│   ├── phraseManager.js      # Dynamic phrase engine
+│   ├── dataStore.js          # Persistent storage
+│   ├── seasonalRotator.js    # Holiday/event phrase rotation
+│   ├── synonymEngine.js      # Synonym replacement
+│   ├── shitpost.js           # Shitpost mode
+│   ├── contextSelector.js    # Context-aware responses
+│   ├── embeds.js             # Message embeds
+│   ├── ffmpeg.js             # FFmpeg path resolution
+│   └── cooldowns.js          # Command cooldowns
 ├── data/
-│   ├── phrases.json          # Phrase templates (source of truth)
-│   ├── reminders.json        # Persisted reminders
-│   ├── economy.json          # Economy balances
-│   ├── cookies.txt           # Generic cookies (yt-dlp fallback)
-│   └── cookies-yt.txt        # YouTube-specific cookies (recommended)
+│   ├── phrases.json          # Phrase templates (hot-reloaded)
+│   ├── cookies-yt.txt        # YouTube cookies (optional)
+│   └── *.json                # Economy, reminders, birthdays
 ├── scripts/
-│   ├── generate-cookies.js   # Extract/filter cookies from browser via yt-dlp
-│   └── setup-ytdlp-conf.js   # Configure @distube/yt-dlp binary path
+│   ├── setup-ytdlp-conf.js   # yt-dlp binary config
+│   └── generate-cookies.js   # Cookie extraction helper
+├── dist/                     # Production build output (gitignored)
+├── startup.sh                # Low-memory startup (Linux/macOS)
+├── startup.cmd               # Low-memory startup (Windows)
+├── esbuild.config.js         # Build configuration
 ├── .env.example              # Template for .env
 ├── package.json
 ├── tsconfig.json             # TypeScript type-checking (jsdoc annotations)
@@ -151,18 +189,134 @@ BottedPlant/
 ```
 
 ---
+## Memory Profiling Guide for BottedPlant
+
+## Overview
+
+This guide documents the memory optimization approach for BottedPlant, based on Tom Spencer's Node.js memory optimization guide.
+
+## Memory Configuration
+
+### Production Flags
+
+```bash
+node --max-old-space-size=256 --optimize-for-size --gc-interval=100 dist/index.js
+```
+
+- `--max-old-space-size=256`: Limits V8's old generation heap to 256MB
+- `--optimize-for-size`: Instructs V8 to optimize for memory usage over execution speed
+- `--gc-interval=100`: Forces garbage collection every 100ms (prevents memory spikes)
+
+### Development Flags
+
+```bash
+node --max-old-space-size=256 --optimize-for-size scripts/dev.js
+```
+
+## Memory Monitoring
+
+### Built-in Monitoring
+
+Add to your code for runtime memory tracking:
+
+```javascript
+setInterval(() => {
+  const used = process.memoryUsage();
+  console.log({
+    rss: `${Math.round(used.rss / 1024 / 1024)} MB`,
+    heapUsed: `${Math.round(used.heapUsed / 1024 / 1024)} MB`,
+    heapTotal: `${Math.round(used.heapTotal / 1024 / 1024)} MB`,
+    external: `${Math.round(used.external / 1024 / 1024)} MB`,
+  });
+}, 60000);
+```
+
+### Using clinic.js for Deep Analysis
+
+```bash
+# Install clinic
+npm install -g clinic
+
+# Profile with doctor (recommended first)
+clinic doctor -- node dist/index.js
+
+# Profile with flamegraph for CPU
+clinic flame -- node dist/index.js
+
+# Profile with bubbleprof for async
+clinic bubbleprof -- node dist/index.js
+```
+
+### Using node --inspect with Chrome DevTools
+
+```bash
+node --inspect=0.0.0.0:9229 --max-old-space-size=256 dist/index.js
+```
+
+Then connect Chrome DevTools at `chrome://inspect`.
+
+## Memory Leak Detection Checklist
+
+### Common Leak Sources in Discord.js Bots
+
+1. **Event listeners not removed**
+   - `client.on()` without corresponding `client.off()` in cleanup
+   - Check: `messageHandler.js`, `reminders.js`
+
+2. **Interval/timeouts not cleared**
+   - `setInterval` in `scheduleReminders()` - ensure cleanup on shutdown
+   - `shitpost.js` cooldown timers
+
+3. **Large object retention**
+   - `phraseManager` caches - verify LRU eviction works
+   - `dataStore` in-memory cache - check TTL expiration
+
+4. **Voice connection leaks**
+   - DisTube voice connections not properly destroyed
+   - Check `musicHandler.js` for proper cleanup
+
+### Heap Snapshot Analysis
+
+```bash
+# Generate heap snapshot
+node --heapsnapshot-signal=SIGUSR2 dist/index.js
+# Then send signal: kill -SIGUSR2 <pid>
+
+# Or programmatically
+const v8 = require('v8');
+v8.writeHeapSnapshot();
+```
+
+Analyze in Chrome DevTools → Memory tab.
+
+## Target Metrics
+
+| Metric | Target | Alert Threshold |
+|--------|--------|-----------------|
+| RSS (Idle) | < 150 MB | > 200 MB |
+| RSS (Under Load) | < 300 MB | > 400 MB |
+| Heap Used | < 100 MB | > 150 MB |
+| GC Pause (99th percentile) | < 50ms | > 100ms |
+
+## Optimization Strategies Applied
+
+1. **ESBuild bundling** - Removes dead code, tree-shakes unused exports
+2. **External dependencies** - Keeps heavy deps (discord.js, distube) out of bundle
+3. **V8 flags** - `--optimize-for-size`, limited heap
+4. **Interval cleanup** - Proper disposal of timers on shutdown
+5. **Cache limits** - LRU eviction in phraseManager and dataStore
 
 ## Development
 
 ```bash
 # Start the bot
-npm start
+pnpm start
 
 # Regenerate yt-dlp config (run after yt-dlp updates)
-npm run setup
+pnpm run setup
 
 # Extract/filter cookies from browser for YouTube bypass
-npm run generate-cookies
+pnpm run generate-cookies
 ```
 
 ### Adding Phrases
@@ -205,7 +359,7 @@ See `data/phrases.json` for real examples across categories: `music`, `economy`,
 
 ### "Sign in to confirm you're not a bot" / YouTube errors
 - Ensure cookies are configured (see **COOKIES-SETUP.md**)
-- Run `npm run generate-cookies` with browser **closed**
+- Run `pnpm run generate-cookies` with browser **closed**
 - Verify `data/cookies-yt.txt` has recent YouTube cookies (check expiration timestamps)
 
 ### Voice connection fails
@@ -213,11 +367,11 @@ See `data/phrases.json` for real examples across categories: `music`, `economy`,
 - Check firewall/NAT if self-hosted (Discord voice uses UDP)
 
 ### yt-dlp extraction fails
-- Run `npm run setup` to refresh the bundled binary
+- Run `pnpm run setup` to refresh the bundled binary
 - Check `@distube/yt-dlp` version in `package.json`
 
 ### Slash commands not appearing
-- Run `npm start` — commands auto-register on startup
+- Run `pnpm start` — commands auto-register on startup
 - Ensure `DISCORD_TOKEN` is valid and bot has `applications.commands` scope
 
 ---
@@ -234,3 +388,5 @@ MIT — see `LICENSE` for details.
 - [DisTube](https://distube.js.org/) + [@distube/yt-dlp](https://github.com/distube/yt-dlp)
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) — the real MVP
 - [pino](https://getpino.io/) for logging
+- [esbuild](https://esbuild.github.io/) for bundling
+- [Tom Spencer](https://www.tomspencer.dev/blog/2016/10/01/running-a-node-dot-js-app-in-a-low-memory-environment/) for low-memory V8 optimization guidance

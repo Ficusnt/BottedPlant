@@ -10,7 +10,37 @@ export function formatDuration(seconds) {
   return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
 }
 
-export function trackEmbed(song, title = '🎵 Canción') {
+/**
+ * Parse duration string (e.g., "3:45" or "1:23:45") to seconds
+ * @param {string} durationStr - Duration string
+ * @returns {number} Duration in seconds
+ */
+export function parseDuration(durationStr) {
+  if (!durationStr) return 0;
+  const parts = durationStr.split(':').map(Number);
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  return 0;
+}
+
+/**
+ * Convert discord-player Track to embed-compatible format
+ * @param {import('discord-player').Track} track - discord-player track
+ * @returns {Object} Embed-compatible track object
+ */
+function toEmbedTrack(track) {
+  return {
+    name: track.title,
+    url: track.url,
+    uploader: { name: track.author || 'Desconocido' },
+    duration: parseDuration(track.duration) || 0,
+    thumbnail: track.thumbnail,
+    member: track.requestedBy ? { displayName: track.requestedBy.displayName || track.requestedBy.username } : null,
+  };
+}
+
+export function trackEmbed(track, title = '🎵 Canción') {
+  const embedTrack = toEmbedTrack(track);
   const emotions = [
     '¡Qué temazo! Se me tiemblan las hojas. c: 🍃',
     '¡Suena! Esto riega mi alma vegetal. 🎧',
@@ -22,12 +52,12 @@ export function trackEmbed(song, title = '🎵 Canción') {
   
   return new EmbedBuilder()
     .setTitle(title)
-    .setDescription(`**[${song.name}](${song.url})**\n${song.uploader?.name || song.uploader || 'Autor desconocido'}\n\n*${reaction}*`)
+    .setDescription(`**[${embedTrack.name}](${embedTrack.url})**\n${embedTrack.uploader?.name || embedTrack.uploader || 'Autor desconocido'}\n\n*${reaction}*`)
     .addFields(
-      { name: '⏱ Duración', value: formatDuration(song.duration), inline: true },
-      { name: '🔊 Pedida por', value: `${song.member?.displayName || 'Alguien'}`, inline: true }
+      { name: '⏱ Duración', value: formatDuration(embedTrack.duration), inline: true },
+      { name: '🔊 Pedida por', value: `${embedTrack.member?.displayName || 'Alguien'}`, inline: true }
     )
-    .setThumbnail(song.thumbnail || null)
+    .setThumbnail(embedTrack.thumbnail || null)
     .setColor(0x57f287);
 }
 
@@ -43,33 +73,39 @@ export function playlistEmbed(playlist) {
   return new EmbedBuilder()
     .setTitle('📃 Playlist añadida')
     .setDescription(
-      `**[${playlist.name}](${playlist.url})**\n> **${playlist.songs.length} canciones**\n\n*${reaction}*`
+      `**[${playlist.title}](${playlist.url})**\n> **${playlist.tracks.length} canciones**\n\n*${reaction}*`
     )
-    .addFields({ name: '🔊 Pedida por', value: `${playlist.member?.displayName || 'Alguien'}`, inline: true })
+    .addFields({ name: '🔊 Pedida por', value: `${playlist.requestedBy?.displayName || playlist.requestedBy?.user?.username || 'Alguien'}`, inline: true })
     .setColor(0x5865f2);
 }
 
-export function queueEmbed(queue) {
-  const tracks = queue.songs
-    .slice(0, 10)
-    .map((song, i) => {
-      const pos = i === 0 ? '▶️' : `${i}.`;
-      return `${pos} **[${song.name}](${song.url})** \`${formatDuration(song.duration)}\``;
+export function queueEmbed(queue, page = 1) {
+  const tracksPerPage = 10;
+  const start = (page - 1) * tracksPerPage;
+  const end = start + tracksPerPage;
+  const tracksToShow = queue.tracks.slice(start, end);
+  
+  const tracks = tracksToShow
+    .map((track, i) => {
+      const pos = (start + i) === 0 && queue.currentTrack ? '▶️' : `${start + i + 1}.`;
+      return `${pos} **[${track.title}](${track.url})** \`${formatDuration(parseDuration(track.duration))}\``;
     })
     .join('\n');
 
-  const extra = queue.songs.length > 10 ? `\n... y **${queue.songs.length - 10}** más.` : '';
+  const extra = queue.tracks.length > end ? `\n... y **${queue.tracks.length - end}** más.` : '';
   
-  const totalDuration = queue.songs.reduce((acc, s) => acc + (s.duration || 0), 0);
-  const mood = queue.songs.length > 5 ? '¡La fiesta sigue! Mis hojas no paran de bailar. 🎉🍃' : queue.songs.length > 1 ? '¡Vamos! Esto crece como yo en verano. c: 🌱' : 'Solo una... ¡agregá más que soy planta de poca compañía! :o';
+  const totalDuration = queue.tracks.reduce((acc, t) => acc + parseDuration(t.duration), 0);
+  const mood = queue.tracks.length > 5 ? '¡La fiesta sigue! Mis hojas no paran de bailar. 🎉🍃' : queue.tracks.length > 1 ? '¡Vamos! Esto crece como yo en verano. c: 🌱' : 'Solo una... ¡agregá más que soy planta de poca compañía! :o';
+
+  const repeatModeText = queue.repeatMode === 0 ? 'Off' : queue.repeatMode === 1 ? 'Canción' : queue.repeatMode === 2 ? 'Cola' : 'Autoplay';
 
   return new EmbedBuilder()
     .setTitle('🎶 Cola de reproducción')
     .setDescription(tracks + extra + `\n\n*${mood}*`)
     .addFields(
       { name: '⏱ Duración total', value: formatDuration(totalDuration), inline: true },
-      { name: '📝 Canciones', value: `${queue.songs.length}`, inline: true },
-      { name: '🔁 Repetir', value: queue.repeatMode === 0 ? 'Off' : queue.repeatMode === 1 ? 'Canción' : 'Cola', inline: true }
+      { name: '📝 Canciones', value: `${queue.tracks.length}`, inline: true },
+      { name: '🔁 Repetir', value: repeatModeText, inline: true }
     )
     .setColor(0xfee75c);
 }

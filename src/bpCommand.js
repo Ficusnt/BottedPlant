@@ -8,6 +8,7 @@ import { queueEmbed, formatDuration } from './embeds.js';
 import { cmdLeave } from './cmdLeave.js';
 import * as phraseManager from './phraseManager.js';
 import config from './config.js';
+import { useQueue } from 'discord-player';
 
 // Import handler modules
 import { handleMusicInteraction } from './handlers/musicHandler.js';
@@ -33,7 +34,7 @@ function getVoiceChannel(interaction) {
 }
 
 function getQueue(interaction) {
-  return interaction.client.distube.getQueue(interaction.guildId);
+  return useQueue(interaction.guildId);
 }
 
 function isPlaylistUrl(url) {

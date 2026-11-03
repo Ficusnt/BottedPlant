@@ -6,8 +6,25 @@
 import { logger } from './logger.js';
 
 /**
+ * @typedef {Object} PhraseContext
+ * @property {number} hour
+ * @property {string} timeOfDay
+ * @property {number} dayOfWeek
+ * @property {boolean} isWeekend
+ * @property {string} season
+ * @property {number} [guildSize]
+ * @property {string} [guildId]
+ * @property {string} [userId]
+ * @property {string} [username]
+ * @property {string} [userRole]
+ * @property {boolean} [isBotOwner]
+ * @property {string} [commandType]
+ * @property {string} [rollType]
+ */
+
+/**
  * Build context object from Discord interaction and optional overrides
- * @param {import('discord.js').Interaction|import('discord.js').Message|null} interaction
+ * @param {import('discord.js').ChatInputCommandInteraction|import('discord.js').MessageComponentInteraction|import('discord.js').ModalSubmitInteraction|import('discord.js').Message|null} interaction
  * @param {Object} overrides
  * @returns {PhraseContext}
  */
@@ -22,30 +39,44 @@ export function buildContext(interaction, overrides = {}) {
     dayOfWeek,
     isWeekend: dayOfWeek === 0 || dayOfWeek === 6,
     season: getCurrentSeason(now),
+    rollType: overrides.rollType || 'none',
     ...overrides
   };
 
-  if (interaction) {
-    if (interaction.guild) {
-      context.guildSize = interaction.guild.memberCount;
-      context.guildId = interaction.guild.id;
-    }
+  if (!interaction) return context;
 
-    if (interaction.user) {
-      context.userId = interaction.user.id;
-      context.username = interaction.user.username;
-    }
+  // Type narrowing for different interaction types
+  const isChatInput = 'commandName' in interaction;
+  const isMessageComponent = 'customId' in interaction;
+  const isModalSubmit = 'fields' in interaction && 'customId' in interaction;
+  const isMessage = 'author' in interaction;
 
-    if (interaction.member) {
-      context.userRole = getUserRole(interaction.member);
-      context.isBotOwner = interaction.user.id === process.env.OWNER_ID;
-    }
+  if (interaction.guild) {
+    context.guildSize = interaction.guild.memberCount;
+    context.guildId = interaction.guild.id;
+  }
 
-    if (interaction.commandName) {
-      context.commandType = interaction.commandName;
-    } else if (interaction.customId) {
-      context.commandType = interaction.customId.split('-')[0];
-    }
+  // Handle user - different properties for Message vs Interactions
+  if (isMessage) {
+    context.userId = interaction.author.id;
+    context.username = interaction.author.username;
+  } else if (interaction.user) {
+    context.userId = interaction.user.id;
+    context.username = interaction.user.username;
+  }
+
+  // Type guard for full GuildMember (has permissions, roles, joinedTimestamp, id)
+  const isFullMember = interaction.member && 'permissions' in interaction.member && 'roles' in interaction.member;
+  if (isFullMember) {
+    const member = /** @type {import('discord.js').GuildMember} */ (interaction.member);
+    context.userRole = getUserRole(member);
+    context.isBotOwner = member.id === process.env.OWNER_ID;
+  }
+
+  if (isChatInput) {
+    context.commandType = 'command';
+  } else if (isMessageComponent || isModalSubmit) {
+    context.commandType = 'component';
   }
 
   return context;
@@ -56,14 +87,32 @@ export function buildContext(interaction, overrides = {}) {
  * @param {import('discord.js').GuildMember} member
  * @returns {string}
  */
+/***
+ * Determine user role from GuildMember
+ * @param {import('discord.js').GuildMember|import('discord.js').APIInteractionGuildMember} member
+ * @returns {string}
+ */
+/**
+ * Determine user role from GuildMember
+ * @param {import('discord.js').GuildMember|import('discord.js').APIInteractionGuildMember} member
+ * @returns {string}
+ */
 export function getUserRole(member) {
-  if (member.permissions.has('Administrator')) return 'admin';
-  if (member.permissions.has('ManageGuild')) return 'moderator';
-  if (member.roles.cache.some(r => r.name.toLowerCase().includes('mod'))) return 'moderator';
-  if (member.roles.cache.some(r => r.name.toLowerCase().includes('vip') || r.name.toLowerCase().includes('premium'))) return 'vip';
-  const daysSinceJoin = (Date.now() - member.joinedTimestamp) / (1000 * 60 * 60 * 24);
+  // Type guard for full GuildMember
+  const isFullMember = member && 'permissions' in member && 'roles' in member && 'cache' in member.roles;
+  if (!isFullMember) return 'member';
+
+  // TypeScript needs explicit narrowing
+  const fullMember = /** @type {import('discord.js').GuildMember} */ (member);
+
+  if (fullMember.permissions.has('Administrator')) return 'admin';
+  if (fullMember.permissions.has('ManageGuild')) return 'moderator';
+  if (fullMember.roles.cache.some(r => r.name.toLowerCase().includes('mod'))) return 'moderator';
+  if (fullMember.roles.cache.some(r => r.name.toLowerCase().includes('vip') || r.name.toLowerCase().includes('premium'))) return 'vip';
+  const daysSinceJoin = (Date.now() - (fullMember.joinedTimestamp || Date.now())) / (1000 * 60 * 60 * 24);
   return daysSinceJoin < 7 ? 'new' : 'member';
 }
+
 
 /**
  * Get current season based on date

@@ -13,6 +13,10 @@ const __dirname = path.dirname(__filename);
 
 const SEASONS_FILE = path.join(__dirname, '..', 'data', 'seasons.json');
 
+/** @typedef {{name: string, start: string, end: string, boost?: number, description?: string}} SeasonConfig */
+
+/** @typedef {{template: string, weight?: number, slots?: Object<string, string[]>}} PhraseTemplate */
+
 let seasonsCache = null;
 let seasonsMtime = 0;
 
@@ -77,6 +81,7 @@ export function getCurrentSeason(date = new Date(), seasons = null) {
  */
 export function getDayOfYear(date) {
   const start = new Date(date.getFullYear(), 0, 0);
+  // @ts-expect-error - Date subtraction works at runtime
   const diff = date - start;
   const oneDay = 1000 * 60 * 60 * 24;
   return Math.floor(diff / oneDay);

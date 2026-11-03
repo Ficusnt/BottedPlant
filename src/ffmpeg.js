@@ -53,7 +53,7 @@ export async function detectFfmpegPath() {
     logger.warn('[FFmpeg] Could not parse system ffmpeg version, using bundled');
     return null;
   } catch (error) {
-    logger.debug('[FFmpeg] System ffmpeg detection failed:', error.message);
+    logger.debug({ err: error }, '[FFmpeg] System ffmpeg detection failed');
     return null;
   }
 }

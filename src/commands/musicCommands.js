@@ -1,10 +1,11 @@
 /**
  * musicCommands.js - Music-related slash command handlers
  * Extracted from bpCommand.js for modularity
+ * Migrated to discord-player v7
  */
 
 import { EmbedBuilder, MessageFlags, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder } from 'discord.js';
-import { queueEmbed, formatDuration } from '../embeds.js';
+import { queueEmbed, formatDuration, trackEmbed, playlistEmbed, parseDuration } from '../embeds.js';
 import { cmdLeave } from '../cmdLeave.js';
 import * as dataStore from '../dataStore.js';
 import * as phraseManager from '../phraseManager.js';
@@ -13,62 +14,57 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { logger } from '../logger.js';
-import { distube } from '../index.js';
+import { useQueue, QueueRepeatMode } from 'discord-player';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Runs yt-dlp search via @distube/yt-dlp's json() API (cross-platform)
-async function searchWithYtDlp(prefix, query) {
-  const { json } = await import('@distube/yt-dlp');
-  const data = await json(`${prefix}:${query}`, {
-    dumpSingleJson: true,
-    noWarnings: true,
-  });
-  const entries = Array.isArray(data) ? data : data.entries || [];
-  return entries.map((e) => ({
-    name: e.title || e.fulltitle || e.id,
-    url: e.webpage_url || e.url,
-    uploader: { name: e.uploader || e.artist || e.channel || 'Desconocido' },
-    duration: e.duration || 0,
+/**
+ * Get queue for a guild with error handling
+ * @param {string} guildId - Guild ID
+ * @returns {import('discord-player').GuildQueue|null}
+ */
+function getQueue(guildId) {
+  return useQueue(guildId);
+}
+
+/**
+ * Format track for embed display
+ * @param {import('discord-player').Track} track - Track object
+ * @returns {Object} Formatted track info
+ */
+function formatTrackForEmbed(track) {
+  return {
+    name: track.title,
+    url: track.url,
+    uploader: { name: track.author || 'Desconocido' },
+    duration: parseDuration(track.duration) || 0,
+    thumbnail: track.thumbnail,
+    requestedBy: track.requestedBy,
+  };
+}
+
+/**
+ * Format queue for embed display
+ * @param {import('discord-player').GuildQueue} queue - Queue object
+ * @param {number} page - Page number
+ * @returns {Object} Formatted queue info
+ */
+function formatQueueForEmbed(queue, page) {
+  const tracks = queue.tracks.map((t, i) => ({
+    name: t.title,
+    url: t.url,
+    duration: parseDuration(t.duration) || 0,
+    requestedBy: t.requestedBy,
   }));
-}
-
-// Bandcamp's web search is JS-protected and its JSON APIs are blocked, so we
-// search via DuckDuckGo (site:bandcamp.com/track) and decode redirect URLs.
-async function searchBandcamp(query) {
-  const searchUrl =
-    'https://html.duckduckgo.com/html/?q=' +
-    encodeURIComponent('site:bandcamp.com/track ' + query);
-  const res = await fetch(searchUrl, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-    },
-  });
-  if (!res.ok) throw new Error(`DuckDuckGo responded ${res.status}`);
-  const html = await res.text();
-
-  const results = [];
-  const anchorRe = /<a[^>]*class="result__a"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g;
-  let m;
-  while ((m = anchorRe.exec(html)) && results.length < 5) {
-    let link = m[1];
-    const uddg = /uddg=([^&]+)/.exec(link);
-    if (uddg) link = decodeURIComponent(uddg[1]);
-    if (!/\/\/[^.]*\.bandcamp\.com\/track\//.test(link)) continue;
-
-    const name = m[2].replace(/<[^>]+>/g, '').trim();
-    const uploader = (/\/\/([^.]+)\.bandcamp\.com\//.exec(link) || [])[1] || 'Desconocido';
-    results.push({ name, url: link, uploader: { name: uploader }, duration: 0 });
-  }
-  return results;
-}
-
-async function searchTracks(place, query) {
-  if (place === 'bandcamp') return searchBandcamp(query);
-  const prefix = place === 'soundcloud' ? 'scsearch5' : 'ytsearch5';
-  return searchWithYtDlp(prefix, query);
+  
+  return {
+    tracks,
+    currentTrack: queue.currentTrack ? formatTrackForEmbed(queue.currentTrack) : null,
+    volume: queue.node.volume,
+    paused: queue.node.isPaused(),
+    repeatMode: queue.repeatMode,
+  };
 }
 
 /**
@@ -87,13 +83,22 @@ async function handleMusicPlay(interaction) {
   }
 
   try {
-    const distube = interaction.client.distube;
-    await distube.play(voiceChannel, url, {
-      member: interaction.member,
-      textChannel: interaction.channel,
+    const player = interaction.client.player;
+    await player.play(voiceChannel, url, {
+      requestedBy: interaction.member,
+      nodeOptions: {
+        metadata: {
+          channel: interaction.channel,
+          requestedBy: interaction.member,
+        },
+        volume: 50,
+        leaveOnEnd: false,
+        leaveOnStop: false,
+        leaveOnEmpty: true,
+      },
     });
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] play error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'playError')
     });
@@ -116,13 +121,22 @@ async function handleMusicPlaylist(interaction) {
   }
 
   try {
-    const distube = interaction.client.distube;
-    await distube.play(voiceChannel, url, {
-      member: interaction.member,
-      textChannel: interaction.channel,
+    const player = interaction.client.player;
+    await player.play(voiceChannel, url, {
+      requestedBy: interaction.member,
+      nodeOptions: {
+        metadata: {
+          channel: interaction.channel,
+          requestedBy: interaction.member,
+        },
+        volume: 50,
+        leaveOnEnd: false,
+        leaveOnStop: false,
+        leaveOnEmpty: true,
+      },
     });
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] playlist error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'playError')
     });
@@ -146,8 +160,15 @@ async function handleMusicQuery(interaction) {
   }
 
   try {
-    // Search using yt-dlp search prefixes based on 'place'
-    const results = await searchTracks(place, title);
+    // Search using the player's search method
+    const query = `${title} ${place === 'youtube' ? 'youtube' : place === 'soundcloud' ? 'soundcloud' : ''}`.trim();
+    const player = interaction.client.player;
+    const searchResult = await player.search(query, {
+      requestedBy: interaction.user,
+      searchEngine: place === 'youtube' ? 'youtubeSearch' : place === 'soundcloud' ? 'soundcloudSearch' : 'autoSearch',
+    });
+
+    const results = searchResult.tracks;
 
     if (!results || results.length === 0) {
       return interaction.editReply({
@@ -158,8 +179,8 @@ async function handleMusicQuery(interaction) {
     // Create select menu options
     const options = results.slice(0, 10).map((song, index) =>
       new StringSelectMenuOptionBuilder()
-        .setLabel(song.name.substring(0, 100))
-        .setDescription(song.uploader ? song.uploader.name.substring(0, 100) : 'Unknown')
+        .setLabel(song.title.substring(0, 100))
+        .setDescription(song.author ? song.author.substring(0, 100) : 'Unknown')
         .setValue(index.toString())
     );
 
@@ -173,20 +194,24 @@ async function handleMusicQuery(interaction) {
     // Store search results in memory for the selection handler
     if (!global.queryResultsCache) global.queryResultsCache = new Map();
     global.queryResultsCache.set(interaction.user.id, {
-      results,
-      voiceChannelId: voiceChannel.id,
+      results: results,
       guildId: interaction.guildId,
-      channelId: interaction.channelId,
+      voiceChannelId: voiceChannel.id,
+      timestamp: Date.now(),
     });
     // Auto-cleanup after 5 minutes
-    setTimeout(() => global.queryResultsCache?.delete(interaction.user.id), 5 * 60 * 1000);
+    setTimeout(() => {
+      if (global.queryResultsCache?.has(interaction.user.id)) {
+        global.queryResultsCache.delete(interaction.user.id);
+      }
+    }, 60000);
 
     return interaction.editReply({
-      content: '🎵 **Resultados de búsqueda:** Elegí una opción:',
+      content: await phraseManager.getPhrase('music', 'queryResults'),
       components: [row],
     });
   } catch (error) {
-    logger.error({ err: error }, '[Music] Play error');
+    logger.error({ err: error }, '[Music] Query error');
     return interaction.editReply({
       content: await phraseManager.getPhrase('music', 'playError')
     });
@@ -216,8 +241,8 @@ async function handleQuerySelect(interaction) {
   }
 
   try {
-    const client = interaction.client;
-    const guild = client.guilds.cache.get(cached.guildId);
+    const player = interaction.client.player;
+    const guild = interaction.client.guilds.cache.get(cached.guildId);
     if (!guild) {
       return interaction.editReply({ content: '❌ No pude encontrar el servidor.' });
     }
@@ -226,10 +251,18 @@ async function handleQuerySelect(interaction) {
       return interaction.editReply({ content: '❌ El canal de voz ya no existe.' });
     }
 
-    const distube = client.distube;
-    await distube.play(voiceChannel, selectedSong.url, {
-      member: interaction.member,
-      textChannel: interaction.channel,
+    await player.play(voiceChannel, selectedSong.url, {
+      nodeOptions: {
+        metadata: {
+          channel: interaction.channel,
+          requestedBy: interaction.member,
+        },
+        volume: 50,
+        leaveOnEnd: false,
+        leaveOnStop: false,
+        leaveOnEmpty: true,
+      },
+      requestedBy: interaction.member,
     });
 
     // Clean up
@@ -254,7 +287,7 @@ async function handleQuerySelect(interaction) {
 async function handleMusicSkip(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
 
   if (!queue) {
     return interaction.editReply({ 
@@ -264,18 +297,18 @@ async function handleMusicSkip(interaction, client) {
 
   try {
     // Check if only one song - skip will stop playback
-    if (queue.songs.length <= 1) {
-      const song = queue.songs[0];
-      queue.stop(); // Stop clears queue and disconnects
+    if (queue.tracks.size <= 1) {
+      const song = queue.currentTrack;
+      queue.node.stop(); // Stop clears queue and disconnects
       return interaction.editReply(await phraseManager.getPhrase('music', 'skipLastSong', {
-        songName: song?.name || 'desconocida'
+        songName: song?.title || 'desconocida'
       }));
     }
     
-    const song = queue.songs[0];
-    queue.skip();
+    const song = queue.currentTrack;
+    queue.node.skip();
     return interaction.editReply(await phraseManager.getPhrase('music', 'skip', {
-      songName: song.name
+      songName: song.title
     }));
   } catch (error) {
     logger.error({ err: error }, '[Music] skip error');
@@ -286,14 +319,12 @@ async function handleMusicSkip(interaction, client) {
 }
 
 /**
-
-/**
  * Handle /bp music stop
  */
 async function handleMusicStop(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
 
   if (!queue) {
     return interaction.editReply({ 
@@ -302,10 +333,10 @@ async function handleMusicStop(interaction, client) {
   }
 
   try {
-    queue.stop();
+    queue.node.stop();
     return interaction.editReply(await phraseManager.getPhrase('music', 'stop'));
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] stop error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'stopError'),
     });
@@ -318,7 +349,7 @@ async function handleMusicStop(interaction, client) {
 async function handleMusicPause(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
 
   if (!queue) {
     return interaction.editReply({ 
@@ -327,10 +358,10 @@ async function handleMusicPause(interaction, client) {
   }
 
   try {
-    queue.pause();
+    queue.node.setPaused(true);
     return interaction.editReply(await phraseManager.getPhrase('music', 'pause'));
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] pause error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'pauseError'),
     });
@@ -343,7 +374,7 @@ async function handleMusicPause(interaction, client) {
 async function handleMusicResume(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
 
   if (!queue) {
     return interaction.editReply({ 
@@ -352,10 +383,10 @@ async function handleMusicResume(interaction, client) {
   }
 
   try {
-    queue.resume();
+    queue.node.setPaused(false);
     return interaction.editReply(await phraseManager.getPhrase('music', 'resume'));
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] resume error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'resumeError'),
     });
@@ -368,23 +399,17 @@ async function handleMusicResume(interaction, client) {
 async function handleMusicQueue(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
 
-  if (!queue || !queue.songs.length) {
+  if (!queue || !queue.tracks.size) {
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'queueEmpty')
     });
   }
 
-  try {
-    const embed = queueEmbed(queue);
-    return interaction.editReply({ embeds: [embed] });
-  } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
-    return interaction.editReply({ 
-      content: await phraseManager.getPhrase('music', 'queueError')
-    });
-  }
+  const page = interaction.options.getInteger('page') || 1;
+  const embed = queueEmbed(queue, page);
+  return interaction.editReply({ embeds: [embed] });
 }
 
 /**
@@ -393,33 +418,17 @@ async function handleMusicQueue(interaction, client) {
 async function handleMusicNowPlaying(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
 
-  if (!queue || !queue.songs.length) {
+  if (!queue || !queue.currentTrack) {
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'nowplayingEmpty')
     });
   }
 
-  try {
-    const song = queue.songs[0];
-    const embed = new EmbedBuilder()
-      .setTitle('🎵 Reproduciendo ahora')
-      .setDescription(`**[${song.name}](${song.url})**\n${song.uploader?.name || song.uploader || 'Autor desconocido'}\n\n*¡Qué temazo! Se me tiemblan las hojas. c: 🍃*`)
-      .addFields(
-        { name: '⏱ Duración', value: formatDuration(song.duration), inline: true },
-        { name: '🔊 Pedida por', value: `${song.member?.displayName || 'Alguien'}`, inline: true }
-      )
-      .setThumbnail(song.thumbnail || null)
-      .setColor(0x57f287);
-    
-    return interaction.editReply({ embeds: [embed] });
-  } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
-    return interaction.editReply({ 
-      content: await phraseManager.getPhrase('music', 'nowplayingError')
-    });
-  }
+  const track = queue.currentTrack;
+  const embed = trackEmbed(track, 'Reproduciendo ahora');
+  return interaction.editReply({ embeds: [embed] });
 }
 
 /**
@@ -428,7 +437,7 @@ async function handleMusicNowPlaying(interaction, client) {
 async function handleMusicVolume(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
   const volume = interaction.options.getInteger('volume');
 
   if (!queue) {
@@ -444,12 +453,12 @@ async function handleMusicVolume(interaction, client) {
   }
 
   try {
-    queue.setVolume(volume);
+    queue.node.setVolume(volume);
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'volSet',  { volume })
     });
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] volume error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'volError'),
     });
@@ -462,7 +471,7 @@ async function handleMusicVolume(interaction, client) {
 async function handleMusicLoop(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
   const mode = interaction.options.getString('mode');
 
   if (!queue) {
@@ -479,11 +488,11 @@ async function handleMusicLoop(interaction, client) {
       case 'queue': modeNum = 2; break;
     }
     
-    queue.setRepeatMode(modeNum);
+    queue.setRepeatMode(/** @type {import("discord-player").QueueRepeatMode} */ (modeNum));
     const modeText = { 0: 'apagado', 1: 'canción', 2: 'cola' }[modeNum];
     return interaction.editReply(await phraseManager.getPhrase('music', 'loopSet',  { mode: modeText }));
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] loop error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'loopError'),
     });
@@ -496,19 +505,19 @@ async function handleMusicLoop(interaction, client) {
 async function handleMusicShuffle(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
 
-  if (!queue || queue.songs.length <= 1) {
+  if (!queue || queue.tracks.size <= 1) {
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'shuffleNoQueue')
     });
   }
 
   try {
-    queue.shuffle();
+    queue.tracks.shuffle();
     return interaction.editReply(await phraseManager.getPhrase('music', 'shuffle'));
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] shuffle error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'shuffleError'),
     });
@@ -521,23 +530,23 @@ async function handleMusicShuffle(interaction, client) {
 async function handleMusicRewind(interaction, client) {
   await interaction.deferReply();
 
-  const queue = distube.getQueue(interaction.guildId);
+  const queue = getQueue(interaction.guildId);
 
-  if (!queue || !queue.previousSongs.length) {
+  if (!queue || !queue.history.size) {
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'rewindNone')
     });
   }
 
   try {
-    const song = queue.previousSongs[queue.previousSongs.length - 1];
-    queue.previousSongs.pop();
-    queue.songs.unshift(song);
+    const track = queue.history[queue.history.size - 1];
+    // queue.history.remove(queue.history.size - 1) // TODO: fix history removal;
+    queue.tracks.add(track);
     return interaction.editReply(await phraseManager.getPhrase('music', 'rewind',  { 
-      songName: song.name 
+      songName: track.title 
     }));
   } catch (error) {
-    logger.error({ err: error }, '[Music]  error');
+    logger.error({ err: error }, '[Music] rewind error');
     return interaction.editReply({ 
       content: await phraseManager.getPhrase('music', 'rewindError'),
     });
@@ -569,4 +578,5 @@ export {
   handleMusicLeave,
   handleQuerySelect,
 };
+
 

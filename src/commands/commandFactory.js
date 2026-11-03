@@ -148,8 +148,8 @@ export const commonOptions = {
   queryText: () => ({ type: 'string', ...stringOption('texto', 'Texto a procesar', true) }),
   latexExpr: () => ({ type: 'string', ...stringOption('expresión', 'Expresión LaTeX', true) }),
   avatarUser: () => ({ type: 'user', ...userOption('usuario', 'Usuario (por defecto vos)', false) }),
-  serverIcon: () => ({ type: 'boolean', ...booleanOption('servidor', 'Mostrar icono del servidor', false) }),
-  serverBanner: () => ({ type: 'boolean', ...booleanOption('servidor', 'Mostrar banner del servidor', false) }),
+  serverIcon: () => ({ type: 'boolean', ...booleanOption('servidor_icon', 'Mostrar icono del servidor', false) }),
+  serverBanner: () => ({ type: 'boolean', ...booleanOption('servidor_banner', 'Mostrar banner del servidor', false) }),
   userId: () => ({ type: 'string', ...stringOption('userid', 'ID de usuario', true) }),
   userTag: () => ({ type: 'user', ...userOption('usuario', 'Usuario', false) }),
   
@@ -178,34 +178,6 @@ export const commonOptions = {
     { name: 'Vibrato', value: 'vibrato' },
     { name: 'Reverse', value: 'reverse' },
   ]) }),
-userId: () => ({ type: 'string', ...stringOption('userid', 'ID de usuario', true) }),
-  userTag: () => ({ type: 'user', ...userOption('usuario', 'Usuario', false) }),
-  
-  volumeLevel: () => ({ type: 'integer', ...integerOption('volumen', 'Volumen (0-200)', true, 0, 200) }),
-  seekPosition: () => ({ type: 'string', ...stringOption('posicion', 'Posición (ej: 1:30, 90s, 10%)', true) }),
-  loopMode: () => stringOption('modo', 'Modo de repetición', true, [
-    { name: 'Desactivado', value: 'off' },
-    { name: 'Canción', value: 'track' },
-    { name: 'Cola', value: 'queue' },
-    { name: 'Autoplay', value: 'autoplay' },
-  ]),
-  skipAmount: () => integerOption('cantidad', 'Cuántas saltar (default 1)', false, 1, 100),
-  clearConfirm: () => booleanOption('confirmar', 'Confirmar limpieza', false),
-  shuffleConfirm: () => booleanOption('confirmar', 'Confirmar aleatorizado', false),
-  moveFrom: () => integerOption('desde', 'Posición origen (1-based)', true, 1),
-  moveTo: () => integerOption('hasta', 'Posición destino (1-based)', true, 1),
-  removePosition: () => integerOption('posicion', 'Posición a eliminar (1-based)', true, 1),
-  filterName: () => stringOption('filtro', 'Filtro de audio', true, [
-    { name: 'Ninguno', value: 'none' },
-    { name: 'Bass Boost', value: 'bassboost' },
-    { name: 'Nightcore', value: 'nightcore' },
-    { name: 'Vaporwave', value: 'vaporwave' },
-    { name: '8D Audio', value: '8d' },
-    { name: 'Karaoke', value: 'karaoke' },
-    { name: 'Tremolo', value: 'tremolo' },
-    { name: 'Vibrato', value: 'vibrato' },
-    { name: 'Reverse', value: 'reverse' },
-  ]),
 };
 
 export function buildBpCommand() {

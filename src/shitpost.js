@@ -97,7 +97,7 @@ async function getShitpostResponse(content, channelId) {
   const trigger = triggers[Math.floor(Math.random() * triggers.length)];
   
   // Use phraseManager's getPhraseWithContext with rollType: 'd20' for hit/crit/fail
-  const response = await phraseManager.getPhraseWithContext(
+  let response = await phraseManager.getPhraseWithContext(
     'shitpost',
     trigger.text,
     {},

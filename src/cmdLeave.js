@@ -1,13 +1,14 @@
 import * as phraseManager from './phraseManager.js';
 import { MessageFlags } from 'discord.js';
 import { logger } from './logger.js';
+import { useQueue } from 'discord-player';
 
 function getVoiceChannel(interaction) {
   return interaction.member.voice.channel || null;
 }
 
 function getQueue(interaction) {
-  return interaction.client.distube.getQueue(interaction.guildId);
+  return useQueue(interaction.guildId);
 }
 
 async function cmdLeave(interaction) {
@@ -20,7 +21,7 @@ async function cmdLeave(interaction) {
     return interaction.editReply({ content: await phraseManager.getPhrase('music', 'leaveUserNotInVoice'), flags: MessageFlags.Ephemeral });
   }
   const queue = getQueue(interaction);
-  if (queue) interaction.client.distube.stop(interaction.guildId);
+  if (queue) queue.delete();
   try {
     // Use voiceChannel.leave() instead of voiceState.disconnect() to avoid needing MoveMembers permission
     await voiceState.channel.leave();

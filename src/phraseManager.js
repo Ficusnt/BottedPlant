@@ -15,10 +15,10 @@ const PHRASES_FILE = path.join(__dirname, '..', 'data', 'phrases.json');
 const SEASONS_FILE = path.join(__dirname, '..', 'data', 'seasons.json');
 
 // New module imports
-import { buildContext, selectWithContext, getCurrentSeason, updateRecentPhrases } from './contextSelector.js';
+import { buildContext, selectWithContext, updateRecentPhrases } from './contextSelector.js';
 import { rollD20, weightedPick as rollerWeightedPick, pickTemplate } from './phraseRoller.js';
 import { applySynonyms as applySynonymsEngine, loadSynonyms } from './synonymEngine.js';
-import { loadSeasons, getSeasonalPhrases, getSeasonalBoosts } from './seasonalRotator.js';
+import { loadSeasons, getSeasonalPhrases, getSeasonalBoosts, getCurrentSeason } from './seasonalRotator.js';
 
 // Fallback returned when a requested phrase/key doesn't exist
 const MISSING_PHRASE = '🌿 *frase extraviada entre mis raíces...*';
@@ -287,10 +287,18 @@ async function getPhrase(category, key, vars = {}) {
  * @param {string} key
  * @param {Object} vars - Template variables
  * @param {Object} contextOptions - Optional context overrides
- * @param {Object} contextOptions.interaction - Discord interaction/message
+ * @param {import('discord.js').Message|import('discord.js').ChatInputCommandInteraction|null} contextOptions.interaction - Discord interaction/message
  * @param {string[]} contextOptions.recentPhrases - Override recent phrases
+ * @param {string} contextOptions.rollType - Roll type for template selection (e.g., 'd20')
  * @returns {Promise<string>}
  */
+/**
+ * @typedef {Object} GetPhraseContextOptions
+ * @property {import('discord.js').Message|import('discord.js').ChatInputCommandInteraction|null} [interaction]
+ * @property {string[]} [recentPhrases]
+ * @property {string} [rollType]
+ */
+/** @type {(category: string, key: string, vars?: Object, contextOptions?: GetPhraseContextOptions) => Promise<string>} */
 async function getPhraseWithContext(category, key, vars = {}, contextOptions = {}) {
   const data = await getPhrases();
   const cat = data.categories?.[category];
@@ -557,4 +565,4 @@ async function setPhrase(category, key, value) {
 }
 
 
-export { loadPhrases, reloadPhrases, getPhrases, getPhrase, getPhraseWithContext, getTriggerResponse, getCategory, getUwuEnding, listPhrases, addPhrase, editPhrase, deletePhrase, savePhrases, setPhrase, getMediaFolder, listMedia, rand, interpolate, weightedRandom, renderTemplate, postProcessPhrase };
+export { loadPhrases, reloadPhrases, getPhrases, getPhrase, getPhraseWithContext, getTriggerResponse, getCategory, getUwuEnding, listPhrases, addPhrase, editPhrase, deletePhrase, savePhrases, setPhrase, getMediaFolder, listMedia, rand, interpolate, weightedRandom, renderTemplate, postProcessPhrase, MISSING_PHRASE };

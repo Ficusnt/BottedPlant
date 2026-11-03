@@ -15,7 +15,8 @@ import { logger } from './logger.js';
  * @param {number} options.maxReplacements - Max replacements per text (default 3)
  * @returns {string} Text with synonyms applied
  */
-export function applySynonyms(text, synonyms, options = {}) {
+/** @typedef {{probability?: number, wholeWordOnly?: boolean, maxReplacements?: number}} SynonymOptions */
+export function applySynonyms(text, synonyms, /** @type {SynonymOptions} */ options = {}) {
   if (!text || !synonyms || Object.keys(synonyms).length === 0) return text;
 
   const {
@@ -88,6 +89,7 @@ export function loadSynonyms(phrasesData) {
  * @returns {Object<string, string>}
  */
 export function buildReverseIndex(synonyms) {
+  /** @type {Object<string, string>} */
   const reverse = {};
   for (const [base, syns] of Object.entries(synonyms)) {
     for (const syn of syns) {

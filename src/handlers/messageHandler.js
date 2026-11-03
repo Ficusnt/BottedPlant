@@ -5,7 +5,7 @@
 
 import { logger } from '../logger.js';
 import { hasShitpostTrigger, getShitpostResponse, getRandomMedia, sendShitpost } from '../shitpost.js';
-import * as phraseManager from '../phraseManager.js';
+import { getPhraseWithContext, MISSING_PHRASE, rand, getPhrases, getTriggerResponse } from '../phraseManager.js';
 
 /**
  * Check if message matches "planta" or "hola planta" patterns for 100% response
@@ -48,25 +48,28 @@ function getGuaranteedTrigger(content) {
  */
 async function processTriggerResponse(message, triggerKey, triggerData) {
   // Use phraseManager's getPhraseWithContext with rollType: 'd20' for hit/crit/fail
-  const response = await phraseManager.getPhraseWithContext(
+  const response = await getPhraseWithContext(
     'triggers',
     triggerKey,
     {},
     { interaction: message, rollType: 'd20' }
   );
 
-  if (!response || response === phraseManager.MISSING_PHRASE) return false;
+  if (!response || response === MISSING_PHRASE) return false;
 
   // Check for media (same logic as phraseManager fallback)
   let mediaFile = null;
   if (triggerData.media && triggerData.media.length && Math.random() < (triggerData.mediaChance || 0.08)) {
-    mediaFile = phraseManager.rand(triggerData.media);
+    mediaFile = rand(triggerData.media);
   }
 
   if (mediaFile) {
     await sendShitpost(message, response, mediaFile);
   } else {
-    await message.channel.send(response).catch(() => {});
+    // message.channel could be a DMChannel, TextChannel, etc. - all have send()
+    // Use type assertion to satisfy TypeScript
+    const channel = /** @type {import('discord.js').TextChannel | import('discord.js').DMChannel | import('discord.js').NewsChannel | import('discord.js').ThreadChannel} */ (message.channel);
+    await channel.send(response).catch(() => {});
   }
 
   return true;
@@ -87,7 +90,7 @@ export async function handleMessage(message) {
     // 1. Check for guaranteed triggers first (100% response rate)
     const guaranteedTrigger = getGuaranteedTrigger(lowerContent);
     if (guaranteedTrigger) {
-      const data = await phraseManager.getPhrases();
+      const data = await getPhrases();
       // Check both triggers and shitpost for the guaranteed trigger
       let triggerData = data.categories?.triggers?.[guaranteedTrigger];
       if (!triggerData) {
@@ -118,7 +121,7 @@ export async function handleMessage(message) {
     
     // 3. Fall back to regular phrase triggers - 25% random trigger chance
     if (Math.random() <= 0.25) {
-      const triggerMatch = await phraseManager.getTriggerResponse(content, {});
+      const triggerMatch = await getTriggerResponse(content, {});
       if (triggerMatch && triggerMatch.triggerData) {
         const { triggerData, triggerKey } = triggerMatch;
         await processTriggerResponse(message, triggerKey, triggerData);

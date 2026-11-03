@@ -1,20 +1,16 @@
 // @ts-nocheck
 /**
  * @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction
- * @typedef {import('distube').Queue} Queue
- * @typedef {import('distube').Song} Song
- * @typedef {import('distube').Playlist} Playlist
+ * @typedef {import('discord-player').GuildQueue} GuildQueue
+ * @typedef {import('discord-player').Track} Track
+ * @typedef {import('discord-player').Playlist} Playlist
  * @typedef {import('discord.js').Guild} Guild
  * @typedef {import('discord.js').VoiceChannel} VoiceChannel
  * @typedef {import('discord.js').TextChannel} TextChannel
  * @typedef {import('discord.js').Collection} Collection
- * @typedef {import('distube').DisTubeEvents} DisTubeEvents
  */
 
 import { Client, GatewayIntentBits, ActivityType } from 'discord.js';
-import { DisTube } from 'distube';
-import { SoundCloudPlugin } from '@distube/soundcloud';
-import { YtDlpPlugin } from '@distube/yt-dlp';
 import config from './config.js';
 import { logger } from './logger.js';
 import { registerSlashCommands, handleInteraction } from './bpCommand.js';
@@ -25,12 +21,13 @@ import { loadShitposts, loadMedia } from './shitpost.js';
 import * as phraseManager from './phraseManager.js';
 import { formatDuration, trackEmbed, playlistEmbed } from './embeds.js';
 import { getFfmpegPath } from './ffmpeg.js';
+import { createPlayer, registerExtractors, setupPlayerEvents } from './player.js';
 
-/** @type {import('discord.js').Client & { distube: import('distube').DisTube }} */
+/** @type {import('discord.js').Client & { player: import('discord-player').Player }} */
 let client;
 
-/** @type {import('distube').DisTube} */
-let distube;
+/** @type {import('discord-player').Player} */
+let player;
 
 if (!config.token) {
   logger.error('DISCORD_TOKEN is missing. Create a .env file from .env.example');
@@ -40,20 +37,7 @@ if (!config.token) {
 // Detect best available FFmpeg (system preferred, bundled fallback)
 const ffmpegPath = await getFfmpegPath();
 
-const disTubeOptions = {
-  plugins: [
-    new SoundCloudPlugin(),
-    new YtDlpPlugin({
-      update: false,
-      cookies: config.cookiesFile
-    })
-  ],
-  emitNewSongOnly: true,
-  savePreviousSongs: true,
-  ffmpeg: ffmpegPath
-};
-
-client = /** @type {import('discord.js').Client & { distube: import('distube').DisTube }} */ (new Client({
+client = /** @type {import('discord.js').Client & { player: import('discord-player').Player }} */ (new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -61,64 +45,17 @@ client = /** @type {import('discord.js').Client & { distube: import('distube').D
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildPresences,
   ],
-}) /** @type {import('discord.js').Client & { distube: import('distube').DisTube }} */);
+}) /** @type {import('discord.js').Client & { player: import('discord-player').Player }} */);
 
-client.distube = new DisTube(client, disTubeOptions);
-distube = client.distube;
+// Create and configure the player
+player = await createPlayer(client);
+client.player = player;
 
-// ---- DisTube event handlers ----
-// @ts-ignore
-distube
-  .on('playSong', (queue, song) => {
-    // Plain text only: title, duration, requester (no embed, no phrases)
-    const duration = formatDuration(song.duration);
-    const requester = song.member.displayName || 'Alguien';
-    /** @type {import('discord.js').TextChannel} */
-    const textChannel = queue.textChannel;
-    textChannel
-      .send(`🎵 **${song.name}** — pedida por **${requester}**`)
-      .catch((e) => logger.error({ err: e }, '[distube] playSong send error'));
-  })
-  .on('addSong', (queue, song) => {
-    const embed = trackEmbed(song, ' Añadida a la cola');
-    /** @type {import('discord.js').TextChannel} */
-    const textChannel = queue.textChannel;
-    textChannel
-      .send({ content: song.url, embeds: [embed] })
-      .catch((e) => logger.error({ err: e }, '[distube] addSong send error'));
-  })
-  .on('addList', (queue, playlist) => {
-    const embed = playlistEmbed(playlist);
-    /** @type {import('discord.js').TextChannel} */
-    const textChannel = queue.textChannel;
-    textChannel
-      .send({ embeds: [embed] })
-      .catch((e) => logger.error({ err: e }, '[distube] addList send error'));
-  })
-  .on('finish', async (queue) => {
-    const msg = await phraseManager.getPhrase('distube', 'finish');
-    /** @type {import('discord.js').TextChannel} */
-    const textChannel = queue.textChannel;
-    textChannel.send(msg).catch(() => {});
-  })
-  .on('empty', async (queue) => {
-    const msg = await phraseManager.getPhrase('distube', 'empty');
-    /** @type {import('discord.js').TextChannel} */
-    const textChannel = queue.textChannel;
-    textChannel.send(msg).catch(() => {});
-  })
-  .on('error', async (error, queue, song) => {
-    logger.error({ err: error }, 'DisTube error');
-    /** @type {import('discord.js').TextChannel | undefined} */
-    const textChannel = queue?.textChannel;
-    if (!textChannel) return;
+// Register extractors
+await registerExtractors(player);
 
-    const errorMsg = error?.message?.slice(0, 400) || 'Unknown error';
-    const msg = await phraseManager.getPhrase('distube', 'error', {
-      errorMsg,
-    });
-    textChannel.send(msg).catch(() => {});
-  });
+// Set up player event handlers
+setupPlayerEvents(player);
 
 // ---- Client events ----
 // discord.js v14.27+ renames 'ready' → 'clientReady' (old name stops emitting in v15)
@@ -129,9 +66,6 @@ client.once('clientReady', () => {
     type: ActivityType.Listening,
   });
 
-  registerSlashCommands(client).catch((err) =>
-    logger.error({ err }, 'Error registering slash commands')
-  );
   scheduleReminders(client);
   loadShitposts().catch((err) => logger.error({ err }, '[SHITPOST] Error loading shitposts'));
   loadMedia().catch((err) => console.error('[SHITPOST] Error loading media:', err));
@@ -211,13 +145,13 @@ async function checkBirthdays() {
 // Disconnect from voice channels after 10 minutes of inactivity
 setInterval(() => {
   for (const guild of client.guilds.cache.values()) {
-    const queue = distube.getQueue(guild.id);
-    if (queue && queue.voiceChannel) {
-      const members = queue.voiceChannel.members.filter((m) => !m.user.bot);
+    const queue = player.queues.get(guild.id);
+    if (queue && queue.channel) {
+      const members = queue.channel.members.filter((m) => !m.user.bot);
       if (members.size === 0) {
         logger.info(`[Voice] No users in ${guild.name}, disconnecting.`);
-        distube.stop(guild.id);
-        queue.voiceChannel.leave().catch((err) => logger.error({ err }, '[Voice] Error leaving channel'));
+        queue.destroy();
+        queue.channel.leave().catch((err) => logger.error({ err }, '[Voice] Error leaving channel'));
       }
     }
   }
@@ -260,4 +194,4 @@ client.login(config.token).catch((err) => {
   process.exit(1);
 });
 
-export { client, distube };
+export { client, player };

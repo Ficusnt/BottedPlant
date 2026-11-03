@@ -32,7 +32,7 @@ async function handleRememberAdd(interaction) {
       when,
       channel.id
     );
-    return interaction.editReply(await phraseManager.getPhrase('reminders', 'addSuccess', 'hits', {
+    return interaction.editReply(await phraseManager.getPhrase('reminders', 'addSuccess', {
       id,
       when: new Date(when).toLocaleString('es-AR')
     }));
@@ -51,7 +51,7 @@ async function handleRememberList(interaction) {
   await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
   const user = interaction.options.getUser('usuario') || interaction.user;
-  const reminders = await dataStore.getReminders(interaction.guildId, user.id);
+  const reminders = await dataStore.getRemindersForUser(interaction.guildId, user.id);
 
   if (!reminders || reminders.length === 0) {
     return interaction.editReply({ 
@@ -64,7 +64,7 @@ async function handleRememberList(interaction) {
   ).join('\n');
 
   return interaction.editReply({ 
-    content: await phraseManager.getPhrase('reminders', 'listHeader', 'hits', {
+    content: await phraseManager.getPhrase('reminders', 'listHeader', {
       user: user.toString(),
       list
     })
@@ -86,7 +86,7 @@ async function handleRememberCancel(interaction) {
     });
   }
 
-  return interaction.editReply(await phraseManager.getPhrase('reminders', 'cancelled', 'hits', { id }));
+  return interaction.editReply(await phraseManager.getPhrase('reminders', 'cancelled', { id }));
 }
 
 /**
@@ -107,7 +107,7 @@ async function handleBirthdayAdd(interaction) {
 
   try {
     await dataStore.addBirthday(interaction.guildId, user.id, date, channel.id);
-    return interaction.editReply(await phraseManager.getPhrase('birthdays', 'addSuccess', 'hits', {
+    return interaction.editReply(await phraseManager.getPhrase('birthdays', 'addSuccess', {
       user: user.toString(),
       date
     }));
@@ -138,7 +138,7 @@ async function handleBirthdayList(interaction) {
   ).join('\n');
 
   return interaction.editReply({ 
-    content: await phraseManager.getPhrase('birthdays', 'listHeader', 'hits', { list })
+    content: await phraseManager.getPhrase('birthdays', 'listHeader', { list })
   });
 }
 
@@ -157,7 +157,7 @@ async function handleBirthdayRemove(interaction) {
     });
   }
 
-  return interaction.editReply(await phraseManager.getPhrase('birthdays', 'removed', 'hits', { id }));
+  return interaction.editReply(await phraseManager.getPhrase('birthdays', 'removed', { id }));
 }
 
 export {
